@@ -1,13 +1,41 @@
 package com.oap2024team7.team7mediastreamingapp;
 
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
-public class App {
+import java.io.IOException;
+import java.net.URL;
 
-	public static void main(String[] args) throws Exception {
-		new App().proceed();
+public class App extends Application {
+
+    private static Scene scene;
+
+	@Override
+    public void start(Stage stage) throws IOException {
+        scene = new Scene(loadFXML("login"), 206, 256);
+        stage.setTitle("Media Streaming and Rental - Login");
+        stage.setScene(scene);
+        stage.show();
 	}
 
-	public void proceed() {
-		System.out.println("Hello world!");
-	}
+	public static void setRoot(String fxml) throws IOException {
+        scene.setRoot(loadFXML(fxml));
+    }
+
+	private static Parent loadFXML(String fxml) throws IOException {
+		URL fxmlLocation = App.class.getResource("/" + fxml + ".fxml");
+		if (fxmlLocation == null) {
+			throw new IOException("FXML file not found: " + fxml + ".fxml");
+		}
+	
+		FXMLLoader fxmlLoader = new FXMLLoader(fxmlLocation);
+		return fxmlLoader.load();
+	}	
+
+    public static void main(String[] args) {
+        launch();
+    }
 }
