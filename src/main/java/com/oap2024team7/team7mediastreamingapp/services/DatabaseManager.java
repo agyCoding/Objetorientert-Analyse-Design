@@ -5,9 +5,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseManager {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/media_streaming_db";
-    private static final String DB_USERNAME = "root";
-    private static final String DB_PASSWORD = "M!nDB2024";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/sakila";
+    private static final String DB_USERNAME = "student";
+    private static final String DB_PASSWORD = "student";
 
     public static Connection getConnection() throws SQLException {
         try {
