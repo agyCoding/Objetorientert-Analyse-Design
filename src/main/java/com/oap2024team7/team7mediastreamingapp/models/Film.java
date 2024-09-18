@@ -1,12 +1,12 @@
 package com.oap2024team7.team7mediastreamingapp.models;
 
 public class Film {
-    private int film_id; // automatically assigned in the database
+    private int filmId; // automatically assigned in the database
     private String title;
     private String description;
-    private int release_year;
-    private int language_id;
-    private int rental_duration; // Understood as MAX ALLOWED rental duration
+    private int releaseYear;
+    private int languageId;
+    private int rentalDuration; // Understood as MAX ALLOWED rental duration
     private int length;
 
     // Define enum properly at the class level
@@ -15,30 +15,30 @@ public class Film {
     Rating rating; //
 
     // Constructor for creating a new film from the database
-    public Film(int film_id, String title, String description, int release_year, int language_id, int rental_duration, int length, Rating rating) {
-        this.film_id = film_id;
+    public Film(int filmId, String title, String description, int releaseYear, int languageId, int rentalDuration, int length, Rating rating) {
+        this.filmId = filmId;
         this.title = title;
         this.description = description;
-        this.release_year = release_year;
-        this.language_id = language_id;
-        this.rental_duration = rental_duration;
+        this.releaseYear = releaseYear;
+        this.languageId = languageId;
+        this.rentalDuration = rentalDuration;
         this.length = length;
         this.rating = rating;
     }
 
     // Constructor for creating a new film to be added to the database
-    public Film(String title, String description, int release_year, int language_id, int rental_duration, int length, Rating rating) {
+    public Film(String title, String description, int releaseYear, int languageId, int rentalDuration, int length, Rating rating) {
         this.title = title;
         this.description = description;
-        this.release_year = release_year;
-        this.language_id = language_id; // Have to add handling of the language_id based on "regular" language information
-        this.rental_duration = rental_duration;
+        this.releaseYear = releaseYear;
+        this.languageId = languageId; // Have to add handling of the languageId based on "regular" language information
+        this.rentalDuration = rentalDuration;
         this.length = length;
         this.rating = rating;
     }
 
-    public int getFilm_id() {
-        return film_id;
+    public int getfilmId() {
+        return filmId;
     }
 
     public String getTitle() {
@@ -57,28 +57,28 @@ public class Film {
         this.description = description;
     }
 
-    public int getRelease_year() {
-        return release_year;
+    public int getreleaseYear() {
+        return releaseYear;
     }
 
-    public void setRelease_year(int release_year) {
-        this.release_year = release_year;
+    public void setreleaseYear(int releaseYear) {
+        this.releaseYear = releaseYear;
     }
 
-    public int getLanguage_id() {
-        return language_id;
+    public int getlanguageId() {
+        return languageId;
     }
 
-    public void setLanguage_id(int language_id) {
-        this.language_id = language_id;
+    public void setlanguageId(int languageId) {
+        this.languageId = languageId;
     }
 
-    public int getRental_duration() {
-        return rental_duration;
+    public int getrentalDuration() {
+        return rentalDuration;
     }
 
-    public void setRental_duration(int rental_duration) {
-        this.rental_duration = rental_duration;
+    public void setrentalDuration(int rentalDuration) {
+        this.rentalDuration = rentalDuration;
     }
 
     public int getLength() {

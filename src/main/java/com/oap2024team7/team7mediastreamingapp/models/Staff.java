@@ -1,69 +1,69 @@
 package com.oap2024team7.team7mediastreamingapp.models;
 
 public class Staff {
-    private int staff_id; // automatically assigned in the database
-    private String first_name;
-    private String last_name;
-    private int address_id;
+    private int staffId; // automatically assigned in the database
+    private String firstName;
+    private String lastName;
+    private int addressId;
     private String email;
-    private int store_id; // we are not planning on using this attribute but it's NN in the database so we will hardcode it to 1 in case of staff creation
+    private int storeId; // we are not planning on using this attribute but it's NN in the database so we will hardcode it to 1 in case of staff creation
     private int active; // this maps to TINYINT in the database with 1 for active and 0 for inactive
     private String username;
     private String password; // hashed password
     
     // Constructor for creating a new staff from the database
-    public Staff(int staff_id, String first_name, String last_name, int address_id, String email, int store_id, int active, String username, String password) {
-        this.staff_id = staff_id;
-        this.first_name = first_name;
-        this.last_name = last_name;
-        this.address_id = address_id;
+    public Staff(int staffId, String firstName, String lastName, int addressId, String email, int storeId, int active, String username, String password) {
+        this.staffId = staffId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.addressId = addressId;
         this.email = email;
-        this.store_id = store_id;
+        this.storeId = storeId;
         this.active = active;
         this.username = username;
         this.password = password;
     }
 
     // Constructor for creating a new staff to be added to the database
-    public Staff(String first_name, String last_name, int address_id, String email, String username, String password) {
-        this.first_name = first_name;
-        this.last_name = last_name;
-        this.address_id = address_id; // Have to add handling of the address_id based on "regular" address information
+    public Staff(String firstName, String lastName, int addressId, String email, String username, String password) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.addressId = addressId; // Have to add handling of the addressId based on "regular" address information
         this.email = email;
-        this.store_id = 1; // Hardcoded to 1
+        this.storeId = 1; // Hardcoded to 1
         this.active = 1; // Hardcoded to 1
         this.username = username;
         this.password = password;
     }
 
-    // We don't need all getters and setters since 1. We're not setting staff_id in the application and 2. We're not planning on managing staff's actvity or store connection
+    // We don't need all getters and setters since 1. We're not setting staffId in the application and 2. We're not planning on managing staff's actvity or store connection
 
-    public int getStaff_id() {
-        return staff_id;
+    public int getstaffId() {
+        return staffId;
     }
 
-    public String getFirst_name() {
-        return first_name;
+    public String getfirstName() {
+        return firstName;
     }
 
-    public void setFirst_name(String first_name) {
-        this.first_name = first_name;
+    public void setfirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getLast_name() {
-        return last_name;
+    public String getlastName() {
+        return lastName;
     }
 
-    public void setLast_name(String last_name) {
-        this.last_name = last_name;
+    public void setlastName(String lastName) {
+        this.lastName = lastName;
     }
 
-    public int getAddress_id() {
-        return address_id;
+    public int getaddressId() {
+        return addressId;
     }
 
-    public void setAddress_id(int address_id) {
-        this.address_id = address_id;
+    public void setaddressId(int addressId) {
+        this.addressId = addressId;
     }
 
     public String getEmail() {
