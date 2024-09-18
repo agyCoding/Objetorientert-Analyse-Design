@@ -2,11 +2,13 @@
 package com.oap2024team7.team7mediastreamingapp.controllers.admin;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.HashSet;
 
 import com.oap2024team7.team7mediastreamingapp.customcells.ActorComboBoxCell;
+import com.oap2024team7.team7mediastreamingapp.customcells.AdminActorCell;
+import com.oap2024team7.team7mediastreamingapp.customcells.AdminSpecialFeaturesCell;
 import com.oap2024team7.team7mediastreamingapp.customcells.CategoryCell;
 import com.oap2024team7.team7mediastreamingapp.customcells.LanguageCell;
 import com.oap2024team7.team7mediastreamingapp.customcells.RatingCell;
@@ -20,8 +22,6 @@ import com.oap2024team7.team7mediastreamingapp.services.FilmManager;
 import com.oap2024team7.team7mediastreamingapp.services.InventoryManager;
 import com.oap2024team7.team7mediastreamingapp.services.LanguageManager;
 import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
-import com.oap2024team7.team7mediastreamingapp.customcells.AdminActorCell;
-import com.oap2024team7.team7mediastreamingapp.customcells.AdminSpecialFeaturesCell;
 import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 
 import javafx.fxml.FXML;
