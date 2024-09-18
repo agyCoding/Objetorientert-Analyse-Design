@@ -17,6 +17,7 @@ public class LoginController {
     @FXML
     private void tryToLogin() {
         System.out.println("Hei!");
+
         /*
         // Get info from username and password fields
         String usernameText = userName.getText();
