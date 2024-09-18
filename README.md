@@ -1,2 +1,2 @@
 # Objektorientert-Analyse-Design
-Team 7 project for media streaming application.
+Team 7 prosject for media streaming application.
