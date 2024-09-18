@@ -1,15 +1,15 @@
 package com.oap2024team7.team7mediastreamingapp.models;
 
 public class Staff {
-    int staff_id; // automatically assigned in the database
-    String first_name;
-    String last_name;
-    int address_id;
-    String email;
-    int store_id; // we are not planning on using this attribute but it's NN in the database so we will hardcode it to 1 in case of staff creation
-    int active; // this maps to TINYINT in the database with 1 for active and 0 for inactive
-    String username;
-    String password; // hashed password
+    private int staff_id; // automatically assigned in the database
+    private String first_name;
+    private String last_name;
+    private int address_id;
+    private String email;
+    private int store_id; // we are not planning on using this attribute but it's NN in the database so we will hardcode it to 1 in case of staff creation
+    private int active; // this maps to TINYINT in the database with 1 for active and 0 for inactive
+    private String username;
+    private String password; // hashed password
     
     // Constructor for creating a new staff from the database
     public Staff(int staff_id, String first_name, String last_name, int address_id, String email, int store_id, int active, String username, String password) {

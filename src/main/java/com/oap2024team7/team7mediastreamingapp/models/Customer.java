@@ -5,13 +5,13 @@ import java.time.LocalDate;
 // This is our basic user class (that will be able to view content)
 // This is called Customer to match the database schema
 public class Customer {
-    int customer_id; // automatically assigned in the database
-    String first_name;
-    String last_name;
-    String email;
-    int address_id;
-    int active; // this maps to TINYINT in the database with 1 for active and 0 for inactive
-    LocalDate create_date;
+    private int customer_id; // automatically assigned in the database
+    private String first_name;
+    private String last_name;
+    private String email;
+    private int address_id;
+    private int active; // this maps to TINYINT in the database with 1 for active and 0 for inactive
+    private LocalDate create_date;
 
     // Constructor for creating a new customer from the database
     public Customer(int customer_id, String first_name, String last_name, String email, int address_id, int active, LocalDate create_date) {
