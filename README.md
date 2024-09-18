@@ -1,2 +1,2 @@
-# Objetorientert-Analyse-Design
-Hei på deg. Tester. 
+# Objektorientert-Analyse-Design
+Team 7 project for media streaming application.
