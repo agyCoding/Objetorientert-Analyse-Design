@@ -1,13 +1,13 @@
 package com.oap2024team7.team7mediastreamingapp.models;
 
 public class Film {
-    int film_id; // automatically assigned in the database
-    String title;
-    String description;
-    int release_year;
-    int language_id;
-    int rental_duration; // Understood as MAX ALLOWED rental duration
-    int length;
+    private int film_id; // automatically assigned in the database
+    private String title;
+    private String description;
+    private int release_year;
+    private int language_id;
+    private int rental_duration; // Understood as MAX ALLOWED rental duration
+    private int length;
 
     // Define enum properly at the class level
     public enum Rating { G, PG, PG13, R, NC17 }

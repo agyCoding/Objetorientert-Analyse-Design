@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="965.0" prefWidth="933.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label text="Register new account" />
+      <Label text="Basic information" />
+      <TextField promptText="First name" />
+      <TextField promptText="Last Name" />
+      <TextField promptText="Email" />
+      <Label text="Contact information" />
+      <TextField promptText="Address" />
+      <TextField promptText="District" />
+      <TextField promptText="City" />
+      <TextField promptText="Postal code" />
+      <TextField promptText="Phone" />
+      <Button mnemonicParsing="false" text="Register" />
+   </children>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+</VBox>
