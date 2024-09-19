@@ -11,6 +11,7 @@ public class Customer {
     private String email;
     private int addressId;
     private int active; // this maps to TINYINT in the database with 1 for active and 0 for inactive
+    private LocalDate birthDate; // LOCAL ATTRIBUTE for handling filtering og content based on PG rating
     private LocalDate createDate;
 
     // Constructor for creating a new customer from the database
@@ -21,36 +22,38 @@ public class Customer {
         this.email = email;
         this.addressId = addressId;
         this.active = active;
+        this.birthDate = null; // We don't have birthdate in the database
         this.createDate = createDate;
     }
 
-    // Constructor for creating a new customer to be added to the database
-    public Customer(String firstName, String lastName, String email, int addressId, int active) {
+    // Constructor for creating a new customer in the application
+    public Customer(String firstName, String lastName, String email, int addressId, int active, LocalDate birthDate) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.addressId = addressId; // Have to add handling of the addressId based on "regular" address information
         this.active = active;
+        this.birthDate = birthDate;
         this.createDate = LocalDate.now(); // Automatically set to the current date when the object is created
     }
 
-    public int getcustomerId() {
+    public int getCustomerId() {
         return customerId;
     }
 
-    public String getfirstName() {
+    public String getFirstName() {
         return firstName;
-        }
+    }
 
-    public void setfirstName(String firstName) {
+    public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
-    public String getlastName() {
+    public String getLastName() {
         return lastName;
     }
 
-    public void setlastName(String lastName) {
+    public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
@@ -62,11 +65,11 @@ public class Customer {
         this.email = email;
     }
 
-    public int getaddressId() {
+    public int getAddressId() {
         return addressId;
     }
 
-    public void setaddressId(int addressId) {
+    public void setAddressId(int addressId) {
         this.addressId = addressId;
     }
 
@@ -76,6 +79,14 @@ public class Customer {
 
     public void setActive(int active) {
         this.active = active;
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
     }
 
 }

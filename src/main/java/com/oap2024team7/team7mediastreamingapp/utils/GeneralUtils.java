@@ -12,5 +12,28 @@ public class GeneralUtils {
         alert.showAndWait();
     }    
  
+    public static String normalizeString(String str) {
+        if (str == null || str.isEmpty()) {
+            return str;
+        }
+        str = str.trim().replaceAll("\\s+", " ");
+        StringBuilder result = new StringBuilder();
+        boolean capitalizeNext = true;
+        for (char c : str.toCharArray()) {
+            if (Character.isSpaceChar(c)) {
+            capitalizeNext = true;
+            result.append(c);
+            } else if (capitalizeNext) {
+            result.append(Character.toUpperCase(c));
+            capitalizeNext = false;
+            } else {
+            result.append(Character.toLowerCase(c));
+            }
+        }
+        return result.toString();
+    }
 
+    public static String normalizeNumString(String str) {
+        return str.replaceAll("\\D+", "");
+    }
 }

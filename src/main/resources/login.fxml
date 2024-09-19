@@ -17,7 +17,7 @@
         <Label text="Please login or sign up" />
         <TextField fx:id="usernameField" promptText="username" />
         <PasswordField fx:id="passwordField" promptText="password" />
-        <Label text="New user?" />
+        <Hyperlink text="New user?" onAction="#switchToUserRegistration"/>
         <Button fx:id="loginButton" mnemonicParsing="false" text="Login" onAction="#tryToLogin"/>
     </children>
     <padding>

@@ -1,5 +1,10 @@
 package com.oap2024team7.team7mediastreamingapp.models;
 
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.io.WKTWriter;
+
 public class Address {
     private int addressId; // automatically assigned in the database
     private String address;
@@ -7,17 +12,19 @@ public class Address {
     private int cityId;
     private String postalCode;
     private String phone;
-    private byte[] location; // GEOMETRY in the database, NN. Consider hardcoding to a default value if not provided
+    private Point location; // GEOMETRY in the database, NN.
 
-    // Constructor for creating a new address from the database
-    public Address(int addressId, String address, String district, int cityId, String postalCode, String phone, byte[] location) {
-        this.addressId = addressId;
+    // Constructor for loading an address from the database, including the GEOMETRY (WKB format)
+    public Address(String address, String district, int cityId, String postalCode, String phone, byte[] locationWKB) throws ParseException {
         this.address = address;
         this.district = district;
         this.cityId = cityId;
         this.postalCode = postalCode;
         this.phone = phone;
-        this.location = location;
+
+        // Convert WKB to Point using JTS
+        WKBReader reader = new WKBReader();
+        this.location = (Point) reader.read(locationWKB);  // Convert WKB to Point
     }
 
     // Constructor for creating a new address to be added to the database

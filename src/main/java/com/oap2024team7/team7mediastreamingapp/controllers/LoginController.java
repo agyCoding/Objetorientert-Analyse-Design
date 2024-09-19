@@ -67,4 +67,20 @@ public class LoginController {
         }
     }
 
+    @FXML
+    private void switchToUserRegistration() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/registerCustomer.fxml"));
+            Parent root = loader.load();
+
+            // Get the current stage (window) and set the new scene
+            Stage stage = (Stage) usernameField.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+
+            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the registration screen", "En error occured while trying to load the registration screen");
+        }
+    }
 }
