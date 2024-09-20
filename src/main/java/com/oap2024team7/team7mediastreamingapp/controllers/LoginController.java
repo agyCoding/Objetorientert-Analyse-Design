@@ -48,7 +48,7 @@ public class LoginController {
                 PrimaryController primaryController = loader.getController();
 
                 // Pass the username to the next scene's controller
-                primaryController.updateUserLabel(usernameText);
+                primaryController.getLoggedInUsername(usernameText);
 
                  // Get the current stage (window) and set the new scene
                  Stage stage = (Stage) usernameField.getScene().getWindow();
