@@ -1,9 +1,10 @@
 package com.oap2024team7.team7mediastreamingapp.models;
 
-import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.io.WKTWriter;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKBReader;
 
 public class Address {
     private int addressId; // automatically assigned in the database
@@ -15,7 +16,8 @@ public class Address {
     private Point location; // GEOMETRY in the database, NN.
 
     // Constructor for loading an address from the database, including the GEOMETRY (WKB format)
-    public Address(String address, String district, int cityId, String postalCode, String phone, byte[] locationWKB) throws ParseException {
+    public Address(int addressId, String address, String district, int cityId, String postalCode, String phone, byte[] locationWKB) throws ParseException {
+        this.addressId = addressId;
         this.address = address;
         this.district = district;
         this.cityId = cityId;
@@ -34,13 +36,11 @@ public class Address {
         this.cityId = cityId; // Have to add handling of the city_id based on "regular" city information
         this.postalCode = postalCode;
         this.phone = phone;
-        // Hardcoded default GEOMETRY (Point 0, 0 in WKB format)
-        this.location = new byte[]{
-            0x00, 0x00, 0x00, 0x01,  // Byte order and type (Point)
-            0x00, 0x00, 0x00, 0x01,  // Geometry type (Point)
-            0x00, 0x00, 0x00, 0x00,  // X-coordinate (0.0 as double)
-            0x00, 0x00, 0x00, 0x00,  // Y-coordinate (0.0 as double)
-        };
+
+        // Hardcoded default GEOMETRY (Point 0, 0)
+        GeometryFactory geometryFactory = new GeometryFactory();
+        Point point = geometryFactory.createPoint(new Coordinate(0, 0));  // Create a Point at (0,0)
+        this.location = point;
     }
 
     public int getAddressId() {
@@ -87,11 +87,21 @@ public class Address {
         this.phone = phone;
     }
 
-    public byte[] getLocation() {
+    public Point getLocation() {
         return location;
     }
 
-    public void setLocation(byte[] location) {
+    public void setLocation(Point location) {
         this.location = location;
     }
+
+    // Method to get latitude and longitude from the Point
+    public double getLatitude() {
+        return location.getY();
+    }
+
+    public double getLongitude() {
+        return location.getX();
+    }
+
 }

@@ -8,6 +8,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKBWriter;
+
 public class AddressManager {
     public int getCityIdFromCityName(String cityName) {
         try {
@@ -47,6 +50,32 @@ public class AddressManager {
         }
     }
     
+    // Create address object from the database with the address_id
+    public static Address getAddressById(int addressId) {
+        String query = "SELECT address, district, city_id, postal_code, phone, location FROM address WHERE address_id = ?";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+    
+            stmt.setInt(1, addressId);
+            ResultSet rs = stmt.executeQuery();
+            
+            if (rs.next()) {
+                String address = rs.getString("address");
+                String district = rs.getString("district");
+                int cityId = rs.getInt("city_id");
+                String postalCode = rs.getString("postal_code");
+                String phone = rs.getString("phone");
+                byte[] locationWKB = rs.getBytes("location");  // Fetch GEOMETRY as WKB (byte[])
+    
+                // Create and return the Address object using the constructor that accepts WKB
+                return new Address(addressId, address, district, cityId, postalCode, phone, locationWKB);
+            }
+        } catch (SQLException | ParseException e) {
+            e.printStackTrace();
+        }
+        return null;  // Return null if address not found or if there's an error
+    }
+
     // This method will check if the address already exists and if not register a new address
     // The method also returns the id of the address
     public static int registerAddress(Address newAddress) {
@@ -66,14 +95,24 @@ public class AddressManager {
                     return rs.getInt(1);  // Return the address_id for the address, district, cityId, postalCode, and phone
                 } else {
                     // If the combination of address, district, cityId, postalCode and phone doesn't exist, create new address
-                    String insertQuery = "INSERT INTO address (address, district, city_id, postal_code, phone, location) VALUES (?, ?, ?, ?, ?, ?)";
+                    String insertQuery = "INSERT INTO address (address, district, city_id, postal_code, phone, location) VALUES (?, ?, ?, ?, ?, ST_GeomFromWKB(?))";
                     try (PreparedStatement insertStmt = conn.prepareStatement(insertQuery)) {
                         insertStmt.setString(1, newAddress.getAddress());
                         insertStmt.setString(2, newAddress.getDistrict());
                         insertStmt.setInt(3, newAddress.getCityId());
                         insertStmt.setString(4, newAddress.getPostalCode());
                         insertStmt.setString(5, newAddress.getPhone());
-                        insertStmt.setBytes(6, newAddress.getLocation());
+
+                        // Convert from Point to byte[] using JTS, before sending to DB
+                        if (newAddress.getLocation() != null) {
+                            WKBWriter wkbWriter = new WKBWriter();
+                            byte[] locationWKB = wkbWriter.write(newAddress.getLocation());
+                            insertStmt.setBytes(6, locationWKB); // Store the geometry as WKB (byte[])
+                        } else {
+                            // Handle the case where the location is null
+                            throw new IllegalArgumentException("Invalid location for address");
+                        }
+
                         insertStmt.executeUpdate();
                         System.out.println("Address was not found in the database. It was added to the database.");
                         return registerAddress(newAddress);  // Recursively call the method to get the address_id for the address that was just added to the table
