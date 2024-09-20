@@ -1,5 +1,11 @@
 package com.oap2024team7.team7mediastreamingapp.models;
 
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKBReader;
+
 public class Address {
     private int addressId; // automatically assigned in the database
     private String address;
@@ -7,17 +13,20 @@ public class Address {
     private int cityId;
     private String postalCode;
     private String phone;
-    private byte[] location; // GEOMETRY in the database, NN. Consider hardcoding to a default value if not provided
+    private Point location; // GEOMETRY in the database, NN.
 
-    // Constructor for creating a new address from the database
-    public Address(int addressId, String address, String district, int cityId, String postalCode, String phone, byte[] location) {
+    // Constructor for loading an address from the database, including the GEOMETRY (WKB format)
+    public Address(int addressId, String address, String district, int cityId, String postalCode, String phone, byte[] locationWKB) throws ParseException {
         this.addressId = addressId;
         this.address = address;
         this.district = district;
         this.cityId = cityId;
         this.postalCode = postalCode;
         this.phone = phone;
-        this.location = location;
+
+        // Convert WKB to Point using JTS
+        WKBReader reader = new WKBReader();
+        this.location = (Point) reader.read(locationWKB);  // Convert WKB to Point
     }
 
     // Constructor for creating a new address to be added to the database
@@ -27,13 +36,11 @@ public class Address {
         this.cityId = cityId; // Have to add handling of the city_id based on "regular" city information
         this.postalCode = postalCode;
         this.phone = phone;
-        // Hardcoded default GEOMETRY (Point 0, 0 in WKB format)
-        this.location = new byte[]{
-            0x00, 0x00, 0x00, 0x01,  // Byte order and type (Point)
-            0x00, 0x00, 0x00, 0x01,  // Geometry type (Point)
-            0x00, 0x00, 0x00, 0x00,  // X-coordinate (0.0 as double)
-            0x00, 0x00, 0x00, 0x00,  // Y-coordinate (0.0 as double)
-        };
+
+        // Hardcoded default GEOMETRY (Point 0, 0)
+        GeometryFactory geometryFactory = new GeometryFactory();
+        Point point = geometryFactory.createPoint(new Coordinate(0, 0));  // Create a Point at (0,0)
+        this.location = point;
     }
 
     public int getAddressId() {
@@ -80,11 +87,21 @@ public class Address {
         this.phone = phone;
     }
 
-    public byte[] getLocation() {
+    public Point getLocation() {
         return location;
     }
 
-    public void setLocation(byte[] location) {
+    public void setLocation(Point location) {
         this.location = location;
     }
+
+    // Method to get latitude and longitude from the Point
+    public double getLatitude() {
+        return location.getY();
+    }
+
+    public double getLongitude() {
+        return location.getX();
+    }
+
 }
