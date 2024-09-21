@@ -12,7 +12,7 @@ public class Film {
     // Define enum properly at the class level
     public enum Rating { G, PG, PG13, R, NC17 }
 
-    Rating rating; //
+    private Rating rating; //
 
     // Constructor for creating a new film from the database
     public Film(int filmId, String title, String description, int releaseYear, int languageId, int rentalDuration, int length, Rating rating) {

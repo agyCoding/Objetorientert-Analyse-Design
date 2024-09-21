@@ -37,16 +37,34 @@
         </VBox>
     </left>
 
-    <!-- Center Section: Film ListView with Toggle Button for Filter Menu -->
+    <!-- Center Section: Film ListView with Sorting Options and Pagination -->
     <center>
-        <HBox>
-            <!-- Right Section: Toggle Button for Filter Menu -->
-            <VBox alignment="CENTER">
-                <Button fx:id="toggleFilterMenuButton" text=">>" />
-            </VBox>
-            
-            <!-- Center Section: Film ListView -->
+        <VBox spacing="10.0" alignment="CENTER">
+            <!-- Sorting Options -->
+            <HBox spacing="10.0" alignment="CENTER">
+                <Label text="Sort by:" />
+
+                    <RadioButton fx:id="sortByTitle" text="Title" />
+                    <RadioButton fx:id="sortByReleaseYear" text="Release Year" />
+ 
+                <Button fx:id="applySortButton" text="Apply Sort" />
+            </HBox>
+
+            <!-- ListView for displaying films -->
             <ListView fx:id="filmListView" prefHeight="600.0" prefWidth="900.0" />
-        </HBox>
+
+            <!-- Pagination Controls -->
+            <HBox spacing="10.0" alignment="CENTER">
+                <Button fx:id="prevButton" text="Previous" />
+                <Label fx:id="currentPageLabel" text="Page 1" />
+                <Button fx:id="nextButton" text="Next" />
+            </HBox>
+        </VBox>
     </center>
+        <!-- Right Section: Toggle Button for Filter Menu -->
+    <right>
+        <VBox alignment="CENTER">
+            <Button fx:id="toggleFilterMenuButton" text=">>" />
+        </VBox>
+    </right>
 </BorderPane>
