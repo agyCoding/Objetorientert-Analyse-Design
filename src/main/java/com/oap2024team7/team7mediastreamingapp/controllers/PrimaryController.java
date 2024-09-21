@@ -45,7 +45,7 @@ public class PrimaryController {
         /* INITIALIZE USER MENU */
 
         // Example: setting the logged-in username
-        loggedInUserLabel.setText("Logged in as: " + currentUsername);
+        loggedInUserLabel.setText("Logged in as: ");
     
         // Handle edit profile action
         editProfileMenuItem.setOnAction(event -> handleEditProfile());
@@ -80,6 +80,7 @@ public class PrimaryController {
 
     public void getLoggedInUsername(String username) {
         currentUsername = username; // Example value
+        loggedInUserLabel.setText("Logged in as: " + currentUsername);
     }
     
     private void handleEditProfile() {

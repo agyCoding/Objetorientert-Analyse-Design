@@ -7,8 +7,8 @@
 <BorderPane fx:controller="com.oap2024team7.team7mediastreamingapp.controllers.PrimaryController"
             xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/8"
-            prefHeight="900.0"
-            prefWidth="1200.0">
+            prefHeight="500.0"
+            prefWidth="800.0">
 
     <!-- Top Section: User Profile Management -->
     <top>

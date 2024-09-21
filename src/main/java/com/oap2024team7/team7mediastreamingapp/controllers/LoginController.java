@@ -47,8 +47,14 @@ public class LoginController {
                 // Get the controller of the next scene
                 PrimaryController primaryController = loader.getController();
 
-                // Pass the username to the next scene's controller
-                primaryController.getLoggedInUsername(usernameText);
+                // TEMPORARY ADMIN HANDLING (just passing the admin as username)
+                if (usernameText.equals("admin")) {
+                    primaryController.getLoggedInUsername("admin");
+                } else {
+                    // Pass the username to the next scene's controller
+                    primaryController.getLoggedInUsername(usernameText);
+                }
+
 
                  // Get the current stage (window) and set the new scene
                  Stage stage = (Stage) usernameField.getScene().getWindow();
