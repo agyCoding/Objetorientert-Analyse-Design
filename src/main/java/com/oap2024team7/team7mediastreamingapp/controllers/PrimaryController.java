@@ -1,8 +1,11 @@
 package com.oap2024team7.team7mediastreamingapp.controllers;
 
 import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
+import com.oap2024team7.team7mediastreamingapp.models.Film;
+import com.oap2024team7.team7mediastreamingapp.services.FilmManager;
 
 import java.io.IOException;
+import java.util.List;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -15,10 +18,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.control.ListView;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.layout.VBox;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
 
 public class PrimaryController {
 
@@ -31,21 +34,45 @@ public class PrimaryController {
     @FXML
     private MenuItem logoutMenuItem;
     @FXML
-    private ListView<String> filmListView;
-    @FXML
     private VBox filterMenu;
     @FXML
-    private Button toggleFilterMenuButton; 
-
+    private Button toggleFilterMenuButton;
+    @FXML
+    private ListView<String> filmListView;
+    @FXML
+    private Button nextButton;
+    @FXML
+    private Button prevButton;
+    @FXML
+    private ComboBox<String> sortComboBox;
+    @FXML
+    private RadioButton sortByTitle;
+    @FXML
+    private RadioButton sortByReleaseYear;
     
+    private ToggleGroup sortToggleGroup;
     private String currentUsername;
+    private FilmManager filmManager;
+    private int offset = 0;
+    private final int limit = 20; // Load 20 films per page
     
     public void initialize() {
+        filmManager = new FilmManager();
+
+        // Initialize the ToggleGroup in the controller
+        sortToggleGroup = new ToggleGroup();
+        
+        // Assign the ToggleGroup to the RadioButtons
+        sortByTitle.setToggleGroup(sortToggleGroup);
+        sortByReleaseYear.setToggleGroup(sortToggleGroup);
+
+        // Set default selection if needed
+        sortByTitle.setSelected(true);
 
         /* INITIALIZE USER MENU */
 
         // Example: setting the logged-in username
-        loggedInUserLabel.setText("Logged in as: " + currentUsername);
+        loggedInUserLabel.setText("Logged in as: ");
     
         // Handle edit profile action
         editProfileMenuItem.setOnAction(event -> handleEditProfile());
@@ -57,15 +84,12 @@ public class PrimaryController {
 
         toggleFilterMenuButton.setOnAction(event -> toggleFilterMenu());
 
-        // Example film data
-        ObservableList<String> films = FXCollections.observableArrayList(
-            "Film 1: Action, PG-13, 2021",
-            "Film 2: Comedy, PG, 2020",
-            "Film 3: Drama, PG, 2022"
-        );
+        // Load the first page of films
+        loadFilms();
 
-        // Set the film list in the ListView
-        filmListView.setItems(films);
+        // Handle next and previous page
+        nextButton.setOnAction(event -> nextPage());
+        prevButton.setOnAction(event -> previousPage());
 
         // Optionally, handle single click to show more details
         filmListView.setOnMouseClicked(event -> {
@@ -80,6 +104,7 @@ public class PrimaryController {
 
     public void getLoggedInUsername(String username) {
         currentUsername = username; // Example value
+        loggedInUserLabel.setText("Logged in as: " + currentUsername);
     }
     
     private void handleEditProfile() {
@@ -100,6 +125,40 @@ public class PrimaryController {
         } else {
             filterMenu.setVisible(true);
             toggleFilterMenuButton.setText("<<"); // Change button text to indicate action
+        }
+    }
+
+    private void loadFilms() {
+        List<Film> films = filmManager.getAllFilms(offset, limit);
+        filmListView.getItems().clear();
+        for (Film film : films) {
+            filmListView.getItems().add(film.getTitle() + " (" + film.getreleaseYear() + ")");
+        }
+    }
+
+    private void nextPage() {
+        offset += limit;
+        loadFilms();
+    }
+
+    private void previousPage() {
+        if (offset > 0) {
+            offset -= limit;
+            loadFilms();
+        }
+    }
+
+    private void sortFilms() {
+        String selectedSort = sortComboBox.getValue();
+        List<Film> sortedFilms;
+        if ("Sort by Title".equals(selectedSort)) {
+            sortedFilms = filmManager.getFilmsSortedByTitle();
+        } else {
+            sortedFilms = filmManager.getFilmsSortedByYear();
+        }
+        filmListView.getItems().clear();
+        for (Film film : sortedFilms) {
+            filmListView.getItems().add(film.getTitle() + " (" + film.getreleaseYear() + ")");
         }
     }
 
