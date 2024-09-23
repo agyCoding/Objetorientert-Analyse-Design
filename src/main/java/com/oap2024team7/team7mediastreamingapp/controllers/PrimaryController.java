@@ -56,6 +56,7 @@ public class PrimaryController {
     private int offset = 0;
     private final int limit = 20; // Load 20 films per page
     
+    @FXML
     public void initialize() {
         filmManager = new FilmManager();
 
