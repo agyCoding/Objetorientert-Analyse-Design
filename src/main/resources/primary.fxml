@@ -32,9 +32,10 @@
                <ComboBox fx:id="genreComboBox" prefWidth="150.0" />
                <Label text="PG Rating:" />
                <ComboBox fx:id="ratingComboBox" prefWidth="150.0" />
+                <Label text="Max Length (minutes):" />
+                <TextField fx:id="maxLengthField" promptText="e.g., 120" />
                <Label text="From Year:" />
                 <TextField fx:id="startYearField" promptText="e.g., 2000" />
-
                 <Label text="To Year:" />
                 <TextField fx:id="endYearField" promptText="e.g., 2020" />
                <Button fx:id="applyFiltersButton" text="Use Filters" onAction="#applyFilters"/>
