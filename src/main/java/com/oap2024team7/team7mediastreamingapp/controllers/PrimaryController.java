@@ -63,6 +63,8 @@ public class PrimaryController {
     @FXML
     private ComboBox<Film.Rating> ratingComboBox;
     @FXML
+    private TextField maxLengthField;
+    @FXML
     private TextField startYearField;
     @FXML
     private TextField endYearField;
@@ -271,10 +273,11 @@ public class PrimaryController {
         Film.Rating selectedRating = ratingComboBox.getSelectionModel().getSelectedItem();
 
         Integer categoryId = selectedCategory != null ? selectedCategory.getCategoryId() : null;
+        Integer maxLength = maxLengthField.getText().isEmpty() ? null : Integer.parseInt(maxLengthField.getText());
         Integer startYear = startYearField.getText().isEmpty() ? null : Integer.parseInt(startYearField.getText());
         Integer endYear = endYearField.getText().isEmpty() ? null : Integer.parseInt(endYearField.getText());
 
-        List<Film> filteredFilms = filmManager.filterFilms(categoryId, selectedRating, startYear, endYear);
+        List<Film> filteredFilms = filmManager.filterFilms(categoryId, selectedRating, maxLength, startYear, endYear);
 
         // Reload LV with filtered films
         filmListView.getItems().clear();
@@ -292,6 +295,7 @@ public class PrimaryController {
 
             // Get the current stage (window) and set the new scene
             Stage stage = (Stage) loggedInUserLabel.getScene().getWindow();
+            stage.setTitle("Media Streaming and Rental - Login");
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
