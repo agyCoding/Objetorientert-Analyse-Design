@@ -1,70 +1,86 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane fx:controller="com.oap2024team7.team7mediastreamingapp.controllers.PrimaryController"
-            xmlns:fx="http://javafx.com/fxml/1"
-            xmlns="http://javafx.com/javafx/8"
-            prefHeight="500.0"
-            prefWidth="800.0">
+<BorderPane prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oap2024team7.team7mediastreamingapp.controllers.PrimaryController">
 
     <!-- Top Section: User Profile Management -->
     <top>
-        <HBox spacing="10.0" alignment="CENTER_RIGHT" style="-fx-padding: 10;">
-            <Label fx:id="loggedInUserLabel" text="Logged in as: [Username]" />
-            <MenuButton fx:id="userProfileMenuButton" text="Manage Profile" mnemonicParsing="false">
-                <items>
-                    <MenuItem text="Edit Profile" fx:id="editProfileMenuItem"/>
-                    <MenuItem text="Logout" fx:id="logoutMenuItem"/>
-                </items>
-            </MenuButton>
+        <HBox alignment="CENTER_RIGHT" spacing="10.0" style="-fx-padding: 10;">
+           <children>
+               <Label fx:id="loggedInUserLabel" text="Logged in as: [Username]" />
+               <MenuButton fx:id="userProfileMenuButton" mnemonicParsing="false" text="Manage Profile">
+                   <items>
+                       <MenuItem fx:id="editProfileMenuItem" text="Edit Profile" />
+                       <MenuItem fx:id="logoutMenuItem" text="Logout" />
+                   </items>
+               </MenuButton>
+           </children>
         </HBox>
     </top>
 
     <!-- Left Section: Hidden Filter Menu -->
     <left>
         <VBox fx:id="filterMenu" spacing="10.0" style="-fx-background-color: lightgray; -fx-padding: 10; visibility: hidden;">
-            <Label text="Filters" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
-            <Label text="Choose Genre:" />
-            <ComboBox fx:id="genreComboBox" prefWidth="150.0" />
-            <Label text="PG Rating:" />
-            <ComboBox fx:id="ratingComboBox" prefWidth="150.0" />
-            <Label text="Release Year:" />
-            <ComboBox fx:id="yearComboBox" prefWidth="150.0" />
-            <Button text="Use Filters" fx:id="applyFiltersButton" />
+           <children>
+               <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Filters" />
+               <Label text="Choose Genre:" />
+               <ComboBox fx:id="genreComboBox" prefWidth="150.0" />
+               <Label text="PG Rating:" />
+               <ComboBox fx:id="ratingComboBox" prefWidth="150.0" />
+               <Label text="From Year:" />
+                <TextField fx:id="startYearField" promptText="e.g., 2000" />
+
+                <Label text="To Year:" />
+                <TextField fx:id="endYearField" promptText="e.g., 2020" />
+               <Button fx:id="applyFiltersButton" text="Use Filters" onAction="#applyFilters"/>
+           </children>
         </VBox>
     </left>
 
     <!-- Center Section: Film ListView with Sorting Options and Pagination -->
     <center>
-        <VBox spacing="10.0" alignment="CENTER">
-            <!-- Sorting Options -->
-            <HBox spacing="10.0" alignment="CENTER">
-                <Label text="Sort by:" />
-
-                    <RadioButton fx:id="sortByTitle" text="Title" />
-                    <RadioButton fx:id="sortByReleaseYear" text="Release Year" />
- 
-                <Button fx:id="applySortButton" text="Apply Sort" />
-            </HBox>
-
-            <!-- ListView for displaying films -->
-            <ListView fx:id="filmListView" prefHeight="600.0" prefWidth="900.0" />
-
-            <!-- Pagination Controls -->
-            <HBox spacing="10.0" alignment="CENTER">
-                <Button fx:id="prevButton" text="Previous" />
-                <Label fx:id="currentPageLabel" text="Page 1" />
-                <Button fx:id="nextButton" text="Next" />
-            </HBox>
+        <VBox alignment="CENTER" spacing="10.0">
+           <children>
+               <!-- Sorting Options -->
+               <HBox alignment="CENTER" spacing="10.0">
+                  <children>
+                      <Label text="Sort by:" />
+      
+                          <RadioButton fx:id="sortByTitle" text="Title" />
+                          <RadioButton fx:id="sortByReleaseYear" text="Release Year" />
+       
+                      <Button fx:id="applySortButton" text="Apply Sort" />
+                  </children>
+               </HBox>
+   
+               <!-- ListView for displaying films -->
+               <ListView fx:id="filmListView" prefHeight="600.0" prefWidth="900.0" />
+   
+               <!-- Pagination Controls -->
+               <HBox alignment="CENTER" spacing="10.0">
+      <children>
+                      <Button fx:id="prevButton" text="Previous" />
+                      <Label fx:id="currentPageLabel" text="Page 1" />
+                      <Button fx:id="nextButton" text="Next" />
+      </children>
+               </HBox>
+           </children>
         </VBox>
     </center>
         <!-- Right Section: Toggle Button for Filter Menu -->
     <right>
         <VBox alignment="CENTER">
-            <Button fx:id="toggleFilterMenuButton" text=">>" />
+           <children>
+               <Button fx:id="toggleFilterMenuButton" text="&gt;&gt;" />
+           </children>
         </VBox>
     </right>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
 </BorderPane>

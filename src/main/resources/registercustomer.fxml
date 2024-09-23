@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="965.0" prefWidth="933.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oap2024team7.team7mediastreamingapp.controllers.RegisterCustomerController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500" prefWidth="933.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oap2024team7.team7mediastreamingapp.controllers.RegisterCustomerController">
    <children>
-      <Label text="Register new account" />
+        <HBox alignment="TOP_RIGHT">
+           <children>
+               <Hyperlink fx:id="backToLoginHL" text="&lt;&lt; Back to login page" />
+           </children>
+        </HBox>
+      <Label text="Register new account">
+         <font>
+            <Font name="System Bold Italic" size="14.0" />
+         </font></Label>
       <Label text="Basic information" />
       <TextField fx:id="firstNameField" promptText="First name" />
       <TextField fx:id="lastNameField" promptText="Last Name" />

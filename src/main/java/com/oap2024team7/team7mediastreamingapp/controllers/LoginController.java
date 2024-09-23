@@ -58,6 +58,8 @@ public class LoginController {
 
                  // Get the current stage (window) and set the new scene
                  Stage stage = (Stage) usernameField.getScene().getWindow();
+                 stage.setTitle("Media Streaming and Rental - Content Viewer");
+
                  stage.setScene(new Scene(root));
                  stage.show();              
             } catch (IOException e) {
@@ -81,6 +83,7 @@ public class LoginController {
 
             // Get the current stage (window) and set the new scene
             Stage stage = (Stage) usernameField.getScene().getWindow();
+            stage.setTitle("Media Streaming and Rental - Register New Customer");
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
