@@ -1,5 +1,8 @@
 # **Team 7 Media Streaming App**
 
+![Project Logo](src/main/resources/images/logo.png)
+
+
 ## 📚 **Overview**
 
 Welcome to the official repository of the **Team 7 Media Streaming App**! This desktop-based Java application allows users to browse and stream media content, manage their profiles, and more. Built using Java 8 and JavaFX, it implements an MVC architecture and interacts with a MySQL database to deliver a seamless media browsing experience.
@@ -13,7 +16,7 @@ Welcome to the official repository of the **Team 7 Media Streaming App**! This d
 
 - **Media Browsing**:
   - View a list of available films with details like title, release year, and genre
-  - Filter films by category, PG rating, and release year
+  - Filter films by category (genre), PG rating, length and release year
   - Click to view detailed information (including cast and description)
 
 - **Dynamic UI**:
