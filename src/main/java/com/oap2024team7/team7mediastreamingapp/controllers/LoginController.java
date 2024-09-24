@@ -2,6 +2,11 @@ package com.oap2024team7.team7mediastreamingapp.controllers;
 
 import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
 import com.oap2024team7.team7mediastreamingapp.services.UserManager;
+import com.oap2024team7.team7mediastreamingapp.models.Customer;
+import com.oap2024team7.team7mediastreamingapp.services.CustomerManager;
+import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
+import com.oap2024team7.team7mediastreamingapp.models.Address;
+import com.oap2024team7.team7mediastreamingapp.services.AddressManager;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -21,7 +26,20 @@ public class LoginController {
     @FXML
     private PasswordField passwordField;
 
-    UserManager userManager = new UserManager();
+    private UserManager userManager = new UserManager();
+
+    private Customer customer;
+
+    @FXML
+    private void initialize() {
+        // Set the username field to be focused when the screen is loaded
+        usernameField.requestFocus();
+        // try to get customer object from session data and if not null, set the username field to the customer's email
+        customer = SessionData.getInstance().getLoggedInCustomer();
+        if (customer != null) {
+            usernameField.setText(customer.getEmail());
+        }
+    }
 
     @FXML
     private void tryToLogin() {
@@ -41,6 +59,18 @@ public class LoginController {
         // Hardcoded admin login for presentation purposes (v1)
         if (userManager.canLogin(usernameText,passwordText) || (usernameText.equals("admin") && passwordText.equals("admin"))) {
             try {
+                // Get the customer object from the database, if the customer hasn't been created locally in the app on "Register New Customer" screen
+                if (customer == null) {
+                    customer = CustomerManager.getCustomerByUsername(usernameText);
+                    int customersAddressId = customer.getAddressId();
+                    Address customersAddress = AddressManager.getAddressById(customersAddressId);
+
+                    // Save the customer and address object to the session data
+                    SessionData.getInstance().setLoggedInCustomer(customer);
+                    SessionData.getInstance().setCustomerAddress(customersAddress);
+                }
+
+
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/primary.fxml"));
                 Parent root = loader.load();
 
@@ -49,10 +79,10 @@ public class LoginController {
 
                 // TEMPORARY ADMIN HANDLING (just passing the admin as username)
                 if (usernameText.equals("admin")) {
-                    primaryController.getLoggedInUsername("admin");
+                    primaryController.setLoggedInUsername("admin");
                 } else {
                     // Pass the username to the next scene's controller
-                    primaryController.getLoggedInUsername(usernameText);
+                    primaryController.setLoggedInUsername(usernameText);
                 }
 
 
