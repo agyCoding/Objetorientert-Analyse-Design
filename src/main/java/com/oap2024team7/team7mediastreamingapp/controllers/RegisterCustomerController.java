@@ -8,6 +8,7 @@ import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
 import com.oap2024team7.team7mediastreamingapp.services.AddressManager;
 import com.oap2024team7.team7mediastreamingapp.models.Address;
 import com.oap2024team7.team7mediastreamingapp.services.CustomerManager;
+import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -83,6 +84,8 @@ public class RegisterCustomerController {
     
             // Set the address details to the address object
             Address newAddress = new Address(address, district, cityId, postalCode, phone);
+            SessionData.getInstance().setCustomerAddress(newAddress);
+
             int addressId = AddressManager.registerAddress(newAddress);
             if (addressId == -1) {
                 GeneralUtils.showAlert(AlertType.ERROR, "Error", "Invalid Address", "Unable to register this address.");
@@ -94,6 +97,7 @@ public class RegisterCustomerController {
     
             // Register the new customer
             CustomerManager.registerNewCustomer(newCustomer);
+            SessionData.getInstance().setLoggedInCustomer(newCustomer);
     
             GeneralUtils.showAlert(AlertType.INFORMATION, "Success", "Registration Successful", "Your account has been registered successfully.");
             

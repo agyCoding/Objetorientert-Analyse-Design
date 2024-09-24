@@ -5,6 +5,8 @@ import com.oap2024team7.team7mediastreamingapp.models.Film;
 import com.oap2024team7.team7mediastreamingapp.services.CategoryManager;
 import com.oap2024team7.team7mediastreamingapp.services.FilmManager;
 import com.oap2024team7.team7mediastreamingapp.models.Category;
+import com.oap2024team7.team7mediastreamingapp.models.Customer;
+import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,6 +28,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.stage.Modality;
 
 public class PrimaryController {
 
@@ -76,9 +79,12 @@ public class PrimaryController {
     private int offset = 0;
     private final int limit = 20; // Load 20 films per page
     private CategoryManager categoryManager = new CategoryManager();
+    private Customer loggedInCustomer;
     
     @FXML
     public void initialize() {
+        loggedInCustomer = SessionData.getInstance().getLoggedInCustomer();
+
         /* INITIALIZE USER MENU */
 
         // Example: setting the logged-in username
@@ -129,12 +135,42 @@ public class PrimaryController {
         });
     }
 
-    public void getLoggedInUsername(String username) {
+    public void setLoggedInUsername(String username) {
         currentUsername = username; // Example value
         loggedInUserLabel.setText("Logged in as: " + currentUsername);
     }
     
     private void handleEditProfile() {
+        // Load the edit account screen
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/editaccount.fxml"));
+            Parent root = loader.load();
+
+            // Get the controller of the next scene
+            EditAccountController editAccountController = loader.getController();
+
+            // Pass the customer object to the edit account controller
+            editAccountController.setLoggedInCustomer(loggedInCustomer);
+
+            // Create a new stage for the pop-up window
+            Stage popupStage = new Stage();
+            popupStage.setTitle("Media Streaming and Rental - Edit Account");
+
+            // Set the scene for the pop-up stage
+            popupStage.setScene(new Scene(root));
+
+            // Make the pop-up window modal (blocks interaction with other windows until closed)
+            popupStage.initModality(Modality.WINDOW_MODAL);
+            popupStage.initOwner(loggedInUserLabel.getScene().getWindow());
+
+            // Show the pop-up window
+            popupStage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+
+            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the edit account screen", "An error occurred while trying to load the edit account screen");
+        }
+
         // Logic to edit the profile
         System.out.println("Edit Profile clicked");
     }

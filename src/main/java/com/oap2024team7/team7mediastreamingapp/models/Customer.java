@@ -11,7 +11,7 @@ public class Customer {
     private String email;
     private int addressId;
     private int active; // this maps to TINYINT in the database with 1 for active and 0 for inactive
-    private LocalDate birthDate; // LOCAL ATTRIBUTE for handling filtering og content based on PG rating
+    private LocalDate birthDate; // LOCAL ATTRIBUTE for handling filtering and content based on PG rating
     private LocalDate createDate;
 
     // Constructor for creating a new customer from the database
@@ -22,7 +22,7 @@ public class Customer {
         this.email = email;
         this.addressId = addressId;
         this.active = active;
-        this.birthDate = null; // We don't have birthdate in the database
+        this.birthDate = LocalDate.of(2000, 1, 1); // For all users coming from the database (that doesn't have information about birthdate, set birthdate to 1.1.2000)
         this.createDate = createDate;
     }
 

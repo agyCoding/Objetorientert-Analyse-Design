@@ -12,6 +12,15 @@ import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKBWriter;
 
 public class AddressManager {
+    private static AddressManager instance;
+
+    public static AddressManager getInstance() {
+        if (instance == null) {
+            instance = new AddressManager();
+        }
+        return instance;
+    }
+
     public int getCityIdFromCityName(String cityName) {
         try {
              // First, normalize the cityName string, ensuring that's one capital letter, and the rest is regular letter and that there aren't multiple empty spaces in the string
@@ -50,6 +59,32 @@ public class AddressManager {
         }
     }
     
+    public String getCityNameFromCityId(int cityId) {
+        try {
+            // Query the table "city" in the database to find city for the city_id sent into the method
+            String query = "SELECT city FROM city WHERE city_id = ?";
+            try (Connection conn = DatabaseManager.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.setInt(1, cityId);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    System.out.println("City for city_id " + cityId + " is " + rs.getString(1));
+                    String cityName = rs.getString(1);
+                    return cityName;  // Return the city for the city_id
+                } else {
+                    System.out.println("City for city_id " + cityId + " was not found in the database.");
+                    return null;  // Return null if city not found
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return null;  // Return null if there was an error in the database query
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null; // Return null if there was an error in the method
+        }
+    }
+
     // Create address object from the database with the address_id
     public static Address getAddressById(int addressId) {
         String query = "SELECT address, district, city_id, postal_code, phone, location FROM address WHERE address_id = ?";

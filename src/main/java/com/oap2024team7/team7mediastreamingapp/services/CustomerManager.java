@@ -2,6 +2,9 @@ package com.oap2024team7.team7mediastreamingapp.services;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import java.time.LocalDate;
 
 import com.oap2024team7.team7mediastreamingapp.models.Customer;
 
@@ -22,5 +25,31 @@ public class CustomerManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    // Create Customer object from the databased, based on email=username
+    public static Customer getCustomerByUsername(String username) {
+        String selectQuery = "SELECT * FROM customer WHERE email = ?";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(selectQuery)) {
+            stmt.setString(1, username);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    int customerId = rs.getInt("customer_id");
+                    String firstName = rs.getString("first_name");
+                    String lastName = rs.getString("last_name");
+                    int addressId = rs.getInt("address_id");
+                    int active = rs.getInt("active");
+                    LocalDate createDate = rs.getDate("create_date").toLocalDate();
+
+                    Customer customer = new Customer(customerId, firstName, lastName, username, addressId, active, createDate);
+
+                    return customer;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
