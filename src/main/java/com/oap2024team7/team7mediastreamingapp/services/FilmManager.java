@@ -105,71 +105,72 @@ public class FilmManager {
     }
 
     // Using Integer instead of int to allow for null values
-    public List<Film> filterFilms(Integer categoryId, Film.Rating rating, Integer maxLength, Integer startYear, Integer endYear) {
+    public List<Film> filterFilms(Integer categoryId, Film.Rating rating, Integer maxLength, Integer startYear, Integer endYear, int offset, int limit) {
+        StringBuilder filterQuery = new StringBuilder("SELECT f.* FROM film f JOIN film_category fc ON f.film_id = fc.film_id WHERE 1=1");
     
-        StringBuilder filterQuery = new StringBuilder("SELECT f.* FROM film f ");
-        filterQuery.append("JOIN film_category fc ON f.film_id = fc.film_id ");
-        filterQuery.append("WHERE 1=1 "); // This makes it easier to append conditions
-
-        List<Object> params = new ArrayList<>();
-
-        // Check for category filter
         if (categoryId != null) {
-            filterQuery.append("AND fc.category_id = ? ");
-            params.add(categoryId);
+            filterQuery.append(" AND fc.category_id = ?");
         }
-
-        // Check for rating filter
         if (rating != null) {
             filterQuery.append(" AND f.rating = ?");
-            params.add(mapRating(rating)); // Use the mapping function
         }
-
-        // Check for max length filter
         if (maxLength != null) {
-            filterQuery.append("AND f.length <= ? ");
-            params.add(maxLength);
+            filterQuery.append(" AND f.length <= ?");
         }
-
-        // Check for release year filters
-        if (startYear != null && endYear != null) {
-            filterQuery.append("AND f.release_year BETWEEN ? AND ? ");
-            params.add(startYear);
-            params.add(endYear);
+        if (startYear != null) {
+            filterQuery.append(" AND f.release_year >= ?");
         }
-        
-        // Check for release year filters when only one of the years is provided
-        if (startYear != null && endYear == null) {
-            filterQuery.append("AND f.release_year >= ? ");
-            params.add(startYear);
-        } else if (startYear == null && endYear != null) {
-            filterQuery.append("AND f.release_year <= ? ");
-            params.add(endYear);
+        if (endYear != null) {
+            filterQuery.append(" AND f.release_year <= ?");
         }
-
-        // FOR DEBUGGING
-        System.out.println("Filter Query: " + filterQuery.toString());
-        System.out.println("Parameters: " + params);
-
-        // Construct the PreparedStatement
+    
+        // Add pagination
+        filterQuery.append(" LIMIT ? OFFSET ?");
+    
         try (Connection conn = DatabaseManager.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(filterQuery.toString())) {
-            
-            // Set the parameters
-            for (int i = 0; i < params.size(); i++) {
-                stmt.setObject(i + 1, params.get(i));
+             PreparedStatement stmt = conn.prepareStatement(filterQuery.toString())) {
+    
+            int paramIndex = 1;
+    
+            if (categoryId != null) {
+                stmt.setInt(paramIndex++, categoryId);
             }
-
+            if (rating != null) {
+                stmt.setString(paramIndex++, rating.name());
+            }
+            if (maxLength != null) {
+                stmt.setInt(paramIndex++, maxLength);
+            }
+            if (startYear != null) {
+                stmt.setInt(paramIndex++, startYear);
+            }
+            if (endYear != null) {
+                stmt.setInt(paramIndex++, endYear);
+            }
+    
+            stmt.setInt(paramIndex++, limit);
+            stmt.setInt(paramIndex++, offset);
+    
             ResultSet rs = stmt.executeQuery();
             List<Film> filteredFilms = new ArrayList<>();
             while (rs.next()) {
-                Film film = new Film(rs.getInt("film_id"), rs.getString("title"), rs.getString("description"), rs.getInt("release_year"), rs.getInt("language_id"), rs.getInt("rental_duration"), rs.getInt("length"), Film.Rating.valueOf(rs.getString("rating").replace("-", "")));
+                Film film = new Film(
+                    rs.getInt("film_id"),
+                    rs.getString("title"),
+                    rs.getString("description"),
+                    rs.getInt("release_year"),
+                    rs.getInt("language_id"),
+                    rs.getInt("rental_duration"),
+                    rs.getInt("length"),
+                    Film.Rating.valueOf(rs.getString("rating").replace("-", ""))
+                );
                 filteredFilms.add(film);
             }
             return filteredFilms;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
-        }  
+        }
     }
+    
 }
