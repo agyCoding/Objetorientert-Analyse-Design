@@ -1,3 +1,58 @@
+/**
+ * PrimaryController.java
+ * 
+ * Author(s): Team 7 - OAP 2024
+ * Contributions:
+ * - Agata: Implemented film loading, pagination, and filtering logic,
+ *          Created the user menu system with login/logout and profile editing functionalities,
+ *          Designed the filter and sorting functionality for films,
+ *          Integrated film details viewing and layout management.
+ * 
+ * Purpose: 
+ * The PrimaryController is responsible for managing the main interface of the media streaming and rental app. 
+ * It handles the display of films, user login/logout, film filtering, and pagination for navigation between 
+ * pages of film results. It also manages the user's profile options, including editing their profile and logging out.
+ * 
+ * The main tasks the controller addresses:
+ * - Display a list of films, with support for sorting and filtering based on user-selected criteria.
+ * - Support pagination so users can navigate through a list of films, loading a specific number of items per page.
+ * - Enable users to toggle between filter menus and load the film details view for selected films.
+ * - Allow users to log out or edit their profile information from the user menu.
+ * 
+ * Methods:
+ * 
+ * - `initialize()`: Initializes the controller by loading categories, films, user profile data, and setting up the 
+ *   event listeners for the user menu and pagination controls.
+ * 
+ * - `loadFilms()`: Loads films either based on the applied filters or retrieves all films if no filters are set.
+ *   It manages pagination, ensuring the correct number of films is displayed per page.
+ * 
+ * - `nextPage()`: Increments the offset for pagination and loads the next set of films.
+ * 
+ * - `previousPage()`: Decrements the offset for pagination and loads the previous set of films.
+ * 
+ * - `updateCurrentPageLabel()`: Updates the current page label to show the user which page they are on, based on
+ *   the current offset and limit.
+ * 
+ * - `applyFilters()`: Applies user-selected filters for category, rating, year range, and film length. It resets
+ *   the pagination to the first page and reloads the films according to the filter criteria.
+ * 
+ * - `handleEditProfile()`: Loads the profile editing interface where the user can update their account information.
+ * 
+ * - `handleLogout()`: Logs the user out of the application and redirects them to the login screen.
+ * 
+ * - `toggleFilterMenu()`: Toggles the visibility of the filter menu, allowing users to hide or show it.
+ * 
+ * - `showFilmDetails(String film)`: Displays more detailed information about a selected film when clicked.
+ * 
+ * - `loadCategories()`: Populates the genre filter dropdown with available categories.
+ * 
+ * - `loadRatings()`: Populates the rating filter dropdown with available film rating options.
+ * 
+ * - `switchToLogin()`: Redirects the user to the login screen after a logout action.
+ */
+
+
 package com.oap2024team7.team7mediastreamingapp.controllers;
 
 import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
@@ -50,6 +105,9 @@ public class PrimaryController {
     @FXML
     private ListView<String> filmListView;
     @FXML
+    private Label currentPageLabel;
+
+    @FXML
     private Button nextButton;
     @FXML
     private Button prevButton;
@@ -80,6 +138,13 @@ public class PrimaryController {
     private final int limit = 20; // Load 20 films per page
     private CategoryManager categoryManager = new CategoryManager();
     private Customer loggedInCustomer;
+
+    // Store filter criteria
+    private Category selectedCategory;
+    private Film.Rating selectedRating;
+    private Integer selectedMaxLength;
+    private Integer selectedStartYear;
+    private Integer selectedEndYear;
     
     @FXML
     public void initialize() {
@@ -192,23 +257,52 @@ public class PrimaryController {
     }
 
     private void loadFilms() {
-        List<Film> films = filmManager.getAllFilms(offset, limit);
+        List<Film> films;
+    
+        // Check if filters are applied
+        if (selectedCategory != null || selectedRating != null || selectedMaxLength != null || selectedStartYear != null || selectedEndYear != null) {
+            // If filters are applied, use the filterFilms method
+            Integer categoryId = selectedCategory != null ? selectedCategory.getCategoryId() : null;
+            films = filmManager.filterFilms(categoryId, selectedRating, selectedMaxLength, selectedStartYear, selectedEndYear, offset, limit);
+        } else {
+            // No filters applied, load all films
+            films = filmManager.getAllFilms(offset, limit);
+        }
+    
+        // Clear the film list view and populate with filtered results
         filmListView.getItems().clear();
         for (Film film : films) {
             filmListView.getItems().add(film.getTitle() + " (" + film.getreleaseYear() + ")");
         }
+    
+        // Check if there are more films to load for pagination
+        if (films.size() < limit || filmManager.getAllFilms(offset + limit, 1).isEmpty()) {
+            nextButton.setDisable(true);
+        } else {
+            nextButton.setDisable(false);
+        }
+    
+        // Disable the previous button if on the first page
+        prevButton.setDisable(offset == 0);
     }
 
     private void nextPage() {
         offset += limit;
         loadFilms();
+        updateCurrentPageLabel();
     }
 
     private void previousPage() {
         if (offset > 0) {
             offset -= limit;
             loadFilms();
+            updateCurrentPageLabel();
         }
+    }
+
+    private void updateCurrentPageLabel() {
+        int currentPage = (offset / limit) + 1;
+        currentPageLabel.setText("Page: " + currentPage);
     }
 
     private void sortFilms() {
@@ -299,29 +393,27 @@ public class PrimaryController {
             // Add all the enum values to the ComboBox
             ratingComboBox.getItems().addAll(ratings);
         }
-
-
     }
 
     @FXML
     private void applyFilters() {
-        Category selectedCategory = genreComboBox.getSelectionModel().getSelectedItem();
-        Film.Rating selectedRating = ratingComboBox.getSelectionModel().getSelectedItem();
+        // Store the filters globally
+        selectedCategory = genreComboBox.getSelectionModel().getSelectedItem();
+        selectedRating = ratingComboBox.getSelectionModel().getSelectedItem();
+        selectedMaxLength = maxLengthField.getText().isEmpty() ? null : Integer.parseInt(maxLengthField.getText());
+        selectedStartYear = startYearField.getText().isEmpty() ? null : Integer.parseInt(startYearField.getText());
+        selectedEndYear = endYearField.getText().isEmpty() ? null : Integer.parseInt(endYearField.getText());
+    
+        // Reset offset when applying filters
+        offset = 0;
+    
+        // Load films with the current filters applied
+        loadFilms();
 
-        Integer categoryId = selectedCategory != null ? selectedCategory.getCategoryId() : null;
-        Integer maxLength = maxLengthField.getText().isEmpty() ? null : Integer.parseInt(maxLengthField.getText());
-        Integer startYear = startYearField.getText().isEmpty() ? null : Integer.parseInt(startYearField.getText());
-        Integer endYear = endYearField.getText().isEmpty() ? null : Integer.parseInt(endYearField.getText());
-
-        List<Film> filteredFilms = filmManager.filterFilms(categoryId, selectedRating, maxLength, startYear, endYear);
-
-        // Reload LV with filtered films
-        filmListView.getItems().clear();
-        for (Film film : filteredFilms) {
-            filmListView.getItems().add(film.getTitle() + " (" + film.getreleaseYear() + ")");
-        }
+        // Update page label
+        updateCurrentPageLabel();
     }
-
+        
 
     @FXML
     private void switchToLogin() {

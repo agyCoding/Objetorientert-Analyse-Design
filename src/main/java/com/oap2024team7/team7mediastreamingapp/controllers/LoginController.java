@@ -1,3 +1,38 @@
+/**
+ * LoginController.java
+ * 
+ * Author: Team 7 - OAP 2024
+ * Contributions: Agata (Sole contributor)
+ * 
+ * Purpose: 
+ * The LoginController is responsible for managing the login interface and handling user authentication for 
+ * both customers and staff. It verifies the login credentials entered by the user and redirects them to the 
+ * main application interface (primary view) upon successful login. Additionally, it allows navigation to 
+ * the user registration interface for new customers.
+ * 
+ * The controller is designed to:
+ * - Manage user input for username and password.
+ * - Authenticate the user using the UserManager and CustomerManager services.
+ * - Initialize fields based on session data and pre-fill login fields when applicable.
+ * - Handle navigation to the primary content viewer after login or user registration screen for new users.
+ * 
+ * Methods:
+ * 
+ * - `initialize()`: Initializes the controller, setting the focus on the username field and, if a customer 
+ *   is already logged in, pre-fills the username field with their email.
+ * 
+ * - `tryToLogin()`: Handles the login process by checking the username and password entered by the user. 
+ *   If the login is successful, the method switches to the primary screen. It also handles the special case 
+ *   for admin login (v1), where the login is hardcoded for presentation purposes.
+ * 
+ * - `switchToUserRegistration()`: Switches to the user registration interface for new customers, allowing 
+ *   them to create an account if they haven't already.
+ * 
+ * - `setLoggedInUsername(String username)`: Passes the logged-in username to the next scene (primary content viewer).
+ */
+
+
+
 package com.oap2024team7.team7mediastreamingapp.controllers;
 
 import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
@@ -56,8 +91,7 @@ public class LoginController {
         }
 
         // Check if the user can login
-        // Hardcoded admin login for presentation purposes (v1)
-        if (userManager.canLogin(usernameText,passwordText) || (usernameText.equals("admin") && passwordText.equals("admin"))) {
+        if (userManager.canLogin(usernameText,passwordText)) {
             try {
                 // Get the customer object from the database, if the customer hasn't been created locally in the app on "Register New Customer" screen
                 if (customer == null) {
@@ -77,13 +111,8 @@ public class LoginController {
                 // Get the controller of the next scene
                 PrimaryController primaryController = loader.getController();
 
-                // TEMPORARY ADMIN HANDLING (just passing the admin as username)
-                if (usernameText.equals("admin")) {
-                    primaryController.setLoggedInUsername("admin");
-                } else {
-                    // Pass the username to the next scene's controller
-                    primaryController.setLoggedInUsername(usernameText);
-                }
+                // Pass the username to the next scene's controller
+                primaryController.setLoggedInUsername(usernameText);
 
 
                  // Get the current stage (window) and set the new scene

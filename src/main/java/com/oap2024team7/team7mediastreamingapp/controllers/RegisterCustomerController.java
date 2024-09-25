@@ -1,3 +1,33 @@
+/**
+ * RegisterCustomerController.java
+ * 
+ * Author: Team 7 - OAP 2024
+ * Contributions: Agata (Sole contributor)
+ * 
+ * Purpose: 
+ * The RegisterCustomerController handles the user registration process for new customers in the media streaming 
+ * application. It manages the registration interface and performs necessary validations on user input. Upon 
+ * successful registration, it creates a new customer record and stores related address information.
+ * 
+ * The controller is designed to:
+ * - Gather input data from the registration form fields.
+ * - Validate that all required fields are filled out before proceeding.
+ * - Normalize input data and manage city and address registration using the AddressManager.
+ * - Create and register a new Customer instance with the provided details.
+ * - Provide feedback to the user through alerts about the registration status.
+ * - Allow navigation back to the login screen upon successful registration.
+ * 
+ * Methods:
+ * 
+ * - `tryToRegisterNewCustomer()`: Validates user input for required fields, retrieves data from the form, 
+ *   and attempts to register the new customer along with their address. Displays alerts for any errors 
+ *   encountered during the process, including validation and registration failures.
+ * 
+ * - `switchToLogin()`: Switches the current view to the login screen, allowing users to log in after 
+ *   successful registration. Handles any potential errors in loading the login interface.
+ */
+
+
 package com.oap2024team7.team7mediastreamingapp.controllers;
 
 import java.io.IOException;
