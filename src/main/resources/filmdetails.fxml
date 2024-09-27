@@ -6,12 +6,12 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="855.0" prefWidth="1195.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oap2024team7.team7mediastreamingapp.controllers.FilmDetailsController">
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="336.0" prefWidth="609.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oap2024team7.team7mediastreamingapp.controllers.FilmDetailsController">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" maxWidth="399.0" minWidth="10.0" prefWidth="297.0" />
-    <ColumnConstraints hgrow="SOMETIMES" maxWidth="245.0" minWidth="10.0" prefWidth="203.0" />
-      <ColumnConstraints hgrow="SOMETIMES" maxWidth="241.0" minWidth="10.0" prefWidth="241.0" />
-      <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="10.0" prefWidth="129.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="245.0" minWidth="10.0" prefWidth="90.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="241.0" minWidth="10.0" prefWidth="139.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="10.0" prefWidth="169.0" />
   </columnConstraints>
   <rowConstraints>
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -23,12 +23,12 @@
    <children>
       <Label fx:id="titleLabel" text="Film Title" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="0">
          <font>
-            <Font name="System Bold Italic" size="36.0" />
+            <Font name="System Bold Italic" size="23.0" />
          </font>
       </Label>
       <Label fx:id="releaseYearLabel" text="Release year: " GridPane.columnIndex="2" />
-      <Label fx:id="descriptionLabel" text="Description" GridPane.columnSpan="2" GridPane.rowIndex="1" wrapText="true"/>
-      <Label fx:id="actorsLabel" text="Actors: " GridPane.columnSpan="2" GridPane.rowIndex="2" wrapText="true"/>
+      <Label fx:id="descriptionLabel" text="Description" wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+      <Label fx:id="actorsLabel" text="Actors: " wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="2" />
       <Label fx:id="languageLabel" text="Language: " GridPane.columnIndex="2" GridPane.rowIndex="1" />
       <Label fx:id="pgRatingLabel" text="PG Rating: " GridPane.columnIndex="3" />
       <Label fx:id="specialFeaturesLabel" text="Special features: " GridPane.columnSpan="2" GridPane.rowIndex="3" />

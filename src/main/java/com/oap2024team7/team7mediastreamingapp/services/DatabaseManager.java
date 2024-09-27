@@ -3,6 +3,7 @@ package com.oap2024team7.team7mediastreamingapp.services;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class DatabaseManager {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/sakila";
@@ -30,5 +31,20 @@ public class DatabaseManager {
             System.err.println("VendorError: " + e.getErrorCode());
             throw e;
         }
-    }    
+    }
+    
+    public static void updateDatabaseSchema() {
+        String alterCustomerTable = "ALTER TABLE customer ADD birth_date DATE;";
+
+        try (Connection conn = DatabaseManager.getConnection();
+             Statement stmt = conn.createStatement()) {
+
+            // Execute SQL command to alter the customer table
+            stmt.executeUpdate(alterCustomerTable);
+
+            System.out.println("Database schema updated successfully.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

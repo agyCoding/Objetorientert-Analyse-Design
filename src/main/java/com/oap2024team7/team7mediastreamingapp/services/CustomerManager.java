@@ -52,4 +52,21 @@ public class CustomerManager {
         }
         return null;
     }
+
+    public static void updateCustomer(Customer customer) {
+        String updateQuery = "UPDATE customer SET first_name = ?, last_name = ?, birth_date = ? WHERE customer_id = ?";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+            stmt.setString(1, customer.getFirstName());
+            stmt.setString(2, customer.getLastName());
+            stmt.setDate(3, java.sql.Date.valueOf(customer.getBirthDate())); // Ensure you handle LocalDate conversion
+            stmt.setInt(4, customer.getCustomerId());
+            stmt.executeUpdate();
+            System.out.println("Customer updated in the database.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    
 }
