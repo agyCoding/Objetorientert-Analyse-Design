@@ -1,6 +1,10 @@
 package com.oap2024team7.team7mediastreamingapp.controllers;
 
+import java.util.List;
+
+import com.oap2024team7.team7mediastreamingapp.models.Actor;
 import com.oap2024team7.team7mediastreamingapp.models.Film;
+import com.oap2024team7.team7mediastreamingapp.services.ActorManager;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -34,18 +38,37 @@ public class FilmDetailsController {
     private void updateFilmDetails() {
         // Update the labels based on the film's details
         titleLabel.setText(selectedFilm.getTitle());
-        releaseYearLabel.setText(String.valueOf(selectedFilm.getReleaseYear()));
-        descriptionLabel.setText(selectedFilm.getDescription());
-
-        // Implement logic to map the languageId to the actual language name
-        languageLabel.setText(String.valueOf(selectedFilm.getLanguage().getLanguageName()));
-
-        // Placeholder for actors and special features logic
+        releaseYearLabel.setText("Release year: " + selectedFilm.getReleaseYear());
+        descriptionLabel.setText("Film description: " + selectedFilm.getDescription());
+    
+        // Assuming you have a method to get the language name
+        languageLabel.setText("Language: " + selectedFilm.getLanguage().getLanguageName());
+    
+        // Update the actors and special features
+        // Placeholder for actors logic
         // actorsLabel.setText("Retrieve actors here");
-        // specialFeaturesLabel.setText(selectedFilm.getSpecialFeatures());
+        
+        // Join special features into a single string
+        String specialFeatures = String.join(", ", selectedFilm.getSpecialFeatures());
+        specialFeaturesLabel.setText("Special features: " + specialFeatures);
+    
+        // Display the PG rating
+        pgRatingLabel.setText("PG rating: " + selectedFilm.getRating().toString());
 
-        pgRatingLabel.setText(selectedFilm.getRating().toString());
+                // Fetch actors from the database and set them to the film object
+        List<Actor> actors = ActorManager.getInstance().getActorsForFilm(selectedFilm.getFilmId());
+        StringBuilder actorsText = new StringBuilder("Actors: ");
+        for (Actor actor : actors) {
+            actorsText.append(actor.getFirstName()).append(" ").append(actor.getLastName()).append(", ");
+        }
+
+        // Remove the last comma and space
+        if (actorsText.length() > 0) {
+            actorsText.setLength(actorsText.length() - 2);
+        }
+        actorsLabel.setText(actorsText.toString());
     }
+    
 
     // TO DO
     @FXML

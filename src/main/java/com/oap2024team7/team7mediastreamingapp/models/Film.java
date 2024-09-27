@@ -1,6 +1,7 @@
 package com.oap2024team7.team7mediastreamingapp.models;
 
-
+import java.util.Set;
+import java.util.List;
 
 public class Film {
     private int filmId; // automatically assigned in the database
@@ -9,7 +10,10 @@ public class Film {
     private int releaseYear;
     private Language language;
     private int rentalDuration; // Understood as MAX ALLOWED rental duration
+    private Double rentalRate; // Understood as the cost of renting the film per day
     private int length;
+    private Set<String> specialFeatures; // Set of special features that come with the film
+    private List<Actor> actors; // List of actors in the film
 
     // Define enum properly at the class level
     public enum Rating { G, PG, PG13, R, NC17 }
@@ -17,7 +21,7 @@ public class Film {
     private Rating rating;
 
     // Constructor for creating a new film from the database
-    public Film(int filmId, String title, String description, int releaseYear, Language language, int rentalDuration, int length, Rating rating) {
+    public Film(int filmId, String title, String description, int releaseYear, Language language, int rentalDuration, int length, Rating rating, Set<String> specialFeatures, Double rentalRate, List<Actor> actors) {
         this.filmId = filmId;
         this.title = title;
         this.description = description;
@@ -26,10 +30,13 @@ public class Film {
         this.rentalDuration = rentalDuration;
         this.length = length;
         this.rating = rating;
+        this.specialFeatures = specialFeatures;
+        this.rentalRate = rentalRate;
+        this.actors = actors;
     }
 
     // Constructor for creating a new film to be added to the database
-    public Film(String title, String description, int releaseYear, Language language, int rentalDuration, int length, Rating rating) {
+    public Film(String title, String description, int releaseYear, Language language, int rentalDuration, int length, Rating rating, Set<String> specialFeatures, Double rentalRate) {
         this.title = title;
         this.description = description;
         this.releaseYear = releaseYear;
@@ -37,7 +44,20 @@ public class Film {
         this.rentalDuration = rentalDuration;
         this.length = length;
         this.rating = rating;
+        this.specialFeatures = specialFeatures;
+        this.rentalRate = rentalRate;
     }
+
+        // Constructor for creating a new film to be added to the database
+        public Film(String title, String description, int releaseYear, Language language, int rentalDuration, int length, Rating rating) {
+            this.title = title;
+            this.description = description;
+            this.releaseYear = releaseYear;
+            this.language = language;
+            this.rentalDuration = rentalDuration;
+            this.length = length;
+            this.rating = rating;
+        }
 
     public int getFilmId() {
         return filmId;
@@ -97,5 +117,29 @@ public class Film {
 
     public void setRating(Rating rating) {
         this.rating = rating;
+    }
+
+    public Set<String> getSpecialFeatures() {
+        return specialFeatures;
+    }
+
+    public void setSpecialFeatures(Set<String> specialFeatures) {
+        this.specialFeatures = specialFeatures;
+    }
+
+    public Double getRentalRate() {
+        return rentalRate;
+    }
+
+    public void setRentalRate(Double rentalRate) {
+        this.rentalRate = rentalRate;
+    }
+
+    public List<Actor> getActors() {
+        return actors;
+    }
+
+    public void setActors(List<Actor> actors) {
+        this.actors = actors;
     }
 }

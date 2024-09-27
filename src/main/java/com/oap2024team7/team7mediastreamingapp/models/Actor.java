@@ -23,4 +23,16 @@ public class Actor {
     public String getLastName() {
         return lastName;
     }
+
+    public void setActorId(int actorId) {
+        this.actorId = actorId;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 }
