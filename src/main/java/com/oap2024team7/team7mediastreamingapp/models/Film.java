@@ -1,11 +1,13 @@
 package com.oap2024team7.team7mediastreamingapp.models;
 
+
+
 public class Film {
     private int filmId; // automatically assigned in the database
     private String title;
     private String description;
     private int releaseYear;
-    private int languageId;
+    private Language language;
     private int rentalDuration; // Understood as MAX ALLOWED rental duration
     private int length;
 
@@ -15,29 +17,29 @@ public class Film {
     private Rating rating;
 
     // Constructor for creating a new film from the database
-    public Film(int filmId, String title, String description, int releaseYear, int languageId, int rentalDuration, int length, Rating rating) {
+    public Film(int filmId, String title, String description, int releaseYear, Language language, int rentalDuration, int length, Rating rating) {
         this.filmId = filmId;
         this.title = title;
         this.description = description;
         this.releaseYear = releaseYear;
-        this.languageId = languageId;
+        this.language = language;
         this.rentalDuration = rentalDuration;
         this.length = length;
         this.rating = rating;
     }
 
     // Constructor for creating a new film to be added to the database
-    public Film(String title, String description, int releaseYear, int languageId, int rentalDuration, int length, Rating rating) {
+    public Film(String title, String description, int releaseYear, Language language, int rentalDuration, int length, Rating rating) {
         this.title = title;
         this.description = description;
         this.releaseYear = releaseYear;
-        this.languageId = languageId; // Have to add handling of the languageId based on "regular" language information
+        this.language = language;
         this.rentalDuration = rentalDuration;
         this.length = length;
         this.rating = rating;
     }
 
-    public int getfilmId() {
+    public int getFilmId() {
         return filmId;
     }
 
@@ -57,27 +59,27 @@ public class Film {
         this.description = description;
     }
 
-    public int getreleaseYear() {
+    public int getReleaseYear() {
         return releaseYear;
     }
 
-    public void setreleaseYear(int releaseYear) {
+    public void setReleaseYear(int releaseYear) {
         this.releaseYear = releaseYear;
     }
 
-    public int getlanguageId() {
-        return languageId;
+    public Language getLanguage() {
+        return language;
     }
 
-    public void setlanguageId(int languageId) {
-        this.languageId = languageId;
+    public void setLanguageId(Language language) {
+        this.language = language;
     }
 
-    public int getrentalDuration() {
+    public int getRentalDuration() {
         return rentalDuration;
     }
 
-    public void setrentalDuration(int rentalDuration) {
+    public void setRentalDuration(int rentalDuration) {
         this.rentalDuration = rentalDuration;
     }
 
