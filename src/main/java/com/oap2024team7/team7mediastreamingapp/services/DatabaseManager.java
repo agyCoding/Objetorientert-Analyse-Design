@@ -33,6 +33,7 @@ public class DatabaseManager {
         }
     }
     
+    // OBS! Maybe we need to put birth_date on the profile not on the customer table. Waiting for feedback from the team
     public static void updateDatabaseSchema() {
         String alterCustomerTable = "ALTER TABLE customer ADD birth_date DATE;";
 

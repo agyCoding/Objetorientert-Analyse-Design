@@ -11,7 +11,7 @@ public class Customer {
     private String email;
     private int addressId;
     private int active; // this maps to TINYINT in the database with 1 for active and 0 for inactive
-    private LocalDate birthDate; // LOCAL ATTRIBUTE for handling filtering and content based on PG rating
+    private LocalDate birthDate; // new attribute that's introduced to the db with the application launch to allow for filtering
     private LocalDate createDate;
 
     // Constructor for creating a new customer from the database

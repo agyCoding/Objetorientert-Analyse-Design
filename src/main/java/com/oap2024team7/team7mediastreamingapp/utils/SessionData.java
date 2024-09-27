@@ -32,4 +32,9 @@ public class SessionData {
     public void setCustomerAddress(Address customerAddress) {
         this.customerAddress = customerAddress;
     }
+
+    public void clearSessionData() {
+        loggedInCustomer = null;
+        customerAddress = null;
+    }
 }

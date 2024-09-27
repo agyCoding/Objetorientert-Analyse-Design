@@ -78,61 +78,61 @@ public class LoginController {
 
     @FXML
     private void tryToLogin() {
-
+        // Clear previous session data
+        SessionData.getInstance().clearSessionData();
+    
         // Get info from username and password fields
-        // V1 Customers in sakila don't have passwords, so we will use the email as the username while the password has to be empty
-        // V2 The staff will login with username and password, and will be checked towards their table
         String usernameText = usernameField.getText();
         String passwordText = passwordField.getText();
-
+    
         if (usernameText.isEmpty()) {
-            GeneralUtils.showAlert(AlertType.ERROR, "Login Failed", "Username cannot be empty", "Please enter correct username");
+            GeneralUtils.showAlert(AlertType.ERROR, "Login Failed", "Username cannot be empty", "Please enter a correct username");
             return;
         }
-
+    
         // Check if the user can login
-        if (userManager.canLogin(usernameText,passwordText)) {
+        if (userManager.canLogin(usernameText, passwordText)) {
             try {
-                // Get the customer object from the database, if the customer hasn't been created locally in the app on "Register New Customer" screen
-                if (customer == null) {
-                    customer = CustomerManager.getCustomerByUsername(usernameText);
+                // Get the customer object from the database
+                customer = CustomerManager.getCustomerByUsername(usernameText);
+                
+                // Ensure customer is found
+                if (customer != null) {
                     int customersAddressId = customer.getAddressId();
                     Address customersAddress = AddressManager.getAddressById(customersAddressId);
-
+    
                     // Save the customer and address object to the session data
                     SessionData.getInstance().setLoggedInCustomer(customer);
                     SessionData.getInstance().setCustomerAddress(customersAddress);
+                } else {
+                    // Handle the case where the customer is not found
+                    GeneralUtils.showAlert(AlertType.ERROR, "Login Failed", "Customer not found", "Unable to find customer information.");
+                    return;
                 }
-
-
+    
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/primary.fxml"));
                 Parent root = loader.load();
-
+    
                 // Get the controller of the next scene
                 PrimaryController primaryController = loader.getController();
-
+    
                 // Pass the username to the next scene's controller
                 primaryController.setLoggedInUsername(usernameText);
-
-
-                 // Get the current stage (window) and set the new scene
-                 Stage stage = (Stage) usernameField.getScene().getWindow();
-                 stage.setTitle("Media Streaming and Rental - Content Viewer");
-
-                 stage.setScene(new Scene(root));
-                 stage.show();              
+    
+                // Get the current stage (window) and set the new scene
+                Stage stage = (Stage) usernameField.getScene().getWindow();
+                stage.setTitle("Media Streaming and Rental - Content Viewer");
+                stage.setScene(new Scene(root));
+                stage.show();
             } catch (IOException e) {
                 e.printStackTrace();
-
-                GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the main app/primary screen", "En error occured while trying to load the primary app");
+                GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the main app/primary screen", "An error occurred while trying to load the primary app");
             }
-        }
-        else {
+        } else {
             // If password and username not matching, show error
-            GeneralUtils.showAlert(AlertType.ERROR, "Login Failed", "Invalig Username or Password", "Please enter correct username and password");
-
+            GeneralUtils.showAlert(AlertType.ERROR, "Login Failed", "Invalid Username or Password", "Please enter correct username and password");
         }
-    }
+    }    
 
     @FXML
     private void switchToUserRegistration() {

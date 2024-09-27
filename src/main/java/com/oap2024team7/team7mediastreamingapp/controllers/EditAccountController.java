@@ -75,7 +75,7 @@ public class EditAccountController {
 
     public void tryToEditAccount() {
         System.out.println("Edit account button clicked");
-        
+    
         // Retrieve values from the input fields
         String firstName = firstNameField.getText();
         String lastName = lastNameField.getText();
@@ -84,7 +84,7 @@ public class EditAccountController {
         String district = districtField.getText();
         String city = cityField.getText(); // You might need a method to get the cityId based on the city name
         String postalCode = postalCodeField.getText();
-        String phone = phoneField.getText(); // Keep this line
+        String phone = phoneField.getText();
     
         // Validate inputs (add any necessary validation here)
         if (firstName.isEmpty() || lastName.isEmpty() || address.isEmpty() || city.isEmpty() || postalCode.isEmpty() || phone.isEmpty()) {
@@ -92,35 +92,28 @@ public class EditAccountController {
             return;
         }
     
-        // Update the customer and address in the database
+        // Update the properties of the loggedInCustomer object directly
         try {
-            // Assuming there's an update method in CustomerManager
-            Customer updatedCustomer = new Customer(
-                loggedInCustomer.getCustomerId(),
-                firstName,
-                lastName,
-                loggedInCustomer.getEmail(), // Keep the email unchanged
-                customersAddress.getAddressId(), // Keep the same addressId if only updating customer
-                loggedInCustomer.getActive(), // Assuming you want to keep the active status unchanged
-                birthDate // Add birth date to the customer
-            );
+            loggedInCustomer.setFirstName(firstName);
+            loggedInCustomer.setLastName(lastName);
+            loggedInCustomer.setBirthDate(birthDate); // Assuming you added this method in the Customer class
     
-            // Update address object
+            // Update the address object
             customersAddress.setAddress(address);
             customersAddress.setDistrict(district);
             customersAddress.setCityId(AddressManager.getInstance().getCityIdFromCityName(city)); // You may need to implement this method
             customersAddress.setPostalCode(postalCode);
             customersAddress.setPhone(phone); // Update phone number from the input field
-            
+    
             // Call update methods in your managers
-            CustomerManager.updateCustomer(updatedCustomer);
-            AddressManager.updateAddress(customersAddress); // You might need to implement this method
+            CustomerManager.updateCustomer(loggedInCustomer); // Update the existing customer directly
+            AddressManager.updateAddress(customersAddress); // Update the address directly
     
             GeneralUtils.showAlert(AlertType.INFORMATION, "Success", "Account updated successfully", "Your account has been updated.");
         } catch (Exception e) {
             e.printStackTrace();
             GeneralUtils.showAlert(AlertType.ERROR, "Error", "Error updating account", "Could not update account information.");
         }
-    }
+    }    
 
 }

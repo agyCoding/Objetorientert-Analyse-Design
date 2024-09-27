@@ -256,6 +256,7 @@ public class PrimaryController {
     private void handleLogout() {
         // Logic to log out the user
         System.out.println("Logout clicked");
+        SessionData.getInstance().clearSessionData();
         switchToLogin();
     }
 
