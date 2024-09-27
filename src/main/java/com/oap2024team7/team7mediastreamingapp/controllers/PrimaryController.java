@@ -103,7 +103,7 @@ public class PrimaryController {
 
     // Pirmary content viewer (LV)
     @FXML
-    private ListView<String> filmListView;
+    private ListView<Film> filmListView;
     @FXML
     private Label currentPageLabel;
 
@@ -185,14 +185,27 @@ public class PrimaryController {
         // Load the first page of films
         loadFilms();
 
+        // Indicate how to present films in the LV (show only some information from Film class)
+        filmListView.setCellFactory(lv -> new ListCell<Film>() {
+            @Override
+            protected void updateItem(Film film, boolean empty) {
+                super.updateItem(film, empty);
+                if (empty || film == null) {
+                    setText(null);
+                } else {
+                    // Display the title and release year in the ListView
+                    setText(film.getTitle() + " (" + film.getReleaseYear() + ")");
+                }
+            }
+        });
+
         // Handle next and previous page
         nextButton.setOnAction(event -> nextPage());
         prevButton.setOnAction(event -> previousPage());
 
-        // Optionally, handle single click to show more details
         filmListView.setOnMouseClicked(event -> {
             if (event.getClickCount() == 1) {
-                String selectedFilm = filmListView.getSelectionModel().getSelectedItem();
+                Film selectedFilm = filmListView.getSelectionModel().getSelectedItem();
                 if (selectedFilm != null) {
                     showFilmDetails(selectedFilm);
                 }
@@ -271,9 +284,7 @@ public class PrimaryController {
     
         // Clear the film list view and populate with filtered results
         filmListView.getItems().clear();
-        for (Film film : films) {
-            filmListView.getItems().add(film.getTitle() + " (" + film.getreleaseYear() + ")");
-        }
+        filmListView.getItems().addAll(films);
     
         // Check if there are more films to load for pagination
         if (films.size() < limit || filmManager.getAllFilms(offset + limit, 1).isEmpty()) {
@@ -305,6 +316,7 @@ public class PrimaryController {
         currentPageLabel.setText("Page: " + currentPage);
     }
 
+    @FXML    
     private void sortFilms() {
         String selectedSort = sortComboBox.getValue();
         List<Film> sortedFilms;
@@ -314,14 +326,39 @@ public class PrimaryController {
             sortedFilms = filmManager.getFilmsSortedByYear();
         }
         filmListView.getItems().clear();
-        for (Film film : sortedFilms) {
-            filmListView.getItems().add(film.getTitle() + " (" + film.getreleaseYear() + ")");
-        }
+        filmListView.getItems().addAll(sortedFilms);
     }
 
-    private void showFilmDetails(String film) {
-        // Logic to display more details about the selected film
-        System.out.println("Film details: " + film);
+    private void showFilmDetails(Film film) {
+        // Load the edit account screen
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/filmdetails.fxml"));
+            Parent root = loader.load();
+
+            // Get the controller of the next scene
+            FilmDetailsController filmDetailsController = loader.getController();
+
+            // Pass the customer object to the edit account controller
+            filmDetailsController.setSelectedFilm(film);
+
+            // Create a new stage for the pop-up window
+            Stage popupStage = new Stage();
+            popupStage.setTitle("Media Streaming and Rental - Film Details");
+
+            // Set the scene for the pop-up stage
+            popupStage.setScene(new Scene(root));
+
+            popupStage.initOwner(loggedInUserLabel.getScene().getWindow());
+
+            // Show the pop-up window
+            popupStage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+
+            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the page with film details", "An error occurred while trying to load the film details page.");
+        }
+        // Small check in terminal (Debugging)
+        System.out.println("Film details: " + film.getTitle() + " (" + film.getReleaseYear() + ")");
     }
 
     private void loadCategories() {
@@ -358,41 +395,35 @@ public class PrimaryController {
         }
     }
     
-
     private void loadRatings() {
         // Get all the enum values
         Film.Rating[] ratings = Film.Rating.values();
 
-        if (ratings == null) {
-            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load ratings", "An error occurred while trying to load the ratings");
-            return;
-        } else {
-            ratingComboBox.getItems().clear();
+        ratingComboBox.getItems().clear();
 
-            // Add a null option
-            ratingComboBox.getItems().add(null);  // This will be displayed as an empty choice
+        // Add a null option
+        ratingComboBox.getItems().add(null);  // This will be displayed as an empty choice
 
-            // Set how the rating will be displayed in the dropdown
-            ratingComboBox.setCellFactory(lv -> new ListCell<Film.Rating>() {
-                @Override
-                protected void updateItem(Film.Rating rating, boolean empty) {
-                    super.updateItem(rating, empty);
-                    setText(empty || rating == null ? "" : rating.name());
-                }
-            });
+        // Set how the rating will be displayed in the dropdown
+        ratingComboBox.setCellFactory(lv -> new ListCell<Film.Rating>() {
+            @Override
+            protected void updateItem(Film.Rating rating, boolean empty) {
+                super.updateItem(rating, empty);
+                setText(empty || rating == null ? "" : rating.name());
+            }
+        });
 
-            // Set how the selected rating is displayed in the ComboBox button
-            ratingComboBox.setButtonCell(new ListCell<Film.Rating>() {
-                @Override
-                protected void updateItem(Film.Rating rating, boolean empty) {
-                    super.updateItem(rating, empty);
-                    setText(empty || rating == null ? "" : rating.name());
-                }
-            });
+        // Set how the selected rating is displayed in the ComboBox button
+        ratingComboBox.setButtonCell(new ListCell<Film.Rating>() {
+            @Override
+            protected void updateItem(Film.Rating rating, boolean empty) {
+                super.updateItem(rating, empty);
+                setText(empty || rating == null ? "" : rating.name());
+            }
+        });
 
-            // Add all the enum values to the ComboBox
-            ratingComboBox.getItems().addAll(ratings);
-        }
+        // Add all the enum values to the ComboBox
+        ratingComboBox.getItems().addAll(ratings);
     }
 
     @FXML
@@ -414,7 +445,6 @@ public class PrimaryController {
         updateCurrentPageLabel();
     }
         
-
     @FXML
     private void switchToLogin() {
         try {

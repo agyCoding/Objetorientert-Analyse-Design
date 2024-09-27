@@ -55,7 +55,7 @@
                           <RadioButton fx:id="sortByTitle" text="Title" />
                           <RadioButton fx:id="sortByReleaseYear" text="Release Year" />
        
-                      <Button fx:id="applySortButton" text="Apply Sort" />
+                      <Button fx:id="applySortButton" text="Apply Sort" onAction="#sortFilms"/>
                   </children>
                </HBox>
    
