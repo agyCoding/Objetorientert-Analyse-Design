@@ -3,11 +3,15 @@ package com.oap2024team7.team7mediastreamingapp.controllers;
 import java.util.List;
 
 import com.oap2024team7.team7mediastreamingapp.models.Actor;
+import com.oap2024team7.team7mediastreamingapp.models.Customer;
+import com.oap2024team7.team7mediastreamingapp.models.Customer.AccountType;
 import com.oap2024team7.team7mediastreamingapp.models.Film;
 import com.oap2024team7.team7mediastreamingapp.services.ActorManager;
+import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.Button;
 
 public class FilmDetailsController {
     @FXML
@@ -24,6 +28,10 @@ public class FilmDetailsController {
     private Label specialFeaturesLabel;
     @FXML
     private Label pgRatingLabel;
+    @FXML
+    private Button rentButton;
+    @FXML
+    private Button streamButton;
 
     private Film selectedFilm;
 
@@ -33,6 +41,9 @@ public class FilmDetailsController {
         
         // Now that the film is set, update the labels with the film's details
         updateFilmDetails();
+
+        // Set button visibility based on account type
+        setButtonVisibility();
     }
 
     private void updateFilmDetails() {
@@ -43,10 +54,6 @@ public class FilmDetailsController {
     
         // Assuming you have a method to get the language name
         languageLabel.setText("Language: " + selectedFilm.getLanguage().getLanguageName());
-    
-        // Update the actors and special features
-        // Placeholder for actors logic
-        // actorsLabel.setText("Retrieve actors here");
         
         // Join special features into a single string
         String specialFeatures = String.join(", ", selectedFilm.getSpecialFeatures());
@@ -69,6 +76,24 @@ public class FilmDetailsController {
         actorsLabel.setText(actorsText.toString());
     }
     
+    private void setButtonVisibility() {
+        // Retrieve the logged-in customer
+        Customer loggedInCustomer = SessionData.getInstance().getLoggedInCustomer();
+        
+        if (loggedInCustomer != null) {
+            AccountType accountType = loggedInCustomer.getAccountType();
+            
+            if (accountType == AccountType.FREE) {
+                // Show Rent button and hide Stream button for FREE users
+                rentButton.setVisible(true);
+                streamButton.setVisible(false);
+            } else if (accountType == AccountType.PREMIUM) {
+                // Show Stream button and hide Rent button for PREMIUM users
+                rentButton.setVisible(false);
+                streamButton.setVisible(true);
+            }
+        }
+    }
 
     // TO DO
     @FXML

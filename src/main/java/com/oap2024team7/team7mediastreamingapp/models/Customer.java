@@ -11,8 +11,13 @@ public class Customer {
     private String email;
     private int addressId;
     private int active; // this maps to TINYINT in the database with 1 for active and 0 for inactive
-    private LocalDate birthDate; // new attribute that's introduced to the db with the application launch to allow for filtering
+    private LocalDate birthDate; // LOCAL ATTRIBUTE just for application
     private LocalDate createDate;
+    private AccountType accountType; // LOCAL ATTRIBUTE just for application
+
+    public enum AccountType {
+        FREE, PREMIUM
+    }
 
     // Constructor for creating a new customer from the database
     public Customer(int customerId, String firstName, String lastName, String email, int addressId, int active, LocalDate createDate) {
@@ -24,6 +29,7 @@ public class Customer {
         this.active = active;
         this.birthDate = LocalDate.of(2000, 1, 1); // For all users coming from the database (that doesn't have information about birthdate, set birthdate to 1.1.2000)
         this.createDate = createDate;
+        this.accountType = AccountType.FREE; // For all users coming from the database (that doesn't have information about account type, set account type to FREE)
     }
 
     // Constructor for creating a new customer in the application
@@ -35,6 +41,7 @@ public class Customer {
         this.active = active;
         this.birthDate = birthDate;
         this.createDate = LocalDate.now(); // Automatically set to the current date when the object is created
+        this.accountType = AccountType.PREMIUM; // For all users created in the application, set account type to FREE
     }
 
     public int getCustomerId() {
@@ -89,4 +96,11 @@ public class Customer {
         this.birthDate = birthDate;
     }
 
+    public AccountType getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(AccountType accountType) {
+        this.accountType = accountType;
+    }
 }

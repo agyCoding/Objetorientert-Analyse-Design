@@ -32,8 +32,8 @@
       <Label fx:id="languageLabel" text="Language: " GridPane.columnIndex="2" GridPane.rowIndex="1" />
       <Label fx:id="pgRatingLabel" text="PG Rating: " GridPane.columnIndex="3" />
       <Label fx:id="specialFeaturesLabel" text="Special features: " GridPane.columnSpan="2" GridPane.rowIndex="3" />
-      <Button mnemonicParsing="false" onAction="#showRentWindow" text="Rent" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-      <Button mnemonicParsing="false" onAction="#tryToStream" text="Stream" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+      <Button fx:id="rentButton" mnemonicParsing="false" onAction="#showRentWindow" text="Rent" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+      <Button fx:id="streamButton" mnemonicParsing="false" onAction="#tryToStream" text="Stream" GridPane.columnIndex="1" GridPane.rowIndex="4" />
    </children>
    <padding>
       <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
