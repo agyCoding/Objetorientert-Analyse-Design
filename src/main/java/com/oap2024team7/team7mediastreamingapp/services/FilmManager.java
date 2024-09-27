@@ -1,8 +1,12 @@
 package com.oap2024team7.team7mediastreamingapp.services;
 
 import java.util.List;
+import java.util.Set;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 
+import com.oap2024team7.team7mediastreamingapp.models.Actor;
 import com.oap2024team7.team7mediastreamingapp.models.Film;
 import com.oap2024team7.team7mediastreamingapp.models.Language;
 
@@ -44,34 +48,47 @@ public class FilmManager {
         }
     } 
 
-    public List<Film> getFilmsSortedByTitle() {
-        String getQuery = "SELECT * FROM film ORDER BY title";
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(getQuery)) {
-            ResultSet rs = stmt.executeQuery();
-            List<Film> films = new ArrayList<>();
-            while (rs.next()) {
-                // Fetch the language object
-                Language language = getLanguageById(conn, rs.getInt("language_id"));
+public List<Film> getFilmsSortedByTitle() {
+    String getQuery = "SELECT * FROM film ORDER BY title";
+    try (Connection conn = DatabaseManager.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(getQuery)) {
+        ResultSet rs = stmt.executeQuery();
+        List<Film> films = new ArrayList<>();
+        while (rs.next()) {
+            // Fetch the language object
+            Language language = getLanguageById(conn, rs.getInt("language_id"));
 
-                Film film = new Film(
-                    rs.getInt("film_id"),
-                    rs.getString("title"),
-                    rs.getString("description"),
-                    rs.getInt("release_year"),
-                    language,  // Pass the Language object instead of language_id
-                    rs.getInt("rental_duration"),
-                    rs.getInt("length"),
-                    Film.Rating.valueOf(rs.getString("rating").replace("-", ""))
-                );
-                films.add(film);
+            // Convert special_features from String to Set<String>
+            String specialFeaturesString = rs.getString("special_features");
+            Set<String> specialFeatures = new HashSet<>();
+            if (specialFeaturesString != null && !specialFeaturesString.isEmpty()) {
+                specialFeatures.addAll(Arrays.asList(specialFeaturesString.split(",")));
             }
-            return films;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+
+            // Fetch the actors for this film
+            List<Actor> actors = ActorManager.getInstance().getActorsForFilm(rs.getInt("film_id"));
+
+            Film film = new Film(
+                rs.getInt("film_id"),
+                rs.getString("title"),
+                rs.getString("description"),
+                rs.getInt("release_year"),
+                language,  // Pass the Language object instead of language_id
+                rs.getInt("rental_duration"),
+                rs.getInt("length"),
+                Film.Rating.valueOf(rs.getString("rating").replace("-", "")),
+                specialFeatures,  // Pass the Set<String> instead of String[]
+                rs.getDouble("rental_rate"),
+                actors
+            );
+            films.add(film);
         }
+        return films;
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return null;
     }
+}
 
     public List<Film> getFilmsSortedByYear() {
         String getQuery = "SELECT * FROM film ORDER BY release_year";
@@ -83,6 +100,16 @@ public class FilmManager {
                 // Fetch the language object
                 Language language = getLanguageById(conn, rs.getInt("language_id"));
 
+                // Convert special_features from String to Set<String>
+                String specialFeaturesString = rs.getString("special_features");
+                Set<String> specialFeatures = new HashSet<>();
+                if (specialFeaturesString != null && !specialFeaturesString.isEmpty()) {
+                    specialFeatures.addAll(Arrays.asList(specialFeaturesString.split(",")));
+                }
+
+                // Fetch the actors for this film
+                List<Actor> actors = ActorManager.getInstance().getActorsForFilm(rs.getInt("film_id"));
+
                 Film film = new Film(
                     rs.getInt("film_id"),
                     rs.getString("title"),
@@ -91,7 +118,10 @@ public class FilmManager {
                     language,  // Pass the Language object instead of language_id
                     rs.getInt("rental_duration"),
                     rs.getInt("length"),
-                    Film.Rating.valueOf(rs.getString("rating").replace("-", ""))
+                    Film.Rating.valueOf(rs.getString("rating").replace("-", "")),
+                    specialFeatures,
+                    rs.getDouble("rental_rate"),
+                    actors
                 );
                 films.add(film);
             }
@@ -114,6 +144,16 @@ public class FilmManager {
                 // Fetch the language object
                 Language language = getLanguageById(conn, rs.getInt("language_id"));
 
+                // Convert special_features from String to Set<String>
+                String specialFeaturesString = rs.getString("special_features");
+                Set<String> specialFeatures = new HashSet<>();
+                if (specialFeaturesString != null && !specialFeaturesString.isEmpty()) {
+                    specialFeatures.addAll(Arrays.asList(specialFeaturesString.split(",")));
+                }
+
+                // Fetch the actors for this film
+                List<Actor> actors = ActorManager.getInstance().getActorsForFilm(rs.getInt("film_id"));
+
                 Film film = new Film(
                     rs.getInt("film_id"),
                     rs.getString("title"),
@@ -122,7 +162,10 @@ public class FilmManager {
                     language,  // Pass the Language object instead of language_id
                     rs.getInt("rental_duration"),
                     rs.getInt("length"),
-                    Film.Rating.valueOf(rs.getString("rating").replace("-", ""))
+                    Film.Rating.valueOf(rs.getString("rating").replace("-", "")),
+                    specialFeatures,
+                    rs.getDouble("rental_rate"),
+                    actors
                 );
                 films.add(film);
             }
@@ -143,6 +186,16 @@ public class FilmManager {
                 // Fetch the language object
                 Language language = getLanguageById(conn, rs.getInt("language_id"));
 
+                // Convert special_features from String to Set<String>
+                String specialFeaturesString = rs.getString("special_features");
+                Set<String> specialFeatures = new HashSet<>();
+                if (specialFeaturesString != null && !specialFeaturesString.isEmpty()) {
+                    specialFeatures.addAll(Arrays.asList(specialFeaturesString.split(",")));
+                }
+
+                // Fetch the actors for this film
+                List<Actor> actors = ActorManager.getInstance().getActorsForFilm(rs.getInt("film_id"));
+
                 return new Film(
                     rs.getInt("film_id"),
                     rs.getString("title"),
@@ -151,7 +204,10 @@ public class FilmManager {
                     language,  // Pass the Language object instead of language_id
                     rs.getInt("rental_duration"),
                     rs.getInt("length"),
-                    Film.Rating.valueOf(rs.getString("rating").replace("-", ""))
+                    Film.Rating.valueOf(rs.getString("rating").replace("-", "")),
+                    specialFeatures,
+                    rs.getDouble("rental_rate"),
+                    actors
                 );
             } else {
                 return null;
@@ -214,6 +270,16 @@ public class FilmManager {
                 // Fetch the language object
                 Language language = getLanguageById(conn, rs.getInt("language_id"));
 
+                // Convert special_features from String to Set<String>
+                String specialFeaturesString = rs.getString("special_features");
+                Set<String> specialFeatures = new HashSet<>();
+                if (specialFeaturesString != null && !specialFeaturesString.isEmpty()) {
+                    specialFeatures.addAll(Arrays.asList(specialFeaturesString.split(",")));
+                }
+
+                // Fetch the actors for this film
+                List<Actor> actors = ActorManager.getInstance().getActorsForFilm(rs.getInt("film_id"));
+
                 Film film = new Film(
                     rs.getInt("film_id"),
                     rs.getString("title"),
@@ -222,7 +288,10 @@ public class FilmManager {
                     language,  // Pass the Language object instead of language_id
                     rs.getInt("rental_duration"),
                     rs.getInt("length"),
-                    Film.Rating.valueOf(rs.getString("rating").replace("-", ""))
+                    Film.Rating.valueOf(rs.getString("rating").replace("-", "")),
+                    specialFeatures,
+                    rs.getDouble("rental_rate"),
+                    actors
                 );
                 filteredFilms.add(film);
             }

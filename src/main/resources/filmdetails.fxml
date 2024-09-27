@@ -27,8 +27,8 @@
          </font>
       </Label>
       <Label fx:id="releaseYearLabel" text="Release year: " GridPane.columnIndex="2" />
-      <Label fx:id="descriptionLabel" text="Description" GridPane.columnSpan="2" GridPane.rowIndex="1" />
-      <Label fx:id="actorsLabel" text="Actors: " GridPane.columnSpan="2" GridPane.rowIndex="2" />
+      <Label fx:id="descriptionLabel" text="Description" GridPane.columnSpan="2" GridPane.rowIndex="1" wrapText="true"/>
+      <Label fx:id="actorsLabel" text="Actors: " GridPane.columnSpan="2" GridPane.rowIndex="2" wrapText="true"/>
       <Label fx:id="languageLabel" text="Language: " GridPane.columnIndex="2" GridPane.rowIndex="1" />
       <Label fx:id="pgRatingLabel" text="PG Rating: " GridPane.columnIndex="3" />
       <Label fx:id="specialFeaturesLabel" text="Special features: " GridPane.columnSpan="2" GridPane.rowIndex="3" />
