@@ -94,36 +94,44 @@ public class LoginController {
         if (userManager.canLogin(usernameText, passwordText)) {
             try {
                 // Get the customer object from the database
-                customer = CustomerManager.getCustomerByUsername(usernameText);
+                Customer dbCustomer = CustomerManager.getCustomerByUsername(usernameText);
                 
                 // Ensure customer is found
-                if (customer != null) {
-                    int customersAddressId = customer.getAddressId();
+                if (dbCustomer != null) {
+                    // Merge the local customer's birthDate and accountType with the DB customer object
+                    if (customer != null) {
+                        dbCustomer.setBirthDate(customer.getBirthDate()); // Preserve birthDate from local profile
+                        dbCustomer.setAccountType(customer.getAccountType()); // Preserve AccountType from local profile
+                    }
+    
+                    // Fetch customer address based on addressId
+                    int customersAddressId = dbCustomer.getAddressId();
                     Address customersAddress = AddressManager.getAddressById(customersAddressId);
     
                     // Save the customer and address object to the session data
-                    SessionData.getInstance().setLoggedInCustomer(customer);
+                    SessionData.getInstance().setLoggedInCustomer(dbCustomer);
                     SessionData.getInstance().setCustomerAddress(customersAddress);
+    
+                    // Load primary screen
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/primary.fxml"));
+                    Parent root = loader.load();
+    
+                    // Get the controller of the next scene
+                    PrimaryController primaryController = loader.getController();
+    
+                    // Pass the username to the next scene's controller
+                    primaryController.setLoggedInUsername(usernameText);
+    
+                    // Get the current stage (window) and set the new scene
+                    Stage stage = (Stage) usernameField.getScene().getWindow();
+                    stage.setTitle("Media Streaming and Rental - Content Viewer");
+                    stage.setScene(new Scene(root));
+                    stage.show();
                 } else {
                     // Handle the case where the customer is not found
                     GeneralUtils.showAlert(AlertType.ERROR, "Login Failed", "Customer not found", "Unable to find customer information.");
                     return;
                 }
-    
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/primary.fxml"));
-                Parent root = loader.load();
-    
-                // Get the controller of the next scene
-                PrimaryController primaryController = loader.getController();
-    
-                // Pass the username to the next scene's controller
-                primaryController.setLoggedInUsername(usernameText);
-    
-                // Get the current stage (window) and set the new scene
-                Stage stage = (Stage) usernameField.getScene().getWindow();
-                stage.setTitle("Media Streaming and Rental - Content Viewer");
-                stage.setScene(new Scene(root));
-                stage.show();
             } catch (IOException e) {
                 e.printStackTrace();
                 GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the main app/primary screen", "An error occurred while trying to load the primary app");
