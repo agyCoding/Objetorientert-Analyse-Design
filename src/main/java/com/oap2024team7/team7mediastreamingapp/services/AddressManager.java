@@ -165,4 +165,21 @@ public class AddressManager {
             return -1; // Return -1 if there was an error in the method
         }
     }
+
+    public static void updateAddress(Address address) {
+        String updateQuery = "UPDATE address SET address = ?, district = ?, city_id = ?, postal_code = ?, phone = ? WHERE address_id = ?";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+            stmt.setString(1, address.getAddress());
+            stmt.setString(2, address.getDistrict());
+            stmt.setInt(3, address.getCityId()); // Ensure the city ID is set correctly
+            stmt.setString(4, address.getPostalCode());
+            stmt.setString(5, address.getPhone());
+            stmt.setInt(6, address.getAddressId());
+            stmt.executeUpdate();
+            System.out.println("Address updated in the database.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }    
 }

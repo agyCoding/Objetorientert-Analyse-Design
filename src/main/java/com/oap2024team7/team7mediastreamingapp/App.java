@@ -10,6 +10,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 
+import com.oap2024team7.team7mediastreamingapp.services.DatabaseManager;
+
 public class App extends Application {
 
     private static Scene scene;
@@ -39,6 +41,7 @@ public class App extends Application {
 	}	
 
     public static void main(String[] args) {
+        DatabaseManager.updateDatabaseSchema();
         launch();
     }
 }
