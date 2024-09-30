@@ -13,6 +13,9 @@ import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+import javafx.event.EventHandler;
 
 /**
  * Controller class for the Film Details screen.
@@ -41,7 +44,28 @@ public class FilmDetailsController {
     private Button streamButton;
 
     private Film selectedFilm;
+    private Stage stage;
 
+    /**
+     * The stage for the Film Details window.
+     * This is used to set a listener to clear the selected film when the window is closed.
+     */
+    public void setStage(Stage stage) {
+        this.stage = stage;
+        // Set a listener to clear the selectedFilm when the window is closed
+        this.stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                // Clear the selected film from SessionData
+                SessionData.getInstance().setSelectedFilm(null);
+            }
+        });
+    }
+
+    /**
+     * This method is called when a film is clicked in the main screen.
+     * @param film The film object that was clicked.
+     */
     public void setSelectedFilm(Film film) {
         // Set the film object to the film object that was clicked
         selectedFilm = film;
@@ -51,8 +75,13 @@ public class FilmDetailsController {
 
         // Set button visibility based on account type
         setButtonVisibility();
+
+        // Save the selected film to the session data
+        SessionData.getInstance().setSelectedFilm(selectedFilm);
     }
 
+
+    // This method updates the labels with the details of the selected film.
     private void updateFilmDetails() {
         // Update the labels based on the film's details
         titleLabel.setText(selectedFilm.getTitle());
@@ -69,7 +98,7 @@ public class FilmDetailsController {
         // Display the PG rating
         pgRatingLabel.setText("PG rating: " + selectedFilm.getRating().toString());
 
-                // Fetch actors from the database and set them to the film object
+        // Fetch actors from the database and set them to the film object
         List<Actor> actors = ActorManager.getInstance().getActorsForFilm(selectedFilm.getFilmId());
         StringBuilder actorsText = new StringBuilder("Actors: ");
         for (Actor actor : actors) {
@@ -83,6 +112,7 @@ public class FilmDetailsController {
         actorsLabel.setText(actorsText.toString());
     }
     
+    // This method sets the visibility of the Rent and Stream buttons based on the logged-in customer's account type.
     private void setButtonVisibility() {
         // Retrieve the logged-in customer
         Customer loggedInCustomer = SessionData.getInstance().getLoggedInCustomer();
