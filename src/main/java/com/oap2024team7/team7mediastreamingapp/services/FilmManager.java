@@ -15,9 +15,21 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Class for the Film Manager.
+ * This class is responsible for managing Film objects.
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
+
 public class FilmManager {
 
-    // Helper method to extract language data and create a Language object
+    /**
+     * Helper method to extract language data and create a Language object
+     * @param conn
+     * @param languageId
+     * @return Language object
+     * @throws SQLException
+     */
     private Language getLanguageById(Connection conn, int languageId) throws SQLException {
         String query = "SELECT * FROM language WHERE language_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -30,7 +42,11 @@ public class FilmManager {
         return null;
     }
 
-    // Helper method to map the database rating to the Film.Rating enum that's without the hyphen
+    /**
+     * Helper method to map the database rating to the Film.Rating enum that's without the hyphen
+     * @param rating
+     * @return String representation of the rating
+     */
     public static String mapRating(Film.Rating rating) {
         switch (rating) {
             case G:
@@ -48,48 +64,56 @@ public class FilmManager {
         }
     } 
 
-public List<Film> getFilmsSortedByTitle() {
-    String getQuery = "SELECT * FROM film ORDER BY title";
-    try (Connection conn = DatabaseManager.getConnection();
-         PreparedStatement stmt = conn.prepareStatement(getQuery)) {
-        ResultSet rs = stmt.executeQuery();
-        List<Film> films = new ArrayList<>();
-        while (rs.next()) {
-            // Fetch the language object
-            Language language = getLanguageById(conn, rs.getInt("language_id"));
+    /**
+     * Fetches all films from the database, sorted by title.
+     * @return List of all films
+     */
+    public List<Film> getFilmsSortedByTitle() {
+        String getQuery = "SELECT * FROM film ORDER BY title";
+        try (Connection conn = DatabaseManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(getQuery)) {
+            ResultSet rs = stmt.executeQuery();
+            List<Film> films = new ArrayList<>();
+            while (rs.next()) {
+                // Fetch the language object
+                Language language = getLanguageById(conn, rs.getInt("language_id"));
 
-            // Convert special_features from String to Set<String>
-            String specialFeaturesString = rs.getString("special_features");
-            Set<String> specialFeatures = new HashSet<>();
-            if (specialFeaturesString != null && !specialFeaturesString.isEmpty()) {
-                specialFeatures.addAll(Arrays.asList(specialFeaturesString.split(",")));
+                // Convert special_features from String to Set<String>
+                String specialFeaturesString = rs.getString("special_features");
+                Set<String> specialFeatures = new HashSet<>();
+                if (specialFeaturesString != null && !specialFeaturesString.isEmpty()) {
+                    specialFeatures.addAll(Arrays.asList(specialFeaturesString.split(",")));
+                }
+
+                // Fetch the actors for this film
+                List<Actor> actors = ActorManager.getInstance().getActorsForFilm(rs.getInt("film_id"));
+
+                Film film = new Film(
+                    rs.getInt("film_id"),
+                    rs.getString("title"),
+                    rs.getString("description"),
+                    rs.getInt("release_year"),
+                    language,  // Pass the Language object instead of language_id
+                    rs.getInt("rental_duration"),
+                    rs.getInt("length"),
+                    Film.Rating.valueOf(rs.getString("rating").replace("-", "")),
+                    specialFeatures,  // Pass the Set<String> instead of String[]
+                    rs.getDouble("rental_rate"),
+                    actors
+                );
+                films.add(film);
             }
-
-            // Fetch the actors for this film
-            List<Actor> actors = ActorManager.getInstance().getActorsForFilm(rs.getInt("film_id"));
-
-            Film film = new Film(
-                rs.getInt("film_id"),
-                rs.getString("title"),
-                rs.getString("description"),
-                rs.getInt("release_year"),
-                language,  // Pass the Language object instead of language_id
-                rs.getInt("rental_duration"),
-                rs.getInt("length"),
-                Film.Rating.valueOf(rs.getString("rating").replace("-", "")),
-                specialFeatures,  // Pass the Set<String> instead of String[]
-                rs.getDouble("rental_rate"),
-                actors
-            );
-            films.add(film);
+            return films;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
         }
-        return films;
-    } catch (SQLException e) {
-        e.printStackTrace();
-        return null;
     }
-}
 
+    /**
+     * Fetches all films from the database, sorted by release year.
+     * @return List of all films
+     */
     public List<Film> getFilmsSortedByYear() {
         String getQuery = "SELECT * FROM film ORDER BY release_year";
         try (Connection conn = DatabaseManager.getConnection();
@@ -132,6 +156,12 @@ public List<Film> getFilmsSortedByTitle() {
         }
     }
 
+    /**
+     * Fetches films from the database based on the offset and limit.
+     * @param offset
+     * @param limit
+     * @return List of films
+     */
     public List<Film> getAllFilms(int offset, int limit) {
         String getQuery = "SELECT * FROM film LIMIT ? OFFSET ?";
         try (Connection conn = DatabaseManager.getConnection();
@@ -176,6 +206,11 @@ public List<Film> getFilmsSortedByTitle() {
         }
     }
 
+    /**
+     * Fetches a detailed information about a film from the database based on the film ID.
+     * @param filmId
+     * @return Film object
+     */
     public Film getFilmById(int filmId) {
         String getQuery = "SELECT * FROM film WHERE film_id = ?";
         try (Connection conn = DatabaseManager.getConnection();
@@ -218,7 +253,18 @@ public List<Film> getFilmsSortedByTitle() {
         }
     }
 
-    // Using Integer instead of int to allow for null values
+    /**
+     * Fetches all films from the database that match the search query (based on filters set by the user)
+     * Using Integer instead of int to allow for null values
+     * @param categoryId
+     * @param rating
+     * @param maxLength
+     * @param startYear
+     * @param endYear
+     * @param offset
+     * @param limit
+     * @return List of films
+     */
     public List<Film> filterFilms(Integer categoryId, Film.Rating rating, Integer maxLength, Integer startYear, Integer endYear, int offset, int limit) {
         StringBuilder filterQuery = new StringBuilder("SELECT f.* FROM film f JOIN film_category fc ON f.film_id = fc.film_id WHERE 1=1");
 

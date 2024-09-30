@@ -3,6 +3,13 @@ package com.oap2024team7.team7mediastreamingapp.utils;
 import com.oap2024team7.team7mediastreamingapp.models.Address;
 import com.oap2024team7.team7mediastreamingapp.models.Customer;
 
+/**
+ * Class for the SessionData object.
+ * This class is responsible for managing the session data of the application.
+ * It stores the logged in customer and their address.
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
+
 public class SessionData {
     private static SessionData instance;
     private Customer loggedInCustomer;

@@ -1,3 +1,4 @@
+// Last Modified: 30.09.2024
 package com.oap2024team7.team7mediastreamingapp.controllers;
 
 import java.util.List;
@@ -12,6 +13,12 @@ import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
+
+/**
+ * Controller class for the Film Details screen.
+ * This class is responsible for displaying the details of a selected film.
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
 
 public class FilmDetailsController {
     @FXML

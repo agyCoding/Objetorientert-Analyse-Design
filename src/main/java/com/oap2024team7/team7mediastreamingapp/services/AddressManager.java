@@ -11,6 +11,12 @@ import java.sql.SQLException;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKBWriter;
 
+/**
+ * Class for the Address Manager.
+ * This class is responsible for managing Address objects.
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
+
 public class AddressManager {
     private static AddressManager instance;
 
@@ -21,6 +27,11 @@ public class AddressManager {
         return instance;
     }
 
+    /**
+     * Get the cityId for a city name.
+     * @param cityName
+     * @return cityId
+     */
     public int getCityIdFromCityName(String cityName) {
         try {
              // First, normalize the cityName string, ensuring that's one capital letter, and the rest is regular letter and that there aren't multiple empty spaces in the string
@@ -59,6 +70,11 @@ public class AddressManager {
         }
     }
     
+    /**
+     * Get the city name for a city id.
+     * @param cityId
+     * @return cityName
+     */
     public String getCityNameFromCityId(int cityId) {
         try {
             // Query the table "city" in the database to find city for the city_id sent into the method
@@ -85,7 +101,11 @@ public class AddressManager {
         }
     }
 
-    // Create address object from the database with the address_id
+    /**
+     * Get the address object for an address id.
+     * @param addressId
+     * @return Address object
+     */
     public static Address getAddressById(int addressId) {
         String query = "SELECT address, district, city_id, postal_code, phone, location FROM address WHERE address_id = ?";
         try (Connection conn = DatabaseManager.getConnection();
@@ -111,8 +131,11 @@ public class AddressManager {
         return null;  // Return null if address not found or if there's an error
     }
 
-    // This method will check if the address already exists and if not register a new address
-    // The method also returns the id of the address
+    /**
+     * This method will check if the address already exists and if not register a new address
+     * @param newAddress
+     * @return addressId
+     */
     public static int registerAddress(Address newAddress) {
         try {
             // Query the table "address" in the database to find address_id for the address, district, cityId, postalCode, and phone sent into the method (to check if it already exists)
@@ -166,6 +189,10 @@ public class AddressManager {
         }
     }
 
+    /**
+     * Update an address in the database.
+     * @param address
+     */
     public static void updateAddress(Address address) {
         String updateQuery = "UPDATE address SET address = ?, district = ?, city_id = ?, postal_code = ?, phone = ? WHERE address_id = ?";
         try (Connection conn = DatabaseManager.getConnection();

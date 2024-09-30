@@ -1,5 +1,11 @@
 package com.oap2024team7.team7mediastreamingapp.models;
 
+/**
+ * Class for the Language object.
+ * This class is responsible for creating and managing Language objects.
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
+
 public class Language {
     private int languageId;
     private String languageName;

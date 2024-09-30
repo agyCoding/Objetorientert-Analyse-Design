@@ -10,7 +10,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Class for the Category Manager.
+ * This class is responsible for managing Category objects.
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
+
 public class CategoryManager {
+    /**
+     * Fetches all categories from the database.
+     * @return List of all categories
+     */
     public List<Category> getAllCategories() {
         // Get all categories from the database
         String getQuery = "SELECT * FROM category";

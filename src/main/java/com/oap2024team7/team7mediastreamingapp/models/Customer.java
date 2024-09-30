@@ -2,8 +2,15 @@ package com.oap2024team7.team7mediastreamingapp.models;
 
 import java.time.LocalDate;
 
-// This is our basic user class (that will be able to view content)
-// This is called Customer to match the database schema
+/**
+ * Class for the Customer object.
+ * This class is responsible for creating and managing Customer objects.
+ * It also contains the birth date and account type information for the customer.
+ * This is our basic user class (that will be able to view content).
+ * This is called Customer to match the database schema
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
+
 public class Customer {
     private int customerId; // automatically assigned in the database
     private String firstName;

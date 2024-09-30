@@ -3,6 +3,12 @@ package com.oap2024team7.team7mediastreamingapp.models;
 import java.util.Set;
 import java.util.List;
 
+/**
+ * Class for the Film object.
+ * This class is responsible for creating and managing Film objects.
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
+
 public class Film {
     private int filmId; // automatically assigned in the database
     private String title;
