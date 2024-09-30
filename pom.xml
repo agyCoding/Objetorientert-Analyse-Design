@@ -43,21 +43,21 @@
             <artifactId>javafx-controls</artifactId>
             <version>8.0.172</version>
             <scope>system</scope>
-            <systemPath>C:/Program Files/Java/jdk-1.8/jre/lib/ext/jfxrt.jar</systemPath>
+            <systemPath>${project.basedir}/lib/jfxrt.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>8.0.172</version>
             <scope>system</scope>
-            <systemPath>C:/Program Files/Java/jdk-1.8/jre/lib/ext/jfxrt.jar</systemPath>
+            <systemPath>${project.basedir}/lib/jfxrt.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
             <version>8.0.172</version>
             <scope>system</scope>
-            <systemPath>C:/Program Files/Java/jdk-1.8/jre/lib/ext/jfxrt.jar</systemPath>
+            <systemPath>${project.basedir}/lib/jfxrt.jar</systemPath>
         </dependency>
 	</dependencies>
 
