@@ -8,7 +8,17 @@ import java.time.LocalDate;
 
 import com.oap2024team7.team7mediastreamingapp.models.Customer;
 
+/**
+ * Class for the Customer Manager.
+ * This class is responsible for managing Customer objects.
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
+
 public class CustomerManager {
+    /**
+     * Registers a new customer in the database.
+     * @param newCustomer
+     */
     public static void registerNewCustomer(Customer newCustomer) {
         // Add new customer to the database
         String insertQuery = "INSERT INTO customer (first_name, last_name, email, address_id, active, store_id) VALUES (?, ?, ?, ?, ?, ?)";
@@ -27,7 +37,11 @@ public class CustomerManager {
         }
     }
 
-    // Create Customer object from the databased, based on email=username
+    /**
+     * Create Customer object from the databased, based on email=username
+     * @param username
+     * @return
+     */
     public static Customer getCustomerByUsername(String username) {
         String selectQuery = "SELECT * FROM customer WHERE email = ?";
         try (Connection conn = DatabaseManager.getConnection();
@@ -53,6 +67,10 @@ public class CustomerManager {
         return null;
     }
 
+    /**
+     * Update customer information in the database.
+     * @param customer
+     */
     public static void updateCustomer(Customer customer) {
         String updateQuery = "UPDATE customer SET first_name = ?, last_name = ? WHERE customer_id = ?";
         try (Connection conn = DatabaseManager.getConnection();

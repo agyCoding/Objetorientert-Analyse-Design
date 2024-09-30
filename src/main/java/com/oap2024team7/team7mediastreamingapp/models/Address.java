@@ -6,6 +6,15 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKBReader;
 
+/**
+ * Class for the Address object.
+ * This class is responsible for creating and managing Address objects.
+ * It also contains the GEOMETRY (Point) information for the address.
+ * The GEOMETRY is stored in the database in WKB format.
+ * The class provides methods to convert the WKB to a Point object.
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
+
 public class Address {
     private int addressId; // automatically assigned in the database
     private String address;

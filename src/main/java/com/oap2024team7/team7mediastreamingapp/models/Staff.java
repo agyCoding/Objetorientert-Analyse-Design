@@ -1,5 +1,11 @@
 package com.oap2024team7.team7mediastreamingapp.models;
 
+/**
+ * Class for the Staff object.
+ * This class is responsible for creating and managing Staff objects.
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
+
 public class Staff {
     private int staffId; // automatically assigned in the database
     private String firstName;

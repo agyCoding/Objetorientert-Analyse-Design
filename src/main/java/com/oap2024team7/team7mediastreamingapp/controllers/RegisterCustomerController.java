@@ -1,33 +1,4 @@
-/**
- * RegisterCustomerController.java
- * 
- * Author: Team 7 - OAP 2024
- * Contributions: Agata (Sole contributor)
- * 
- * Purpose: 
- * The RegisterCustomerController handles the user registration process for new customers in the media streaming 
- * application. It manages the registration interface and performs necessary validations on user input. Upon 
- * successful registration, it creates a new customer record and stores related address information.
- * 
- * The controller is designed to:
- * - Gather input data from the registration form fields.
- * - Validate that all required fields are filled out before proceeding.
- * - Normalize input data and manage city and address registration using the AddressManager.
- * - Create and register a new Customer instance with the provided details.
- * - Provide feedback to the user through alerts about the registration status.
- * - Allow navigation back to the login screen upon successful registration.
- * 
- * Methods:
- * 
- * - `tryToRegisterNewCustomer()`: Validates user input for required fields, retrieves data from the form, 
- *   and attempts to register the new customer along with their address. Displays alerts for any errors 
- *   encountered during the process, including validation and registration failures.
- * 
- * - `switchToLogin()`: Switches the current view to the login screen, allowing users to log in after 
- *   successful registration. Handles any potential errors in loading the login interface.
- */
-
-
+// Last Modified: 30.09.2024
 package com.oap2024team7.team7mediastreamingapp.controllers;
 
 import java.io.IOException;
@@ -48,6 +19,12 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.scene.control.DatePicker;
+
+/**
+ * Controller class for the Register Customer screen.
+ * This class is responsible for handling user input and registering a new customer account.
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
 
 public class RegisterCustomerController {
     @FXML
@@ -77,6 +54,11 @@ public class RegisterCustomerController {
     @FXML
     private TextField phoneField;
 
+    /**
+     * Method to handle the registration process.
+     * It checks the user input and registers a new customer account (and, if needed, city and address).
+     * If the registration is successful, the method switches to the login screen.
+     */
     public void tryToRegisterNewCustomer() {
         // Basic validation to check if fields are empty
         if (firstNameField.getText().isEmpty() || lastNameField.getText().isEmpty() || 
@@ -118,6 +100,7 @@ public class RegisterCustomerController {
 
             int addressId = AddressManager.registerAddress(newAddress);
             if (addressId == -1) {
+                // Show an error message to the user
                 GeneralUtils.showAlert(AlertType.ERROR, "Error", "Invalid Address", "Unable to register this address.");
                 return;
             }
@@ -129,16 +112,19 @@ public class RegisterCustomerController {
             CustomerManager.registerNewCustomer(newCustomer);
             SessionData.getInstance().setLoggedInCustomer(newCustomer);
     
+            // Show a success message to the user
             GeneralUtils.showAlert(AlertType.INFORMATION, "Success", "Registration Successful", "Your account has been registered successfully.");
             
             switchToLogin();
     
         } catch (Exception e) {
             e.printStackTrace(); // Log the error for debugging purposes
+            // Show an error message to the user
             GeneralUtils.showAlert(AlertType.ERROR, "Registration Error", "An error occurred", "Unable to register user account. Please try again.");
         }
     }
 
+    // Method to switch to the login screen
     @FXML
     private void switchToLogin() {
         try {

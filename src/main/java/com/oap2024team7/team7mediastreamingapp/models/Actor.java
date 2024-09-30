@@ -1,5 +1,11 @@
 package com.oap2024team7.team7mediastreamingapp.models;
 
+/**
+ * Class for the Actor object.
+ * This class is responsible for creating and managing Actor objects.
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
+
 public class Actor {
     private int actorId;
     private String firstName;

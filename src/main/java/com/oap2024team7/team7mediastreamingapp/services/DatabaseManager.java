@@ -5,11 +5,22 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * Class for the Database Manager.
+ * This class is responsible for managing the database connection and schema.
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
+
 public class DatabaseManager {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/sakila";
     private static final String DB_USERNAME = "student";            
     private static final String DB_PASSWORD = "student";
 
+    /**
+     * Establishes a connection to the database.
+     * @return Connection object
+     * @throws SQLException
+     */
     public static Connection getConnection() throws SQLException {
         try {
             System.out.println("Loading MySQL JDBC Driver...");

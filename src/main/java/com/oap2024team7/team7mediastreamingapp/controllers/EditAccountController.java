@@ -1,3 +1,4 @@
+// Last Modified: 30.09.2024
 package com.oap2024team7.team7mediastreamingapp.controllers;
 
 import com.oap2024team7.team7mediastreamingapp.models.Customer;
@@ -12,6 +13,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.DatePicker;
 import java.time.LocalDate;
+
+/**
+ * Controller class for the Edit Account screen.
+ * This class is responsible for handling user input and updating the customer's account information.
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
 
 public class EditAccountController {
     @FXML

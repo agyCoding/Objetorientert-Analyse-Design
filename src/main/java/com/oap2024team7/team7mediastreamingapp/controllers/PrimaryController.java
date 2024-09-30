@@ -1,58 +1,4 @@
-/**
- * PrimaryController.java
- * 
- * Author(s): Team 7 - OAP 2024
- * Contributions:
- * - Agata: Implemented film loading, pagination, and filtering logic,
- *          Created the user menu system with login/logout and profile editing functionalities,
- *          Designed the filter and sorting functionality for films,
- *          Integrated film details viewing and layout management.
- * 
- * Purpose: 
- * The PrimaryController is responsible for managing the main interface of the media streaming and rental app. 
- * It handles the display of films, user login/logout, film filtering, and pagination for navigation between 
- * pages of film results. It also manages the user's profile options, including editing their profile and logging out.
- * 
- * The main tasks the controller addresses:
- * - Display a list of films, with support for sorting and filtering based on user-selected criteria.
- * - Support pagination so users can navigate through a list of films, loading a specific number of items per page.
- * - Enable users to toggle between filter menus and load the film details view for selected films.
- * - Allow users to log out or edit their profile information from the user menu.
- * 
- * Methods:
- * 
- * - `initialize()`: Initializes the controller by loading categories, films, user profile data, and setting up the 
- *   event listeners for the user menu and pagination controls.
- * 
- * - `loadFilms()`: Loads films either based on the applied filters or retrieves all films if no filters are set.
- *   It manages pagination, ensuring the correct number of films is displayed per page.
- * 
- * - `nextPage()`: Increments the offset for pagination and loads the next set of films.
- * 
- * - `previousPage()`: Decrements the offset for pagination and loads the previous set of films.
- * 
- * - `updateCurrentPageLabel()`: Updates the current page label to show the user which page they are on, based on
- *   the current offset and limit.
- * 
- * - `applyFilters()`: Applies user-selected filters for category, rating, year range, and film length. It resets
- *   the pagination to the first page and reloads the films according to the filter criteria.
- * 
- * - `handleEditProfile()`: Loads the profile editing interface where the user can update their account information.
- * 
- * - `handleLogout()`: Logs the user out of the application and redirects them to the login screen.
- * 
- * - `toggleFilterMenu()`: Toggles the visibility of the filter menu, allowing users to hide or show it.
- * 
- * - `showFilmDetails(String film)`: Displays more detailed information about a selected film when clicked.
- * 
- * - `loadCategories()`: Populates the genre filter dropdown with available categories.
- * 
- * - `loadRatings()`: Populates the rating filter dropdown with available film rating options.
- * 
- * - `switchToLogin()`: Redirects the user to the login screen after a logout action.
- */
-
-
+// Last Modified: 30.09.2024
 package com.oap2024team7.team7mediastreamingapp.controllers;
 
 import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
@@ -84,6 +30,13 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Modality;
+
+/**
+ * Controller class for the primary screen.
+ * It displays a list of films and allows the user to filter and sort the films.
+ * The controller also allows the user to view film details and navigate to the edit profile screen or logout.
+ * @author  Agata (Agy) Olaussen (@agyCoding)
+ */
 
 public class PrimaryController {
 
@@ -146,6 +99,10 @@ public class PrimaryController {
     private Integer selectedStartYear;
     private Integer selectedEndYear;
     
+    /**
+     * Initializes the controller class.
+     * It is used to initialize the controller and load the initial data.
+     */
     @FXML
     public void initialize() {
         loggedInCustomer = SessionData.getInstance().getLoggedInCustomer();
@@ -213,11 +170,17 @@ public class PrimaryController {
         });
     }
 
+    /**
+     * Sets the username of the currently logged in user.
+     * @param username
+     */
     public void setLoggedInUsername(String username) {
         currentUsername = username; // Example value
         loggedInUserLabel.setText("Logged in as: " + currentUsername);
     }
     
+
+    // Handles the action when the user clicks the "Edit Profile" menu item.
     private void handleEditProfile() {
         // Load the edit account screen
         try {
@@ -253,6 +216,7 @@ public class PrimaryController {
         System.out.println("Edit Profile clicked");
     }
     
+    // Handles the action when the user clicks the "Logout" menu item.
     private void handleLogout() {
         // Logic to log out the user
         System.out.println("Logout clicked");
@@ -260,6 +224,7 @@ public class PrimaryController {
         switchToLogin();
     }
 
+    // Toggle the filter menu visibility
     private void toggleFilterMenu() {
         if (filterMenu.isVisible()) {
             filterMenu.setVisible(false);
@@ -270,6 +235,7 @@ public class PrimaryController {
         }
     }
 
+    // Load films based on the current filters
     private void loadFilms() {
         List<Film> films;
     
@@ -298,6 +264,7 @@ public class PrimaryController {
         prevButton.setDisable(offset == 0);
     }
 
+    // Pagination methods
     private void nextPage() {
         offset += limit;
         loadFilms();
@@ -312,11 +279,13 @@ public class PrimaryController {
         }
     }
 
+    // Update the current page label based on pagination
     private void updateCurrentPageLabel() {
         int currentPage = (offset / limit) + 1;
         currentPageLabel.setText("Page: " + currentPage);
     }
 
+    // Sort films based on the selected option
     @FXML    
     private void sortFilms() {
         String selectedSort = sortComboBox.getValue();
@@ -330,6 +299,10 @@ public class PrimaryController {
         filmListView.getItems().addAll(sortedFilms);
     }
 
+    /**
+     * Shows the details of the selected film in a pop-up window.
+     * @param film
+     */
     private void showFilmDetails(Film film) {
         // Load the edit account screen
         try {
@@ -362,6 +335,7 @@ public class PrimaryController {
         System.out.println("Film details: " + film.getTitle() + " (" + film.getReleaseYear() + ")");
     }
 
+    // Load all categories and add them to the ComboBox
     private void loadCategories() {
         List<Category> categories = categoryManager.getAllCategories();
     
@@ -396,6 +370,7 @@ public class PrimaryController {
         }
     }
     
+    // Load all ratings and add them to the ComboBox
     private void loadRatings() {
         // Get all the enum values
         Film.Rating[] ratings = Film.Rating.values();
@@ -427,6 +402,7 @@ public class PrimaryController {
         ratingComboBox.getItems().addAll(ratings);
     }
 
+    // Apply filters to the films list view
     @FXML
     private void applyFilters() {
         // Store the filters globally
@@ -445,7 +421,8 @@ public class PrimaryController {
         // Update page label
         updateCurrentPageLabel();
     }
-        
+    
+    // Redirect to the login screen
     @FXML
     private void switchToLogin() {
         try {
@@ -459,7 +436,7 @@ public class PrimaryController {
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
-
+            // Show an error alert if the login screen cannot be loaded
             GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the login screen", "En error occured while trying to load the registration screen");
         }
     }

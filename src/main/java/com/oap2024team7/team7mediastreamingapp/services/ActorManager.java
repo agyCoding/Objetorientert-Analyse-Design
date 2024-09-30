@@ -10,6 +10,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class for the Actor Manager.
+ * This class is responsible for managing Actor objects.
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
+
 public class ActorManager {
     // Singleton instance
     private static ActorManager instance;
@@ -26,6 +32,11 @@ public class ActorManager {
         return instance;
     }
 
+    /**
+     * Get all actors from the database for a specific film.
+     * @param filmId The ID of the film
+     * @return List of all actors
+     */
     public List<Actor> getActorsForFilm(int filmId) {
         List<Actor> actors = new ArrayList<>();
         String query = "SELECT a.actor_id, a.first_name, a.last_name " +

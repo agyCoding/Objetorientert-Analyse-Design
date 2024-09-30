@@ -1,38 +1,4 @@
-/**
- * LoginController.java
- * 
- * Author: Team 7 - OAP 2024
- * Contributions: Agata (Sole contributor)
- * 
- * Purpose: 
- * The LoginController is responsible for managing the login interface and handling user authentication for 
- * both customers and staff. It verifies the login credentials entered by the user and redirects them to the 
- * main application interface (primary view) upon successful login. Additionally, it allows navigation to 
- * the user registration interface for new customers.
- * 
- * The controller is designed to:
- * - Manage user input for username and password.
- * - Authenticate the user using the UserManager and CustomerManager services.
- * - Initialize fields based on session data and pre-fill login fields when applicable.
- * - Handle navigation to the primary content viewer after login or user registration screen for new users.
- * 
- * Methods:
- * 
- * - `initialize()`: Initializes the controller, setting the focus on the username field and, if a customer 
- *   is already logged in, pre-fills the username field with their email.
- * 
- * - `tryToLogin()`: Handles the login process by checking the username and password entered by the user. 
- *   If the login is successful, the method switches to the primary screen. It also handles the special case 
- *   for admin login (v1), where the login is hardcoded for presentation purposes.
- * 
- * - `switchToUserRegistration()`: Switches to the user registration interface for new customers, allowing 
- *   them to create an account if they haven't already.
- * 
- * - `setLoggedInUsername(String username)`: Passes the logged-in username to the next scene (primary content viewer).
- */
-
-
-
+// Last Modified: 30.09.2024
 package com.oap2024team7.team7mediastreamingapp.controllers;
 
 import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
@@ -53,6 +19,14 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.io.IOException;
 
+/**
+ * Controller class for the Login screen.
+ * This class is responsible for handling user login and authentication.
+ * It manages the login interface and redirects users to the main application screen upon successful login.
+ * The controller also allows navigation to the user registration interface for new customers.
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
+
 public class LoginController {
     
     @FXML
@@ -65,6 +39,10 @@ public class LoginController {
 
     private Customer customer;
 
+    /**
+     *   Initializes the controller, setting the focus on the username field and, if a customer 
+     *   is already logged in, pre-fills the username field with their email.
+     */
     @FXML
     private void initialize() {
         // Set the username field to be focused when the screen is loaded
@@ -76,6 +54,11 @@ public class LoginController {
         }
     }
 
+    /*
+     * Method to handle the login process.
+     * It checks the username and password entered by the user.
+     * If the login is successful, the method switches to the primary screen.
+     */
     @FXML
     private void tryToLogin() {
         // Clear previous session data
@@ -142,6 +125,9 @@ public class LoginController {
         }
     }    
 
+    /**
+     * Method to switch to the user registration screen.
+     */
     @FXML
     private void switchToUserRegistration() {
         try {
@@ -155,7 +141,7 @@ public class LoginController {
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
-
+            // If an error occurs while trying to load the registration screen, show an error alert
             GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the registration screen", "En error occured while trying to load the registration screen");
         }
     }

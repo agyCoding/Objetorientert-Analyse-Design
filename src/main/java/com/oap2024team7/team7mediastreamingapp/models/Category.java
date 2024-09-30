@@ -1,6 +1,11 @@
 package com.oap2024team7.team7mediastreamingapp.models;
 
-// Category (Genre) class
+/**
+ * Class for the Category (Genre) object.
+ * This class is responsible for creating and managing Category objects.
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
+
 public class Category {
     private int categoryId;
     private String categoryName;

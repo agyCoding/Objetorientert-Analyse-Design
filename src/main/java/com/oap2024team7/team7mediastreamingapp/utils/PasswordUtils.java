@@ -4,9 +4,19 @@ package com.oap2024team7.team7mediastreamingapp.utils;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * This class is responsible for hashing the password (using basic SHA-256)
+ * This is not secure, bcrypt or scrypt should be used instead, but this is our first project so we're starting with sth easy
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
+
 public class PasswordUtils {
-    // using basic SHA-256 for password hashing
-    // this is not secure, bcrypt or scrypt should be used instead, but this is our first project so we're starting with sth easy 
+
+    /**
+     * Method to hash the password using SHA-256
+     * @param password
+     * @return hashed password
+     */
     public static String hashPassword(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -17,6 +27,11 @@ public class PasswordUtils {
         }
     }
 
+    /**
+     * Method to convert the byte array to a hex string
+     * @param hash
+     * @return hex string
+     */
     private static String bytesToHex(byte[] hash) {
         StringBuilder hexString = new StringBuilder(2 * hash.length);
         for (byte b : hash) {
