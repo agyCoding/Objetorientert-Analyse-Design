@@ -9,6 +9,7 @@ import java.util.HashSet;
 import com.oap2024team7.team7mediastreamingapp.models.Actor;
 import com.oap2024team7.team7mediastreamingapp.models.Film;
 import com.oap2024team7.team7mediastreamingapp.models.Language;
+import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -68,36 +69,32 @@ public class FilmManager {
      * Fetches all films from the database, sorted by title.
      * @return List of all films
      */
-    public List<Film> getFilmsSortedByTitle() {
-        String getQuery = "SELECT * FROM film ORDER BY title";
+    public List<Film> getFilmsSortedByTitle(int storeId) {
+        String getQuery = "SELECT DISTINCT f.* FROM film f " +
+                          "JOIN inventory i ON f.film_id = i.film_id " +
+                          "WHERE i.store_id = ? " +
+                          "ORDER BY f.title";
         try (Connection conn = DatabaseManager.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(getQuery)) {
+             PreparedStatement stmt = conn.prepareStatement(getQuery)) {
+            stmt.setInt(1, storeId);  // Filter by store_id
             ResultSet rs = stmt.executeQuery();
             List<Film> films = new ArrayList<>();
             while (rs.next()) {
-                // Fetch the language object
                 Language language = getLanguageById(conn, rs.getInt("language_id"));
-
-                // Convert special_features from String to Set<String>
-                String specialFeaturesString = rs.getString("special_features");
-                Set<String> specialFeatures = new HashSet<>();
-                if (specialFeaturesString != null && !specialFeaturesString.isEmpty()) {
-                    specialFeatures.addAll(Arrays.asList(specialFeaturesString.split(",")));
-                }
-
-                // Fetch the actors for this film
+                GeneralUtils utils = new GeneralUtils();
+                Set<String> specialFeatures = utils.convertToSet(rs.getString("special_features"));
                 List<Actor> actors = ActorManager.getInstance().getActorsForFilm(rs.getInt("film_id"));
-
+    
                 Film film = new Film(
                     rs.getInt("film_id"),
                     rs.getString("title"),
                     rs.getString("description"),
                     rs.getInt("release_year"),
-                    language,  // Pass the Language object instead of language_id
+                    language,
                     rs.getInt("rental_duration"),
                     rs.getInt("length"),
                     Film.Rating.valueOf(rs.getString("rating").replace("-", "")),
-                    specialFeatures,  // Pass the Set<String> instead of String[]
+                    specialFeatures,
                     rs.getDouble("rental_rate"),
                     actors
                 );
@@ -114,8 +111,11 @@ public class FilmManager {
      * Fetches all films from the database, sorted by release year.
      * @return List of all films
      */
-    public List<Film> getFilmsSortedByYear() {
-        String getQuery = "SELECT * FROM film ORDER BY release_year";
+    public List<Film> getFilmsSortedByYear(int storeId) {
+        String getQuery = "SELECT DISTINCT f.* FROM film f " +
+                      "JOIN inventory i ON f.film_id = i.film_id " +
+                      "WHERE i.store_id = ? " +
+                      "ORDER BY f.release_year";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(getQuery)) {
             ResultSet rs = stmt.executeQuery();
@@ -124,12 +124,8 @@ public class FilmManager {
                 // Fetch the language object
                 Language language = getLanguageById(conn, rs.getInt("language_id"));
 
-                // Convert special_features from String to Set<String>
-                String specialFeaturesString = rs.getString("special_features");
-                Set<String> specialFeatures = new HashSet<>();
-                if (specialFeaturesString != null && !specialFeaturesString.isEmpty()) {
-                    specialFeatures.addAll(Arrays.asList(specialFeaturesString.split(",")));
-                }
+                GeneralUtils utils = new GeneralUtils();
+                Set<String> specialFeatures = utils.convertToSet(rs.getString("special_features"));
 
                 // Fetch the actors for this film
                 List<Actor> actors = ActorManager.getInstance().getActorsForFilm(rs.getInt("film_id"));
@@ -162,24 +158,27 @@ public class FilmManager {
      * @param limit
      * @return List of films
      */
-    public List<Film> getAllFilms(int offset, int limit) {
-        String getQuery = "SELECT * FROM film LIMIT ? OFFSET ?";
+    public List<Film> getAllFilms(int offset, int limit, int storeId) {
+        String getQuery = "SELECT DISTINCT f.* FROM film f " +
+        "JOIN inventory i ON f.film_id = i.film_id " +
+        "WHERE i.store_id = ? " +
+        "ORDER BY f.title " +
+        "LIMIT ? OFFSET ?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(getQuery)) {
-            stmt.setInt(1, limit);
-            stmt.setInt(2, offset);
+            stmt.setInt(1, storeId);
+            stmt.setInt(2, limit);
+            stmt.setInt(3, offset);
+
             ResultSet rs = stmt.executeQuery();
             List<Film> films = new ArrayList<>();
             while (rs.next()) {
                 // Fetch the language object
                 Language language = getLanguageById(conn, rs.getInt("language_id"));
 
-                // Convert special_features from String to Set<String>
-                String specialFeaturesString = rs.getString("special_features");
-                Set<String> specialFeatures = new HashSet<>();
-                if (specialFeaturesString != null && !specialFeaturesString.isEmpty()) {
-                    specialFeatures.addAll(Arrays.asList(specialFeaturesString.split(",")));
-                }
+                // Fetch special features
+                GeneralUtils utils = new GeneralUtils();
+                Set<String> specialFeatures = utils.convertToSet(rs.getString("special_features"));
 
                 // Fetch the actors for this film
                 List<Actor> actors = ActorManager.getInstance().getActorsForFilm(rs.getInt("film_id"));
@@ -265,8 +264,11 @@ public class FilmManager {
      * @param limit
      * @return List of films
      */
-    public List<Film> filterFilms(Integer categoryId, Film.Rating rating, Integer maxLength, Integer startYear, Integer endYear, int offset, int limit) {
-        StringBuilder filterQuery = new StringBuilder("SELECT f.* FROM film f JOIN film_category fc ON f.film_id = fc.film_id WHERE 1=1");
+    public List<Film> filterFilms(Integer categoryId, Film.Rating rating, Integer maxLength, Integer startYear, Integer endYear, int offset, int limit, int storeId) {
+        StringBuilder filterQuery = new StringBuilder("SELECT DISTINCT f.* FROM film f " +
+        "JOIN film_category fc ON f.film_id = fc.film_id " +
+        "JOIN inventory i ON f.film_id = i.film_id " +
+        "WHERE 1=1");
 
         if (categoryId != null) {
             filterQuery.append(" AND fc.category_id = ?");
@@ -283,7 +285,7 @@ public class FilmManager {
         if (endYear != null) {
             filterQuery.append(" AND f.release_year <= ?");
         }
-
+        filterQuery.append(" AND i.store_id = ?");
         filterQuery.append(" LIMIT ? OFFSET ?");
 
         try (Connection conn = DatabaseManager.getConnection();
@@ -306,7 +308,7 @@ public class FilmManager {
             if (endYear != null) {
                 stmt.setInt(paramIndex++, endYear);
             }
-
+            stmt.setInt(paramIndex++, storeId);
             stmt.setInt(paramIndex++, limit);
             stmt.setInt(paramIndex++, offset);
 

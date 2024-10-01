@@ -118,7 +118,7 @@ public class RentFilmController {
                 // Check if customer already has an active rental for this film
                 if (inventoryManager.customerHasActiveRental(loggedInCustomer.getCustomerId(), filmId, rentalStartDate, rentalEndDate)) {
                     Platform.runLater(() -> {
-                        GeneralUtils.showAlert(Alert.AlertType.ERROR, ERROR_TITLE, "You already have this film rented within this time period.", "Please return the film or wait for the current rental to expire.");
+                        GeneralUtils.showAlert(Alert.AlertType.ERROR, ERROR_TITLE, "You already have this film rented within this time period.", "Please wait for the current rental to expire.");
                     });
                     return;
                 }
