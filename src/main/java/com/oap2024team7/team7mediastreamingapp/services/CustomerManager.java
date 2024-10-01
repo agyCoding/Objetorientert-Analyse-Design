@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.time.LocalDate;
 
 import com.oap2024team7.team7mediastreamingapp.models.Customer;
+import com.oap2024team7.team7mediastreamingapp.models.Customer.AccountType;
 
 /**
  * Class for the Customer Manager.
@@ -21,7 +22,7 @@ public class CustomerManager {
      */
     public static void registerNewCustomer(Customer newCustomer) {
         // Add new customer to the database
-        String insertQuery = "INSERT INTO customer (first_name, last_name, email, address_id, active, store_id) VALUES (?, ?, ?, ?, ?, ?)";
+        String insertQuery = "INSERT INTO customer (first_name, last_name, email, address_id, active, store_id, account_type) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseManager.getConnection();
             PreparedStatement stmt = conn.prepareStatement(insertQuery)) {
                 stmt.setString(1, newCustomer.getFirstName());
@@ -30,6 +31,7 @@ public class CustomerManager {
                 stmt.setInt(4, newCustomer.getAddressId());
                 stmt.setInt(5, newCustomer.getActive());
                 stmt.setInt(6, 1); // hardcoder store_id 1 since we're not using stores in the app, but the field is NN
+                stmt.setString(7, newCustomer.getAccountType().toString());
                 stmt.executeUpdate();
                 System.out.println("Customer is added to the database.");           
         } catch (Exception e) {
@@ -55,8 +57,9 @@ public class CustomerManager {
                     int addressId = rs.getInt("address_id");
                     int active = rs.getInt("active");
                     LocalDate createDate = rs.getDate("create_date").toLocalDate();
+                    AccountType accountType = AccountType.valueOf(rs.getString("account_type"));
 
-                    Customer customer = new Customer(customerId, firstName, lastName, username, addressId, active, createDate);
+                    Customer customer = new Customer(customerId, firstName, lastName, username, addressId, active, createDate, accountType);
 
                     return customer;
                 }

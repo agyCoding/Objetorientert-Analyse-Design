@@ -2,6 +2,7 @@ package com.oap2024team7.team7mediastreamingapp.services;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -44,17 +45,26 @@ public class DatabaseManager {
         }
     }
     
-    // OBS! Maybe we need to put birth_date on the profile not on the customer table. Waiting for feedback from the team
+    /**
+     * Updates the database schema by adding a new column 'account_type' to the 'customer' table.
+     * The column is of type ENUM with values 'FREE' and 'PREMIUM'.
+     */
     public static void updateDatabaseSchema() {
-        String alterCustomerTable = "ALTER TABLE customer ADD birth_date DATE;";
+        String checkColumnQuery = "SELECT column_name FROM information_schema.columns WHERE table_name = 'customer' AND column_name = 'account_type'";
+        String alterCustomerTable = "ALTER TABLE customer ADD account_type ENUM('FREE', 'PREMIUM') DEFAULT 'FREE';";
 
         try (Connection conn = DatabaseManager.getConnection();
              Statement stmt = conn.createStatement()) {
 
-            // Execute SQL command to alter the customer table
-            stmt.executeUpdate(alterCustomerTable);
+            // Check if the account_type column exists in the customer table
+            ResultSet rs = stmt.executeQuery(checkColumnQuery);
 
-            System.out.println("Database schema updated successfully.");
+            if (!rs.next()) { // Column doesn't exist
+            stmt.executeUpdate(alterCustomerTable);
+                System.out.println("Column 'account_type' added to customer table.");
+            } else {
+                System.out.println("Column 'account_type' already exists in customer table.");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

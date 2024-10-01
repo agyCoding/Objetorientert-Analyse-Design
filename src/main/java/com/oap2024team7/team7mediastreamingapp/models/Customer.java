@@ -20,14 +20,14 @@ public class Customer {
     private int active; // this maps to TINYINT in the database with 1 for active and 0 for inactive
     private LocalDate birthDate; // LOCAL ATTRIBUTE just for application
     private LocalDate createDate;
-    private AccountType accountType; // LOCAL ATTRIBUTE just for application
+    private AccountType accountType; // this attribute is added to the database schema on application start
 
     public enum AccountType {
         FREE, PREMIUM
     }
 
     // Constructor for creating a new customer from the database
-    public Customer(int customerId, String firstName, String lastName, String email, int addressId, int active, LocalDate createDate) {
+    public Customer(int customerId, String firstName, String lastName, String email, int addressId, int active, LocalDate createDate, AccountType accountType) {
         this.customerId = customerId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -36,7 +36,12 @@ public class Customer {
         this.active = active;
         this.birthDate = LocalDate.of(2000, 1, 1); // For all users coming from the database (that doesn't have information about birthdate, set birthdate to 1.1.2000)
         this.createDate = createDate;
-        this.accountType = AccountType.FREE; // For all users coming from the database (that doesn't have information about account type, set account type to FREE)
+        // If the account type is not set, set it to FREE
+        if (accountType == null) {
+            this.accountType = AccountType.FREE;
+        } else {
+            this.accountType = accountType;
+        }
     }
 
     // Constructor for creating a new customer in the application
@@ -48,7 +53,7 @@ public class Customer {
         this.active = active;
         this.birthDate = birthDate;
         this.createDate = LocalDate.now(); // Automatically set to the current date when the object is created
-        this.accountType = AccountType.PREMIUM; // For all users created in the application, set account type to FREE
+        this.accountType = AccountType.FREE; // For all users created in the application, set account type to FREE
     }
 
     public int getCustomerId() {
