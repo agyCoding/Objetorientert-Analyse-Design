@@ -10,17 +10,17 @@
    <children>
       <Label text="Rental information">
          <font>
-            <Font name="System Bold Italic" size="35.0" />
+            <Font name="System Bold Italic" size="25.0" />
          </font>
       </Label>
       <Label fx:id="selectedFilmLabel" text="Film Title (Year)">
          <font>
-            <Font name="System Bold" size="32.0" />
+            <Font name="System Bold" size="22.0" />
          </font></Label>
       <Label fx:id="maxRentalLengthLabel" text="Max rental length: " />
       <Label fx:id="rentalRateLabel" text="Rental rate (per day): " />
       <Label text="How many days do you want to rent for:" />
-      <TextField fx:id="rentalDaysTF" maxWidth="-Infinity" prefHeight="65.0" prefWidth="100.0" promptText="1" />
+      <TextField fx:id="rentalDaysTF" maxWidth="-Infinity" prefHeight="20.0" prefWidth="100.0" promptText="1" onKeyReleased="#updateTotalCost"/>
       <Label fx:id="totalCostLabel" text="Total cost:" />
         <HBox alignment="CENTER">
         <children>

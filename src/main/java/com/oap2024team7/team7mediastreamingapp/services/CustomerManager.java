@@ -30,7 +30,7 @@ public class CustomerManager {
                 stmt.setString(3, newCustomer.getEmail());
                 stmt.setInt(4, newCustomer.getAddressId());
                 stmt.setInt(5, newCustomer.getActive());
-                stmt.setInt(6, 1); // hardcoder store_id 1 since we're not using stores in the app, but the field is NN
+                stmt.setInt(6, newCustomer.getStoreId());
                 stmt.setString(7, newCustomer.getAccountType().toString());
                 stmt.executeUpdate();
                 System.out.println("Customer is added to the database.");           
@@ -58,8 +58,9 @@ public class CustomerManager {
                     int active = rs.getInt("active");
                     LocalDate createDate = rs.getDate("create_date").toLocalDate();
                     AccountType accountType = AccountType.valueOf(rs.getString("account_type"));
+                    int storeId = rs.getInt("store_id");
 
-                    Customer customer = new Customer(customerId, firstName, lastName, username, addressId, active, createDate, accountType);
+                    Customer customer = new Customer(customerId, firstName, lastName, username, addressId, active, createDate, accountType, storeId);
 
                     return customer;
                 }
@@ -80,7 +81,6 @@ public class CustomerManager {
              PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
             stmt.setString(1, customer.getFirstName());
             stmt.setString(2, customer.getLastName());
-            // stmt.setDate(3, java.sql.Date.valueOf(customer.getBirthDate())); // Ensure you handle LocalDate conversion
             stmt.setInt(3, customer.getCustomerId());
             stmt.executeUpdate();
             System.out.println("Customer updated in the database.");
