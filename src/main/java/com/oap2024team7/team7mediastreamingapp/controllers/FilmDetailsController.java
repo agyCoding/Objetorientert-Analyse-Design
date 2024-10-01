@@ -16,6 +16,10 @@ import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import java.io.IOException;
 
 /**
  * Controller class for the Film Details screen.
@@ -124,6 +128,7 @@ public class FilmDetailsController {
                 // Show Rent button and hide Stream button for FREE users
                 rentButton.setVisible(true);
                 streamButton.setVisible(false);
+
             } else if (accountType == AccountType.PREMIUM) {
                 // Show Stream button and hide Rent button for PREMIUM users
                 rentButton.setVisible(false);
@@ -132,10 +137,20 @@ public class FilmDetailsController {
         }
     }
 
-    // TO DO
     @FXML
     private void showRentWindow() {
         // Show rent window for the selected film
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/rentfilm.fxml"));
+            Parent root = fxmlLoader.load();
+
+            Stage rentStage = new Stage();
+            rentStage.setTitle("Rent Film");
+            rentStage.setScene(new Scene(root));
+            rentStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         System.out.println("Rent window for film: " + selectedFilm.getTitle());
     }
 

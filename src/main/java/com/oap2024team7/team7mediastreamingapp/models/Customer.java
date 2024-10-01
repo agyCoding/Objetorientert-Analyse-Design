@@ -21,13 +21,14 @@ public class Customer {
     private LocalDate birthDate; // LOCAL ATTRIBUTE just for application
     private LocalDate createDate;
     private AccountType accountType; // this attribute is added to the database schema on application start
+    private int storeId;
 
     public enum AccountType {
         FREE, PREMIUM
     }
 
     // Constructor for creating a new customer from the database
-    public Customer(int customerId, String firstName, String lastName, String email, int addressId, int active, LocalDate createDate, AccountType accountType) {
+    public Customer(int customerId, String firstName, String lastName, String email, int addressId, int active, LocalDate createDate, AccountType accountType, int storeId) {
         this.customerId = customerId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -42,6 +43,7 @@ public class Customer {
         } else {
             this.accountType = accountType;
         }
+        this.storeId = storeId;
     }
 
     // Constructor for creating a new customer in the application
@@ -54,6 +56,7 @@ public class Customer {
         this.birthDate = birthDate;
         this.createDate = LocalDate.now(); // Automatically set to the current date when the object is created
         this.accountType = AccountType.FREE; // For all users created in the application, set account type to FREE
+        this.storeId = 1; // For all users created in the application, set storeId to 1
     }
 
     public int getCustomerId() {
@@ -114,5 +117,13 @@ public class Customer {
 
     public void setAccountType(AccountType accountType) {
         this.accountType = accountType;
+    }
+
+    public int getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(int storeId) {
+        this.storeId = storeId;
     }
 }

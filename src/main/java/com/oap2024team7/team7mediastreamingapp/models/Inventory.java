@@ -11,6 +11,9 @@ public class Inventory {
     private int filmId;
     private int storeId;
 
+    public Inventory() {
+    }
+
     public Inventory(int inventoryId, int filmId, int storeId) {
         this.inventoryId = inventoryId;
         this.filmId = filmId;
@@ -27,5 +30,17 @@ public class Inventory {
 
     public int getStoreId() {
         return storeId;
+    }
+
+    public void setInventoryId(int inventoryId) {
+        this.inventoryId = inventoryId;
+    }
+
+    public void setFilmId(int filmId) {
+        this.filmId = filmId;
+    }
+
+    public void setStoreId(int storeId) {
+        this.storeId = storeId;
     }
 }
