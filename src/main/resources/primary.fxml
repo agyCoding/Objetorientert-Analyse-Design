@@ -39,6 +39,7 @@
                 <Label text="To Year:" />
                 <TextField fx:id="endYearField" promptText="e.g., 2020" />
                <Button fx:id="applyFiltersButton" text="Use Filters" onAction="#applyFilters"/>
+               
            </children>
         </VBox>
     </left>

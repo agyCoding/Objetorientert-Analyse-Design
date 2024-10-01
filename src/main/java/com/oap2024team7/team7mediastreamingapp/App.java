@@ -1,5 +1,7 @@
 package com.oap2024team7.team7mediastreamingapp;
 
+import com.oap2024team7.team7mediastreamingapp.services.DatabaseManager;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -40,8 +42,7 @@ public class App extends Application {
 	}	
 
     public static void main(String[] args) {
-        // OBS! Uncomment the line below to update the database schema
-        // DatabaseManager.updateDatabaseSchema();
+        DatabaseManager.updateDatabaseSchema();
         launch();
     }
 }

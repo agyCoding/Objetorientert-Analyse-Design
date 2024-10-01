@@ -2,11 +2,19 @@
 package com.oap2024team7.team7mediastreamingapp.controllers;
 
 import com.oap2024team7.team7mediastreamingapp.models.Film;
+import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
 import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
+
+/**
+ * Controller class for the rent film view
+ * This class is responsible for handling the user input and handling the renting of the selected film
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
 
 public class RentFilmController {
     @FXML
@@ -37,7 +45,13 @@ public class RentFilmController {
     @FXML
     private void tryToRent() {
         // Get the number of rental days from the text field
-        int rentalDays = Integer.parseInt(rentalDaysTF.getText());
+        int rentalDays;
+        try {
+            rentalDays = Integer.parseInt(rentalDaysTF.getText());
+        } catch (NumberFormatException e) {
+            GeneralUtils.showAlert(AlertType.ERROR,"Invalid input", "Please enter a valid number of days.","You need to enter numerical value.");
+            return;
+        }
 
         // Calculate the total cost
         double totalCost = selectedFilm.getRentalRate() * rentalDays;
