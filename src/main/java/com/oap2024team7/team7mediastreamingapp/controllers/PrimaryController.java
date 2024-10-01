@@ -238,15 +238,16 @@ public class PrimaryController {
     // Load films based on the current filters
     private void loadFilms() {
         List<Film> films;
+        int customersStoreId = loggedInCustomer.getStoreId();
     
         // Check if filters are applied
         if (selectedCategory != null || selectedRating != null || selectedMaxLength != null || selectedStartYear != null || selectedEndYear != null) {
             // If filters are applied, use the filterFilms method
             Integer categoryId = selectedCategory != null ? selectedCategory.getCategoryId() : null;
-            films = filmManager.filterFilms(categoryId, selectedRating, selectedMaxLength, selectedStartYear, selectedEndYear, offset, limit);
+            films = filmManager.filterFilms(categoryId, selectedRating, selectedMaxLength, selectedStartYear, selectedEndYear, offset, limit, customersStoreId);
         } else {
             // No filters applied, load all films
-            films = filmManager.getAllFilms(offset, limit);
+            films = filmManager.getAllFilms(offset, limit, customersStoreId);
         }
     
         // Clear the film list view and populate with filtered results
@@ -254,7 +255,7 @@ public class PrimaryController {
         filmListView.getItems().addAll(films);
     
         // Check if there are more films to load for pagination
-        if (films.size() < limit || filmManager.getAllFilms(offset + limit, 1).isEmpty()) {
+        if (films.size() < limit || filmManager.getAllFilms(offset + limit, limit, customersStoreId).isEmpty()) {
             nextButton.setDisable(true);
         } else {
             nextButton.setDisable(false);
@@ -290,10 +291,12 @@ public class PrimaryController {
     private void sortFilms() {
         String selectedSort = sortComboBox.getValue();
         List<Film> sortedFilms;
+        int customersStoreId = loggedInCustomer.getStoreId();
+
         if ("Sort by Title".equals(selectedSort)) {
-            sortedFilms = filmManager.getFilmsSortedByTitle();
+            sortedFilms = filmManager.getFilmsSortedByTitle(customersStoreId);
         } else {
-            sortedFilms = filmManager.getFilmsSortedByYear();
+            sortedFilms = filmManager.getFilmsSortedByYear(customersStoreId);
         }
         filmListView.getItems().clear();
         filmListView.getItems().addAll(sortedFilms);

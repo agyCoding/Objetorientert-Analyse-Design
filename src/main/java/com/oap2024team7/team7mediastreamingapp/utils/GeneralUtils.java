@@ -2,6 +2,9 @@ package com.oap2024team7.team7mediastreamingapp.utils;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Class for general methods that are used throughout the application.
@@ -59,4 +62,18 @@ public class GeneralUtils {
     public static String normalizeNumString(String str) {
         return str.replaceAll("\\D+", "");
     }
+
+    /**
+     * Method to convert a string of special features to a set.
+     * @param specialFeaturesString
+     * @return
+     */
+    public Set<String> convertToSet(String specialFeaturesString) {
+        Set<String> specialFeatures = new HashSet<>();
+        if (specialFeaturesString != null && !specialFeaturesString.isEmpty()) {
+            specialFeatures.addAll(Arrays.asList(specialFeaturesString.split(",")));
+        }
+        return specialFeatures;
+    }
+    
 }
