@@ -65,15 +65,4 @@ public class Profile {
     public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
-
-    @Override
-    public String toString() {
-        return "Profile{" +
-            "profileId=" + profileId +
-            ", customerId='" + customerId + '\'' +
-            ", isMainProfile='" + isMainProfile + '\'' +
-            ", profileName='" + profileName + '\'' +
-            ", birthDate=" + birthDate +
-            '}';
-    }
 }

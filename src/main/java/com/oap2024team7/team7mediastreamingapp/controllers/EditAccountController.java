@@ -41,6 +41,8 @@ public class EditAccountController {
     private Label accountTypeLabel;
     @FXML
     private Button upgradeToPremiumButton;
+    @FXML
+    private Button unsubButton;
 
     private Customer loggedInCustomer;
 
@@ -84,13 +86,16 @@ public class EditAccountController {
     }
 
     /**
-     * Hide "Upgrade to Premium" button if the account already is premium.
+     * Hide "Upgrade to Premium" button if the account already is premium and show it if it's Free.
+     * Also, hide "Unsubscribe" button if the account is Free and show it if it's Premium.
      */
     private void setUpgradeButtonVisibility() {
         if (loggedInCustomer.getAccountType() == Customer.AccountType.PREMIUM) {
             upgradeToPremiumButton.setVisible(false);
+            unsubButton.setVisible(true);
         } else {
             upgradeToPremiumButton.setVisible(true);
+            unsubButton.setVisible(false);
         }
     }
 
@@ -144,7 +149,7 @@ public class EditAccountController {
             return;
         }
     
-        // Call the upgrade method in the CustomerManager
+        // Call the update subscription method in the CustomerManager
         try {
             // Right now, you can upgrade when you just click
             // Implement some dummy payment method later
@@ -157,5 +162,25 @@ public class EditAccountController {
             e.printStackTrace();
             GeneralUtils.showAlert(AlertType.ERROR, "Error", "Error upgrading to Premium", "Could not upgrade to premium account.");
         }
+    }
+
+    public void tryToDowngradeToFree() {
+        // Check if the customer is already a free customer
+        if (loggedInCustomer.getAccountType() == Customer.AccountType.FREE) {
+            GeneralUtils.showAlert(AlertType.INFORMATION, "Already Free", "Free account type", "You are already have a free account type.");
+            return;
+        }
+        // Call the update subscription method in the CustomerManager
+        try {
+            loggedInCustomer.setAccountType(Customer.AccountType.FREE);
+            CustomerManager.updateSubscription(loggedInCustomer);
+            GeneralUtils.showAlert(AlertType.INFORMATION, "Success", "Downgraded to Free", "You have successfully upgraded to a free account.");
+            accountTypeLabel.setText("Type: " + loggedInCustomer.getAccountType());
+            setUpgradeButtonVisibility();
+        } catch (Exception e) {
+            e.printStackTrace();
+            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Error downgrading", "Could not downgrade to free account.");
+        }        
+        
     }
 }
