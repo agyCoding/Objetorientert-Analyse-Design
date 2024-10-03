@@ -173,7 +173,6 @@ public class RentFilmController {
             // Get the current stage and close it
             ((Stage) selectedFilmLabel.getScene().getWindow()).close();
         });
-        SessionData.getInstance().setSelectedFilm(null);
     }
     
 }
