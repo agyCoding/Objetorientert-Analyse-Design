@@ -5,9 +5,11 @@ import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
 import com.oap2024team7.team7mediastreamingapp.services.UserManager;
 import com.oap2024team7.team7mediastreamingapp.models.Customer;
 import com.oap2024team7.team7mediastreamingapp.services.CustomerManager;
+import com.oap2024team7.team7mediastreamingapp.services.ProfileManager;
 import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 import com.oap2024team7.team7mediastreamingapp.models.Address;
 import com.oap2024team7.team7mediastreamingapp.services.AddressManager;
+import com.oap2024team7.team7mediastreamingapp.models.Profile;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -18,6 +20,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.io.IOException;
+import java.util.List;
+import java.sql.SQLException;
 
 /**
  * Controller class for the Login screen.
@@ -47,7 +51,7 @@ public class LoginController {
     private void initialize() {
         // Set the username field to be focused when the screen is loaded
         usernameField.requestFocus();
-        // try to get customer object from session data and if not null, set the username field to the customer's email
+        // If the customer has just created an account, the username field will be pre-filled with their email
         customer = SessionData.getInstance().getLoggedInCustomer();
         if (customer != null) {
             usernameField.setText(customer.getEmail());
@@ -57,54 +61,81 @@ public class LoginController {
     /*
      * Method to handle the login process.
      * It checks the username and password entered by the user.
-     * If the login is successful, the method switches to the primary screen.
+     * If the login is successful, it retrieves the customer information from the database and saves it in the session data.
+     * It also checks if the customer has any profiles and if not, creates a default profile.
+     * Then the method switches to the primary screen.
      */
     @FXML
     private void tryToLogin() {
         // Clear previous session data
         SessionData.getInstance().clearSessionData();
-    
+
         // Get info from username and password fields
         String usernameText = usernameField.getText();
         String passwordText = passwordField.getText();
-    
+
         if (usernameText.isEmpty()) {
             GeneralUtils.showAlert(AlertType.ERROR, "Login Failed", "Username cannot be empty", "Please enter a correct username");
             return;
         }
-    
+
         // Check if the user can login
         if (userManager.canLogin(usernameText, passwordText)) {
             try {
                 // Get the customer object from the database
-                Customer dbCustomer = CustomerManager.getCustomerByUsername(usernameText);
-                
+                Customer dbCustomer = CustomerManager.getCustomerByUsername(usernameText); // This can throw SQLException
+
                 // Ensure customer is found
-                if (dbCustomer != null) {
-                    // Merge the local customer's birthDate and accountType with the DB customer object
-                    if (customer != null) {
-                        dbCustomer.setBirthDate(customer.getBirthDate()); // Preserve birthDate from local profile
-                        dbCustomer.setAccountType(customer.getAccountType()); // Preserve AccountType from local profile
-                    }
-    
+                if (dbCustomer != null) {   
                     // Fetch customer address based on addressId
-                    int customersAddressId = dbCustomer.getAddressId();
-                    Address customersAddress = AddressManager.getAddressById(customersAddressId);
-    
+                    Address customersAddress = AddressManager.getAddressById(dbCustomer.getAddressId());
+                    if (customersAddress == null) {
+                        GeneralUtils.showAlert(AlertType.ERROR, "Login Failed", "Address not found", "Unable to retrieve customer address.");
+                        return;
+                    }
+
                     // Save the customer and address object to the session data
                     SessionData.getInstance().setLoggedInCustomer(dbCustomer);
                     SessionData.getInstance().setCustomerAddress(customersAddress);
-    
-                    // Load primary screen
+
+                    // Check if the customer has any profiles
+                    List<Profile> profiles = ProfileManager.getProfilesByCustomerId(dbCustomer.getCustomerId());
+                    Profile newProfile = null;
+
+                    if (profiles.isEmpty()) {
+                        // If no profiles exist, create a default profile
+                        newProfile = new Profile(dbCustomer.getCustomerId(), dbCustomer.getFirstName(), null);
+                        newProfile.setIsMainProfile(true); // Set as the main profile
+                        int profileId = ProfileManager.registerNewProfile(newProfile);
+                        if (profileId != -1) {
+                            newProfile.setProfileId(profileId); // Set the generated ID in the profile object
+                            SessionData.getInstance().setCurrentProfile(newProfile); // Save the newly created profile in the session
+                            System.out.println("New profile created with ID: " + profileId);
+                        } else {
+                            GeneralUtils.showAlert(AlertType.ERROR, "Profile Creation Failed", "Unable to create the default profile", "Please try again later.");
+                            return;
+                        }
+                    } else {
+                        System.out.println("Profiles found for customer ID: " + dbCustomer.getCustomerId());
+                        // If profiles exist, save the main profile to session data
+                        for (Profile profile : profiles) {
+                            System.out.println("Checking profile ID: " + profile.getProfileId() + ", isMainProfile: " + profile.isMainProfile());
+                            if (profile.isMainProfile()) {
+                                SessionData.getInstance().setCurrentProfile(profile);
+                                System.out.println("Main profile set with ID: " + profile.getProfileId());
+                                break; // Break if the main profile is found
+                            }
+                        }
+                    }
+
+                    // Load primary screen - this is where IOException may occur
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/primary.fxml"));
                     Parent root = loader.load();
-    
+
                     // Get the controller of the next scene
                     PrimaryController primaryController = loader.getController();
-    
-                    // Pass the username to the next scene's controller
                     primaryController.setLoggedInUsername(usernameText);
-    
+
                     // Get the current stage (window) and set the new scene
                     Stage stage = (Stage) usernameField.getScene().getWindow();
                     stage.setTitle("Media Streaming and Rental - Content Viewer");
@@ -123,7 +154,7 @@ public class LoginController {
             // If password and username not matching, show error
             GeneralUtils.showAlert(AlertType.ERROR, "Login Failed", "Invalid Username or Password", "Please enter correct username and password");
         }
-    }    
+    }
 
     /**
      * Method to switch to the user registration screen.

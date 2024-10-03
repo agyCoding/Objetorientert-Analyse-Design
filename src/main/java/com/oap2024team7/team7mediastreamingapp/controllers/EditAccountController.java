@@ -9,10 +9,10 @@ import com.oap2024team7.team7mediastreamingapp.services.AddressManager;
 import com.oap2024team7.team7mediastreamingapp.services.CustomerManager;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.DatePicker;
-import java.time.LocalDate;
+import javafx.scene.control.Button;
 
 /**
  * Controller class for the Edit Account screen.
@@ -28,8 +28,6 @@ public class EditAccountController {
     @FXML
     private TextField emailField;
     @FXML
-    private DatePicker birthDateDP;
-    @FXML
     private TextField addressField;
     @FXML
     private TextField districtField;
@@ -39,6 +37,10 @@ public class EditAccountController {
     private TextField postalCodeField;
     @FXML
     private TextField phoneField;
+    @FXML
+    private Label accountTypeLabel;
+    @FXML
+    private Button upgradeToPremiumButton;
 
     private Customer loggedInCustomer;
 
@@ -58,7 +60,6 @@ public class EditAccountController {
             firstNameField.setText(loggedInCustomer.getFirstName());
             lastNameField.setText(loggedInCustomer.getLastName());
             emailField.setText(loggedInCustomer.getEmail());
-            birthDateDP.setValue(loggedInCustomer.getBirthDate());
 
             // Address fields are saved on the address object, so we need to get the address object first
             addressField.setText(customersAddress.getAddress());
@@ -68,8 +69,10 @@ public class EditAccountController {
 
             postalCodeField.setText(customersAddress.getPostalCode());
             phoneField.setText(customersAddress.getPhone());
+            accountTypeLabel.setText("Type: " + loggedInCustomer.getAccountType());
 
-
+            // Set visibility of the Upgrade to Premium button based on account type
+            setUpgradeButtonVisibility();
         } else {
             // Handle the case where the customer is not found in the current session
             GeneralUtils.showAlert(AlertType.ERROR, "Error", "Customer Not Found", "No customer found with the provided email.");
@@ -80,13 +83,23 @@ public class EditAccountController {
         loggedInCustomer = customer;
     }
 
+    /**
+     * Hide "Upgrade to Premium" button if the account already is premium.
+     */
+    private void setUpgradeButtonVisibility() {
+        if (loggedInCustomer.getAccountType() == Customer.AccountType.PREMIUM) {
+            upgradeToPremiumButton.setVisible(false);
+        } else {
+            upgradeToPremiumButton.setVisible(true);
+        }
+    }
+
     public void tryToEditAccount() {
         System.out.println("Edit account button clicked");
     
         // Retrieve values from the input fields
         String firstName = firstNameField.getText();
         String lastName = lastNameField.getText();
-        LocalDate birthDate = birthDateDP.getValue();
         String address = addressField.getText();
         String district = districtField.getText();
         String city = cityField.getText(); // You might need a method to get the cityId based on the city name
@@ -103,7 +116,6 @@ public class EditAccountController {
         try {
             loggedInCustomer.setFirstName(firstName);
             loggedInCustomer.setLastName(lastName);
-            loggedInCustomer.setBirthDate(birthDate); // Assuming you added this method in the Customer class
     
             // Update the address object
             customersAddress.setAddress(address);
@@ -123,4 +135,27 @@ public class EditAccountController {
         }
     }    
 
+    public void tryToUpgradeToPremium() {
+        System.out.println("Upgrade to Premium button clicked");
+    
+        // Check if the customer is already a premium customer
+        if (loggedInCustomer.getAccountType() == Customer.AccountType.PREMIUM) {
+            GeneralUtils.showAlert(AlertType.INFORMATION, "Already Premium", "Already a Premium Customer", "You are already a premium customer.");
+            return;
+        }
+    
+        // Call the upgrade method in the CustomerManager
+        try {
+            // Right now, you can upgrade when you just click
+            // Implement some dummy payment method later
+            loggedInCustomer.setAccountType(Customer.AccountType.PREMIUM);
+            CustomerManager.updateSubscription(loggedInCustomer);
+            GeneralUtils.showAlert(AlertType.INFORMATION, "Success", "Upgraded to Premium", "You have successfully upgraded to a premium account.");
+            accountTypeLabel.setText("Type: " + loggedInCustomer.getAccountType());
+            setUpgradeButtonVisibility();
+        } catch (Exception e) {
+            e.printStackTrace();
+            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Error upgrading to Premium", "Could not upgrade to premium account.");
+        }
+    }
 }

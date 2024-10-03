@@ -2,18 +2,20 @@ package com.oap2024team7.team7mediastreamingapp.utils;
 
 import com.oap2024team7.team7mediastreamingapp.models.Address;
 import com.oap2024team7.team7mediastreamingapp.models.Customer;
+import com.oap2024team7.team7mediastreamingapp.models.Profile;
 import com.oap2024team7.team7mediastreamingapp.models.Film;
 
 /**
  * Class for the SessionData object.
  * This class is responsible for managing the session data of the application.
- * It stores the logged in customer, their address and selected film.
+ * It stores the logged in customer, current profile, customer's address and selected film.
  * @author Agata (Agy) Olaussen (@agyCoding)
  */
 
 public class SessionData {
     private static SessionData instance;
     private Customer loggedInCustomer;
+    private Profile currentProfile;
     private Address customerAddress;
     private Film selectedFilm;
 
@@ -34,6 +36,14 @@ public class SessionData {
         this.loggedInCustomer = loggedInCustomer;
     }
 
+    public Profile getCurrentProfile() {
+        return currentProfile;
+    }
+
+    public void setCurrentProfile(Profile currentProfile) {
+        this.currentProfile = currentProfile;
+    }
+
     public Address getCustomerAddress() {
         return customerAddress;
     }
@@ -52,6 +62,7 @@ public class SessionData {
 
     public void clearSessionData() {
         loggedInCustomer = null;
+        currentProfile = null;
         customerAddress = null;
         selectedFilm = null;
     }
