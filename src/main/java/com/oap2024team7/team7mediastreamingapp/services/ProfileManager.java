@@ -103,7 +103,7 @@ public class ProfileManager {
                     int profileId = rs.getInt("profile_id");
                     boolean isMainProfile = rs.getBoolean("main_profile");
                     String profileName = rs.getString("profile_name");
-                    LocalDate birthDate = rs.getDate("birth_date").toLocalDate();
+                    LocalDate birthDate = rs.getDate("birth_date") != null ? rs.getDate("birth_date").toLocalDate() : null;
                     Profile profile = new Profile(profileId, customerId, isMainProfile, profileName, birthDate);
                     profiles.add(profile);
                 }

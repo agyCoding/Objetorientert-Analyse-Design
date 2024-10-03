@@ -21,7 +21,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.List;
-import java.sql.SQLException;
 
 /**
  * Controller class for the Login screen.
@@ -116,10 +115,8 @@ public class LoginController {
                             return;
                         }
                     } else {
-                        System.out.println("Profiles found for customer ID: " + dbCustomer.getCustomerId());
                         // If profiles exist, save the main profile to session data
                         for (Profile profile : profiles) {
-                            System.out.println("Checking profile ID: " + profile.getProfileId() + ", isMainProfile: " + profile.isMainProfile());
                             if (profile.isMainProfile()) {
                                 SessionData.getInstance().setCurrentProfile(profile);
                                 System.out.println("Main profile set with ID: " + profile.getProfileId());
