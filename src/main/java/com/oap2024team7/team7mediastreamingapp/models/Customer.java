@@ -18,7 +18,6 @@ public class Customer {
     private String email;
     private int addressId;
     private int active; // this maps to TINYINT in the database with 1 for active and 0 for inactive
-    private LocalDate birthDate; // LOCAL ATTRIBUTE just for application
     private LocalDate createDate;
     private AccountType accountType; // this attribute is added to the database schema on application start
     private int storeId;
@@ -35,7 +34,6 @@ public class Customer {
         this.email = email;
         this.addressId = addressId;
         this.active = active;
-        this.birthDate = LocalDate.of(2000, 1, 1); // For all users coming from the database (that doesn't have information about birthdate, set birthdate to 1.1.2000)
         this.createDate = createDate;
         // If the account type is not set, set it to FREE
         if (accountType == null) {
@@ -47,13 +45,12 @@ public class Customer {
     }
 
     // Constructor for creating a new customer in the application
-    public Customer(String firstName, String lastName, String email, int addressId, int active, LocalDate birthDate) {
+    public Customer(String firstName, String lastName, String email, int addressId, int active) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.addressId = addressId; // Have to add handling of the addressId based on "regular" address information
         this.active = active;
-        this.birthDate = birthDate;
         this.createDate = LocalDate.now(); // Automatically set to the current date when the object is created
         this.accountType = AccountType.FREE; // For all users created in the application, set account type to FREE
         this.storeId = 1; // For all users created in the application, set storeId to 1
@@ -61,6 +58,10 @@ public class Customer {
 
     public int getCustomerId() {
         return customerId;
+    }
+
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
     }
 
     public String getFirstName() {
@@ -101,14 +102,6 @@ public class Customer {
 
     public void setActive(int active) {
         this.active = active;
-    }
-
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
     }
 
     public AccountType getAccountType() {

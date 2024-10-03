@@ -5,11 +5,14 @@ import java.io.IOException;
 import java.time.LocalDate;
 
 import com.oap2024team7.team7mediastreamingapp.models.Customer;
-import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
-import com.oap2024team7.team7mediastreamingapp.services.AddressManager;
+import com.oap2024team7.team7mediastreamingapp.models.Profile;
 import com.oap2024team7.team7mediastreamingapp.models.Address;
+
+import com.oap2024team7.team7mediastreamingapp.services.AddressManager;
 import com.oap2024team7.team7mediastreamingapp.services.CustomerManager;
+import com.oap2024team7.team7mediastreamingapp.services.ProfileManager;
 import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
+import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -106,11 +109,31 @@ public class RegisterCustomerController {
             }
 
             // Use customer constructor
-            Customer newCustomer = new Customer(firstName, lastName, email, addressId, 1, birthDate);
-    
+            Customer newCustomer = new Customer(firstName, lastName, email, addressId, 1);
+  
             // Register the new customer
-            CustomerManager.registerNewCustomer(newCustomer);
+            int newCustomerId = CustomerManager.registerNewCustomer(newCustomer);
+            if (newCustomerId == -1) {
+                GeneralUtils.showAlert(AlertType.ERROR, "Error", "Registration Failed", "Unable to register the customer. Try again.");
+                return;
+            }
+            newCustomer.setCustomerId(newCustomerId);
+
+            // When creating new customer, also create a default profile
+            Profile newProfile = new Profile(newCustomerId, firstName, birthDate);
+
             SessionData.getInstance().setLoggedInCustomer(newCustomer);
+            SessionData.getInstance().setCurrentProfile(newProfile);
+
+            // Create a default profile and set it as the main profile
+            newProfile.setIsMainProfile(true); // Set the new profile as the main profile
+            int profileId = ProfileManager.registerNewProfile(newProfile); // Create profile in DB
+            if (profileId != -1) {
+                newProfile.setProfileId(profileId); // Update the profile object with the generated ID
+            } else {
+                GeneralUtils.showAlert(AlertType.ERROR, "Profile Creation Failed", "Unable to create the default profile", "Please try again later.");
+                return;
+            }
     
             // Show a success message to the user
             GeneralUtils.showAlert(AlertType.INFORMATION, "Success", "Registration Successful", "Your account has been registered successfully.");

@@ -8,6 +8,7 @@ import com.oap2024team7.team7mediastreamingapp.services.FilmManager;
 import com.oap2024team7.team7mediastreamingapp.models.Category;
 import com.oap2024team7.team7mediastreamingapp.models.Customer;
 import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
+import com.oap2024team7.team7mediastreamingapp.models.Profile;
 
 import java.io.IOException;
 import java.util.List;
@@ -44,7 +45,9 @@ public class PrimaryController {
     @FXML
     private Label loggedInUserLabel;
     @FXML
-    private MenuButton userProfileMenuButton;
+    private MenuButton userAccountMenuButton;
+    @FXML
+    private MenuItem editAccountMenuItem;
     @FXML
     private MenuItem editProfileMenuItem;
     @FXML
@@ -91,6 +94,7 @@ public class PrimaryController {
     private final int limit = 20; // Load 20 films per page
     private CategoryManager categoryManager = new CategoryManager();
     private Customer loggedInCustomer;
+    private Profile currentProfile;
 
     // Store filter criteria
     private Category selectedCategory;
@@ -106,15 +110,29 @@ public class PrimaryController {
     @FXML
     public void initialize() {
         loggedInCustomer = SessionData.getInstance().getLoggedInCustomer();
+        currentProfile = SessionData.getInstance().getCurrentProfile();
 
         /* INITIALIZE USER MENU */
 
-        // Example: setting the logged-in username
+        // Setting the logged-in username as empty
         loggedInUserLabel.setText("Logged in as: ");
+
+        // DEBUGGING: Print the current profile to the console
+        System.out.println("Current profile: " + currentProfile);
+
+        // Check if the current profile is the main profile
+        if (currentProfile != null && currentProfile.isMainProfile()) {
+            editAccountMenuItem.setVisible(true);  // Show the Edit Account menu item if mainProfile = true
+        } else {
+            editAccountMenuItem.setVisible(false);  // Hide the Edit Account menu item if mainProfile = false
+        }        
+    
+        // Handle edit account action
+        editAccountMenuItem.setOnAction(event -> handleEditAccount());
     
         // Handle edit profile action
         editProfileMenuItem.setOnAction(event -> handleEditProfile());
-    
+
         // Handle logout action
         logoutMenuItem.setOnAction(event -> handleLogout());
 
@@ -180,8 +198,8 @@ public class PrimaryController {
     }
     
 
-    // Handles the action when the user clicks the "Edit Profile" menu item.
-    private void handleEditProfile() {
+    // Handles the action when the user clicks the "Edit Account" menu item.
+    private void handleEditAccount() {
         // Load the edit account screen
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/editaccount.fxml"));
@@ -213,6 +231,11 @@ public class PrimaryController {
         }
 
         // Logic to edit the profile
+        System.out.println("Edit Profile clicked");
+    }
+
+    // Handles the action when the user clicks the "Edit Profile" menu item.
+    private void handleEditProfile() {
         System.out.println("Edit Profile clicked");
     }
     

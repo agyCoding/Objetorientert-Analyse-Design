@@ -13,8 +13,9 @@
         <HBox alignment="CENTER_RIGHT" spacing="10.0" style="-fx-padding: 10;">
            <children>
                <Label fx:id="loggedInUserLabel" text="Logged in as: [Username]" />
-               <MenuButton fx:id="userProfileMenuButton" mnemonicParsing="false" text="Manage Profile">
+               <MenuButton fx:id="userAccountMenuButton" mnemonicParsing="false" text="Manage Account">
                    <items>
+                       <MenuItem fx:id="editAccountMenuItem" text="Edit Account" />
                        <MenuItem fx:id="editProfileMenuItem" text="Edit Profile" />
                        <MenuItem fx:id="logoutMenuItem" text="Logout" />
                    </items>
