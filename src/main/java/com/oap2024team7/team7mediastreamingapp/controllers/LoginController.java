@@ -129,10 +129,6 @@ public class LoginController {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/primary.fxml"));
                     Parent root = loader.load();
 
-                    // Get the controller of the next scene
-                    PrimaryController primaryController = loader.getController();
-                    primaryController.setLoggedInUsername(usernameText);
-
                     // Get the current stage (window) and set the new scene
                     Stage stage = (Stage) usernameField.getScene().getWindow();
                     stage.setTitle("Media Streaming and Rental - Content Viewer");

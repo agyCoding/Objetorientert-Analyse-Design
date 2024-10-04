@@ -90,7 +90,6 @@ public class PrimaryController {
     
     // Local variables
     private ToggleGroup sortToggleGroup;
-    private String currentUsername;
     private FilmManager filmManager;
     private int offset = 0;
     private final int limit = 20; // Load 20 films per page
@@ -113,11 +112,12 @@ public class PrimaryController {
     public void initialize() {
         loggedInCustomer = SessionData.getInstance().getLoggedInCustomer();
         currentProfile = SessionData.getInstance().getCurrentProfile();
+        String profileName = currentProfile.getProfileName();
 
         /* INITIALIZE USER MENU */
 
         // Setting the logged-in username as empty
-        loggedInUserLabel.setText("Logged in as: ");
+        loggedInUserLabel.setText("Logged in as: " + profileName);
 
         // DEBUGGING: Print the current profile to the console
         System.out.println("Current profile: " + currentProfile);
@@ -191,15 +191,6 @@ public class PrimaryController {
                 }
             }
         });
-    }
-
-    /**
-     * Sets the username of the currently logged in user.
-     * @param username
-     */
-    public void setLoggedInUsername(String username) {
-        currentUsername = username; // Example value
-        loggedInUserLabel.setText("Logged in as: " + currentUsername);
     }
 
     // Handles the action when the user clicks the "Manage profiles" menu item.
