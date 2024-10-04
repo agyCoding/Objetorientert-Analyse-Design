@@ -6,7 +6,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="451.0" prefWidth="433.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oap2024team7.team7mediastreamingapp.controllers.EditProfileController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="377.0" prefWidth="433.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oap2024team7.team7mediastreamingapp.controllers.EditProfileController">
    <children>
       <Label text="Edit profile">
          <font>
@@ -38,7 +38,16 @@
             <Insets bottom="10.0" />
          </VBox.margin>
       </PasswordField>
-      <Button mnemonicParsing="false" onAction="#tryToUpdateProfile" text="Update profile" />
+      <HBox alignment="TOP_CENTER" prefHeight="31.0" prefWidth="273.0">
+         <children>
+            <Button mnemonicParsing="false" onAction="#tryToUpdateProfile" text="Update profile" />
+            <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#tryToDeleteProfile" style="-fx-background-color: linear-gradient(#ff5400, #be1d00); -fx-text-fill: white;" text="Delete profile">
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </Button>
+         </children>
+      </HBox>
    </children>
    <padding>
       <Insets bottom="40.0" left="80.0" right="80.0" top="40.0" />
