@@ -8,14 +8,16 @@ public class Profile {
     private boolean isMainProfile;
     private String profileName;
     private LocalDate birthDate;
+    private String hashedPassword;
 
     // Constructor for creating a new profile from the database (with profileId)
-    public Profile(int profileId, int customerId, boolean isMainProfile, String profileName, LocalDate birthDate) {
+    public Profile(int profileId, int customerId, boolean isMainProfile, String profileName, LocalDate birthDate, String hashedPassword) {
         this.profileId = profileId;
         this.customerId = customerId;
         this.isMainProfile = isMainProfile;
         this.profileName = profileName;
         this.birthDate = birthDate;
+        this.hashedPassword = hashedPassword;
     }
 
     // Constructor for creating a new profile in the application (without profileId, that will get automatically assigned in the database)
@@ -24,6 +26,7 @@ public class Profile {
         this.profileName = profileName;
         this.isMainProfile = false; // By default, a new profile is not the main profile
         this.birthDate = birthDate;
+        this.hashedPassword = null; // By default, a new profile does not have a password
     }
 
     public int getProfileId() {
@@ -64,5 +67,13 @@ public class Profile {
 
     public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
+    }
+
+    public String getHashedPassword() {
+        return hashedPassword;
+    }
+
+    public void setHashedPassword(String hashedPassword) {
+        this.hashedPassword = hashedPassword;
     }
 }

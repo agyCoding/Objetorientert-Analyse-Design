@@ -82,7 +82,7 @@ public class LoginController {
         if (userManager.canLogin(usernameText, passwordText)) {
             try {
                 // Get the customer object from the database
-                Customer dbCustomer = CustomerManager.getCustomerByUsername(usernameText); // This can throw SQLException
+                Customer dbCustomer = CustomerManager.getCustomerByUsername(usernameText);
 
                 // Ensure customer is found
                 if (dbCustomer != null) {   

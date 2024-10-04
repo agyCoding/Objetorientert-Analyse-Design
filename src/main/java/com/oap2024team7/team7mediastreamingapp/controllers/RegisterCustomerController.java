@@ -13,6 +13,7 @@ import com.oap2024team7.team7mediastreamingapp.services.CustomerManager;
 import com.oap2024team7.team7mediastreamingapp.services.ProfileManager;
 import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
+import com.oap2024team7.team7mediastreamingapp.utils.PasswordUtils;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,6 +23,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.PasswordField;
 
 /**
  * Controller class for the Register Customer screen.
@@ -57,6 +59,12 @@ public class RegisterCustomerController {
     @FXML
     private TextField phoneField;
 
+    @FXML
+    private PasswordField passwordField;
+
+    @FXML
+    private PasswordField repeatPasswordField;
+
     /**
      * Method to handle the registration process.
      * It checks the user input and registers a new customer account (and, if needed, city and address).
@@ -68,7 +76,8 @@ public class RegisterCustomerController {
             emailField.getText().isEmpty() || birthDateDP.getValue() == null ||
             addressField.getText().isEmpty() || districtField.getText().isEmpty() || 
             cityField.getText().isEmpty() || postalCodeField.getText().isEmpty() || 
-            phoneField.getText().isEmpty()) {
+            phoneField.getText().isEmpty() || passwordField.getText().isEmpty() || 
+            repeatPasswordField.getText().isEmpty()) {
             
             GeneralUtils.showAlert(AlertType.ERROR, "Validation Error", "Required Fields Missing", "Please fill in all required fields.");
             return; // Stop the process if any field is empty
@@ -88,6 +97,17 @@ public class RegisterCustomerController {
             postalCode = GeneralUtils.normalizeNumString(postalCode);
             String phone = phoneField.getText();
             phone = GeneralUtils.normalizeNumString(phone);
+
+            // Check if the password and repeat password match
+            String password = passwordField.getText();
+            String repeatPassword = repeatPasswordField.getText();
+            if (!password.equals(repeatPassword)) {
+                GeneralUtils.showAlert(AlertType.ERROR, "Password Mismatch", "Passwords do not match", "Please make sure the passwords match.");
+                return;
+            }
+
+            // Hash the password using SHA-256
+            String hashedPassword = PasswordUtils.hashPassword(password);
     
             // Get the cityId based on the city name
             AddressManager addressManager = new AddressManager();
@@ -121,6 +141,7 @@ public class RegisterCustomerController {
 
             // When creating new customer, also create a default profile
             Profile newProfile = new Profile(newCustomerId, firstName, birthDate);
+            newProfile.setHashedPassword(hashedPassword);
 
             SessionData.getInstance().setLoggedInCustomer(newCustomer);
             SessionData.getInstance().setCurrentProfile(newProfile);
