@@ -221,12 +221,6 @@ public class PrimaryController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/editaccount.fxml"));
             Parent root = loader.load();
 
-            // Get the controller of the next scene
-            EditAccountController editAccountController = loader.getController();
-
-            // Pass the customer object to the edit account controller
-            editAccountController.setLoggedInCustomer(loggedInCustomer);
-
             // Create a new stage for the pop-up window
             Stage popupStage = new Stage();
             popupStage.setTitle("Media Streaming and Rental - Edit Account");

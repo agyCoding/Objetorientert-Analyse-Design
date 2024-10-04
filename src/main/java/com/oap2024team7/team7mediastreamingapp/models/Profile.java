@@ -2,6 +2,15 @@ package com.oap2024team7.team7mediastreamingapp.models;
 
 import java.time.LocalDate;
 
+/**
+ * Class for the Profile object.
+ * This class represents a profile of a customer in the application.
+ * It stores the profile ID, customer ID, profile name, birth date and hashed password.
+ * It also stores a boolean value to indicate if the profile is the main profile of the customer.
+ * The profile ID is automatically assigned by the database when a new profile is created.
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
+
 public class Profile {
     private int profileId;
     private int customerId;

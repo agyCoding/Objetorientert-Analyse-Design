@@ -81,10 +81,6 @@ public class EditAccountController {
         }
     }
 
-    public void setLoggedInCustomer(Customer customer) {
-        loggedInCustomer = customer;
-    }
-
     /**
      * Hide "Upgrade to Premium" button if the account already is premium and show it if it's Free.
      * Also, hide "Unsubscribe" button if the account is Free and show it if it's Premium.
