@@ -48,19 +48,19 @@ public class DatabaseManager {
 /**
  * Updates the database schema by adding a new column 'account_type' to the 'customer' table
  * and creating a new 'profile' table.
- * The column is of type ENUM with values 'FREE' and 'PREMIUM'.
  */
 public static void updateDatabaseSchema() {
     String checkColumnQuery = "SELECT column_name FROM information_schema.columns WHERE table_name = 'customer' AND column_name = 'account_type'";
     String alterCustomerTable = "ALTER TABLE customer ADD account_type ENUM('FREE', 'PREMIUM') DEFAULT 'FREE';";
 
-    // Updated query to include the 'mainProfile' boolean field
+    // Create the Profile table
     String createProfileTable = "CREATE TABLE IF NOT EXISTS profile (" +
         "profile_id INT AUTO_INCREMENT PRIMARY KEY, " +
         "customer_id SMALLINT UNSIGNED NOT NULL, " +
         "main_profile BOOLEAN DEFAULT FALSE, " +
-        "profile_name VARCHAR(255), " +
+        "profile_name VARCHAR(255) NOT NULL, " +
         "birth_date DATE, " +
+        "hashed_password VARCHAR(255)," +
         "FOREIGN KEY (customer_id) REFERENCES customer(customer_id) ON DELETE CASCADE" +
         ");";
 

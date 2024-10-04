@@ -16,7 +16,7 @@
                <MenuButton fx:id="userAccountMenuButton" mnemonicParsing="false" text="Manage Account">
                    <items>
                        <MenuItem fx:id="editAccountMenuItem" text="Edit Account" />
-                       <MenuItem fx:id="editProfileMenuItem" text="Edit Profile" />
+                       <MenuItem fx:id="editProfileMenuItem" text="Edit Your Profile" />
                        <MenuItem fx:id="logoutMenuItem" text="Logout" />
                    </items>
                </MenuButton>

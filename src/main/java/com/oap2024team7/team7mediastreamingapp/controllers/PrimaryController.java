@@ -229,14 +229,33 @@ public class PrimaryController {
 
             GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the edit account screen", "An error occurred while trying to load the edit account screen");
         }
-
-        // Logic to edit the profile
-        System.out.println("Edit Profile clicked");
     }
 
     // Handles the action when the user clicks the "Edit Profile" menu item.
     private void handleEditProfile() {
         System.out.println("Edit Profile clicked");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/editprofile.fxml"));
+            Parent root = loader.load();
+
+            // Create a new stage for the pop-up window
+            Stage popupStage = new Stage();
+            popupStage.setTitle("Media Streaming and Rental - Edit Profile");
+
+            // Set the scene for the pop-up stage
+            popupStage.setScene(new Scene(root));
+
+            // Make the pop-up window modal (blocks interaction with other windows until closed)
+            popupStage.initModality(Modality.WINDOW_MODAL);
+            popupStage.initOwner(loggedInUserLabel.getScene().getWindow());
+
+            // Show the pop-up window
+            popupStage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+
+            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the edit profile screen", "An error occurred while trying to load the edit profile screen");
+        }
     }
     
     // Handles the action when the user clicks the "Logout" menu item.

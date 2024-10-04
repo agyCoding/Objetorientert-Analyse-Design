@@ -19,7 +19,7 @@ public class ProfileManager {
      * @return The profile ID of the newly registered profile
      */
     public static int registerNewProfile(Profile newProfile) {
-        String insertQuery = "INSERT INTO profile (customer_id, main_profile, profile_name, birth_date) VALUES (?, ?, ?, ?)";
+        String insertQuery = "INSERT INTO profile (customer_id, main_profile, profile_name, birth_date, hashed_password) VALUES (?, ?, ?, ?, ?)";
     
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(insertQuery, PreparedStatement.RETURN_GENERATED_KEYS)) {
@@ -34,6 +34,7 @@ public class ProfileManager {
             } else {
                 stmt.setNull(4, java.sql.Types.DATE); // Set null if birthDate is null
             }
+            stmt.setString(5, newProfile.getHashedPassword());       
     
             int affectedRows = stmt.executeUpdate();
     
@@ -54,6 +55,54 @@ public class ProfileManager {
         }
     }
     
+    public static boolean updateProfile(Profile profile) {
+        // Query to check if the profile name already exists for the same customer
+        String checkUniqueNameQuery = "SELECT COUNT(*) FROM profile WHERE customer_id = ? AND profile_name = ? AND profile_id != ?";
+        // Query to update the profile
+        String updateQuery = "UPDATE profile SET profile_name = ?, birth_date = ?, hashed_password = ? WHERE profile_id = ?";
+        
+        try (Connection conn = DatabaseManager.getConnection()) {
+            
+            // First, check if the profile name is unique for the customer
+            try (PreparedStatement checkStmt = conn.prepareStatement(checkUniqueNameQuery)) {
+                checkStmt.setInt(1, profile.getCustomerId());
+                checkStmt.setString(2, profile.getProfileName());
+                checkStmt.setInt(3, profile.getProfileId());
+    
+                try (ResultSet rs = checkStmt.executeQuery()) {
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        // Profile name already exists for this customer
+                        System.out.println("Profile name already exists for this customer.");
+                        return false; // Return false, update should not proceed
+                    }
+                }
+            }
+    
+            // Proceed with updating the profile if the name is unique
+            try (PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+                stmt.setString(1, profile.getProfileName());
+    
+                // Handle null birthDate
+                if (profile.getBirthDate() != null) {
+                    stmt.setDate(2, Date.valueOf(profile.getBirthDate()));
+                } else {
+                    stmt.setNull(2, java.sql.Types.DATE); // Set null if birthDate is null
+                }
+    
+                stmt.setString(3, profile.getHashedPassword());                
+
+                stmt.setInt(4, profile.getProfileId());
+    
+                int affectedRows = stmt.executeUpdate();
+    
+                return affectedRows > 0;
+            }
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; // Return false if update fails
+        }
+    }    
 
     /**
      * Get all information about a certain profile based on the given profileId
@@ -73,7 +122,8 @@ public class ProfileManager {
                     boolean isMainProfile = rs.getBoolean("main_profile");
                     String profileName = rs.getString("profile_name");
                     LocalDate birthDate = rs.getDate("birth_date").toLocalDate();
-                    return new Profile(profileId, customerId, isMainProfile, profileName, birthDate);
+                    String hashedPassword = rs.getString("hashed_password");
+                    return new Profile(profileId, customerId, isMainProfile, profileName, birthDate, hashedPassword);
                 } else {
                     return null; // Profile not found
                 }
@@ -104,7 +154,8 @@ public class ProfileManager {
                     boolean isMainProfile = rs.getBoolean("main_profile");
                     String profileName = rs.getString("profile_name");
                     LocalDate birthDate = rs.getDate("birth_date") != null ? rs.getDate("birth_date").toLocalDate() : null;
-                    Profile profile = new Profile(profileId, customerId, isMainProfile, profileName, birthDate);
+                    String hashedPassword = rs.getString("hashed_password");
+                    Profile profile = new Profile(profileId, customerId, isMainProfile, profileName, birthDate, hashedPassword);
                     profiles.add(profile);
                 }
             }
