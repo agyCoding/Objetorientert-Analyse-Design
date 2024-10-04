@@ -5,8 +5,11 @@ import com.oap2024team7.team7mediastreamingapp.models.Profile;
 import com.oap2024team7.team7mediastreamingapp.services.ProfileManager;
 import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 import com.oap2024team7.team7mediastreamingapp.utils.PasswordUtils;
+import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.Label;
@@ -108,9 +111,25 @@ public class ManageProfilesController {
     }
 
     private void handleCreateProfileClick() {
-        // Open profile creation form (this could be another FXML view)
         System.out.println("Create new profile clicked!");
+
+        try {
+            // Load the FXML file for the create profile scene
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/createprofile.fxml"));
+            Parent root = loader.load();
+
+            // Get the current stage (window) and set the new scene
+            Stage stage = (Stage) profileContainer.getScene().getWindow();
+            stage.setTitle("Streamify - Content Viewer");
+            stage.setScene(new Scene(root));
+            stage.show();
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the create profile screen", "An error occurred while trying to load the create profile screen");
+        }
     }
+
 
     private Optional<String> promptForPassword() {
         TextInputDialog dialog = new TextInputDialog();

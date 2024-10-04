@@ -166,4 +166,31 @@ public class ProfileManager {
         return profiles;
     }
 
+    /**
+     * Check if a profile name is already taken for a given customer ID
+     * @param customerId
+     * @param profileName
+     * @return True if the profile name is already taken, false otherwise
+     */
+    public static boolean isProfileNameTaken(int customerId, String profileName) {
+        String checkQuery = "SELECT COUNT(*) FROM profile WHERE customer_id = ? AND profile_name = ?";
+        
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(checkQuery)) {
+            
+            stmt.setInt(1, customerId);
+            stmt.setString(2, profileName);
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0; // Return true if a profile with the same name exists
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return false; // Return false if there is no existing profile with that name
+    }
+    
 }
