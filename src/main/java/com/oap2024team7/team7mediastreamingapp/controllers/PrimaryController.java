@@ -47,6 +47,8 @@ public class PrimaryController {
     @FXML
     private MenuButton userAccountMenuButton;
     @FXML
+    private MenuItem manageProfilesMenuItem;
+    @FXML
     private MenuItem editAccountMenuItem;
     @FXML
     private MenuItem editProfileMenuItem;
@@ -127,6 +129,9 @@ public class PrimaryController {
             editAccountMenuItem.setVisible(false);  // Hide the Edit Account menu item if mainProfile = false
         }        
     
+        // Handle manage profiles action
+        manageProfilesMenuItem.setOnAction(event -> handleManageProfiles());
+
         // Handle edit account action
         editAccountMenuItem.setOnAction(event -> handleEditAccount());
     
@@ -196,8 +201,28 @@ public class PrimaryController {
         currentUsername = username; // Example value
         loggedInUserLabel.setText("Logged in as: " + currentUsername);
     }
-    
 
+    // Handles the action when the user clicks the "Manage profiles" menu item.
+    private void handleManageProfiles() {
+        System.out.println("Manage Profiles clicked");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/manageprofiles.fxml"));
+            Parent root = loader.load();
+
+            // Get the current stage from the loggedInUserLabel
+            Stage currentStage = (Stage) loggedInUserLabel.getScene().getWindow();
+
+            // Set the new scene for the current stage
+            currentStage.setScene(new Scene(root));
+
+            currentStage.setTitle("Streamify - Manage Profiles");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the manage profiles screen", "An error occurred while trying to load the manage profiles screen");
+        }
+    }
+   
     // Handles the action when the user clicks the "Edit Account" menu item.
     private void handleEditAccount() {
         // Load the edit account screen

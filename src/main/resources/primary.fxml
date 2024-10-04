@@ -15,6 +15,7 @@
                <Label fx:id="loggedInUserLabel" text="Logged in as: [Username]" />
                <MenuButton fx:id="userAccountMenuButton" mnemonicParsing="false" text="Manage Account">
                    <items>
+                       <MenuItem fx:id="manageProfilesMenuItem" text="Manage profiles" />
                        <MenuItem fx:id="editAccountMenuItem" text="Edit Account" />
                        <MenuItem fx:id="editProfileMenuItem" text="Edit Your Profile" />
                        <MenuItem fx:id="logoutMenuItem" text="Logout" />
