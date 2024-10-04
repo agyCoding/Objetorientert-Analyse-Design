@@ -37,13 +37,13 @@ public class EditProfileController {
 
     @FXML
     public void tryToUpdateProfile() {
-        // Get the new profile name and birth date from the input fields
+        // Get profile information from input fields
         String newProfileName = profileNameTF.getText();
         LocalDate newBirthDate = birthDateDP.getValue();
         String password = passwordField.getText();
         String repeatPassword = repeatPasswordField.getText();
 
-        // Check if either of the fields is not set
+        // Check if either of the required fields is not set
         if (newProfileName == null || newProfileName.trim().isEmpty() || newBirthDate == null) {
             GeneralUtils.showAlert(AlertType.WARNING, "Invalid Input", "Please fill out the fields", "Both profile name and birth date must be set.");
             return;

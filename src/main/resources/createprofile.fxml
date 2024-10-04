@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="451.0" prefWidth="433.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oap2024team7.team7mediastreamingapp.controllers.CreateProfileController">
+   <children>
+      <Label text="Create profile">
+         <font>
+            <Font name="System Bold Italic" size="20.0" />
+         </font>
+         <VBox.margin>
+            <Insets bottom="10.0" />
+         </VBox.margin>
+      </Label>
+      <Label text="Profile name:" />
+      <TextField fx:id="profileNameTF">
+         <VBox.margin>
+            <Insets bottom="10.0" />
+         </VBox.margin></TextField>
+      <Label text="Birth date:" />
+      <DatePicker fx:id="birthDateDP">
+         <VBox.margin>
+            <Insets bottom="10.0" />
+         </VBox.margin></DatePicker>
+      <Label text="Optional password" />
+      <PasswordField fx:id="passwordField">
+         <VBox.margin>
+            <Insets bottom="10.0" />
+         </VBox.margin>
+      </PasswordField>
+      <Label text="Repeat optional password" />
+      <PasswordField fx:id="repeatPasswordField">
+         <VBox.margin>
+            <Insets bottom="10.0" />
+         </VBox.margin>
+      </PasswordField>
+      <Button mnemonicParsing="false" onAction="#tryToCreateProfile" text="Create profile" />
+   </children>
+   <padding>
+      <Insets bottom="40.0" left="80.0" right="80.0" top="40.0" />
+   </padding>
+</VBox>
