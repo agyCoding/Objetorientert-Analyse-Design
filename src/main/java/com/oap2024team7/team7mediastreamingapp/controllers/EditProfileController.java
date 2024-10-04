@@ -18,6 +18,12 @@ import javafx.scene.Parent;
 
 import java.time.LocalDate;
 
+/**
+ * Controller class for the Edit Profile screen.
+ * It manages the profile editing interface and allows users to update or delete their profile information.
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
+
 public class EditProfileController {
     @FXML
     private TextField profileNameTF;
@@ -39,6 +45,10 @@ public class EditProfileController {
         birthDateDP.setValue(profileToEdit.getBirthDate());
     }
 
+    /**
+     * Method to handle the profile update process.
+     * It validates the input fields and updates the profile in the database.
+     */
     @FXML
     public void tryToUpdateProfile() {
         // Get profile information from input fields
@@ -91,6 +101,10 @@ public class EditProfileController {
         }
     }
 
+    /**
+     * Method to handle the profile deletion process.
+     * It validates the deletion and deletes the profile from the database.
+     */
     @FXML
     public void tryToDeleteProfile() {
         // Make sure that the user is unable to delete their main profile

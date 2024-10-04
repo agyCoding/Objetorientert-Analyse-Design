@@ -19,6 +19,12 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+/**
+ * Controller class for the Create Profile screen.
+ * It manages the profile creation interface and allows users to create new profiles.
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
+
 public class CreateProfileController {
     @FXML
     private TextField profileNameTF;
@@ -37,6 +43,10 @@ public class CreateProfileController {
         customer = SessionData.getInstance().getLoggedInCustomer();
     }
 
+    /**
+     * Method to handle the profile creation process.
+     * If the profile is created successfully, it redirects the user to the main application screen.
+     */
     @FXML
     public void tryToCreateProfile() {
         // Get the profile information from input fields

@@ -12,6 +12,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Class for the ProfileManager object.
+ * This class is responsible for managing the profile data in the database.
+ * It provides methods for registering, updating and deleting profiles, as well as getting profile information.
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
+
 public class ProfileManager {
     /**
      * Register a new profile in the database
@@ -55,6 +62,11 @@ public class ProfileManager {
         }
     }
     
+    /**
+     * Update an existing profile in the database
+     * @param profile
+     * @return True if the update is successful, false otherwise
+     */
     public static boolean updateProfile(Profile profile) {
         // Query to check if the profile name already exists for the same customer
         String checkUniqueNameQuery = "SELECT COUNT(*) FROM profile WHERE customer_id = ? AND profile_name = ? AND profile_id != ?";
@@ -104,6 +116,11 @@ public class ProfileManager {
         }
     }    
 
+    /**
+     * Delete a profile from the database
+     * @param profile
+     * @return True if the deletion is successful, false otherwise
+     */
     public static boolean deleteProfile(Profile profile) {
         String deleteQuery = "DELETE FROM profile WHERE profile_id = ?";
         
