@@ -104,6 +104,21 @@ public class ProfileManager {
         }
     }    
 
+    public static boolean deleteProfile(Profile profile) {
+        String deleteQuery = "DELETE FROM profile WHERE profile_id = ?";
+        
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(deleteQuery)) {
+            
+            stmt.setInt(1, profile.getProfileId());
+            int affectedRows = stmt.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; // Return false if deletion fails
+        }
+    }
+
     /**
      * Get all information about a certain profile based on the given profileId
      * @param profileId

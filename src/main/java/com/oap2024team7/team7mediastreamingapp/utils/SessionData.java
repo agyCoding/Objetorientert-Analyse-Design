@@ -66,4 +66,8 @@ public class SessionData {
         customerAddress = null;
         selectedFilm = null;
     }
+
+    public void clearProfileData() {
+        currentProfile = null;
+    }
 }
