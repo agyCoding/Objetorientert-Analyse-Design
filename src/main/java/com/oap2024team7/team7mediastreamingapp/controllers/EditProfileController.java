@@ -54,7 +54,21 @@ public class EditProfileController {
             GeneralUtils.showAlert(AlertType.WARNING, "Invalid Input", "Passwords do not match", "The passwords entered do not match.");
             return;
         }
-        String hashedPassword = PasswordUtils.hashPassword(password);
+
+        // Make sure that the user is unable to delete password from their main profile
+        boolean isMainProfile = profileToEdit.isMainProfile();
+        if (isMainProfile && password.isEmpty()) {
+            GeneralUtils.showAlert(AlertType.WARNING, "Invalid Input", "Password Required", "The main profile must have a password.");
+            return;
+        }
+
+        String hashedPassword = null;
+        // Hash the password if it is not empty
+        if (!password.isEmpty()) {
+            hashedPassword = PasswordUtils.hashPassword(password);
+        } else {
+            hashedPassword = null;
+        }
 
         // Update the profile with the new values
         profileToEdit.setProfileName(newProfileName);
