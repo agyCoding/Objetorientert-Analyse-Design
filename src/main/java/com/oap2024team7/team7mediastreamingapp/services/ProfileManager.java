@@ -1,10 +1,12 @@
 package com.oap2024team7.team7mediastreamingapp.services;
 
 import com.oap2024team7.team7mediastreamingapp.models.Profile;
+import com.oap2024team7.team7mediastreamingapp.models.Film;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.Period;
 
 import java.sql.Date;
 import java.sql.Connection;
@@ -225,4 +227,33 @@ public class ProfileManager {
         return false; // Return false if there is no existing profile with that name
     }
     
+    public static boolean canWatchFilm(Film film, Profile profile) {
+        LocalDate usersBirthDate = profile.getBirthDate();
+        Film.Rating rating = film.getRating();
+        int age = Period.between(usersBirthDate, LocalDate.now()).getYears();
+
+        switch (rating) {
+        case G:
+            return true;
+        case PG:
+            return age >= 7;
+        case PG13:
+            return age >= 13;
+        case R:
+            return age >= 17;
+        case NC17:
+            return age >= 18;
+        default:
+            return false; // Unknown rating
+        }
+    }
+
+    public static boolean isAgeValid(LocalDate birthDate, int ageLimit) {
+        LocalDate today = LocalDate.now();
+        int age = today.getYear() - birthDate.getYear();
+        if (birthDate.getDayOfYear() > today.getDayOfYear()) {
+            age--; // Adjust if the birth date hasn't occurred yet this year
+        }
+        return age >= ageLimit;
+    }
 }

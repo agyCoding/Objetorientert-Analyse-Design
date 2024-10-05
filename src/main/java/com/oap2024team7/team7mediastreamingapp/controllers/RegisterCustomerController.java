@@ -88,6 +88,12 @@ public class RegisterCustomerController {
             String lastName = lastNameField.getText();
             String email = emailField.getText();
             LocalDate birthDate = birthDateDP.getValue();
+
+            if (!ProfileManager.isAgeValid(birthDate, 18)) {
+                GeneralUtils.showAlert(AlertType.ERROR, "Age Restriction", "You must be at least 18 years old to register.", "Please enter a valid birth date.");
+                return; // Stop the registration process
+            }
+
             String address = addressField.getText();
             address = GeneralUtils.normalizeString(address);
             String district = districtField.getText();
