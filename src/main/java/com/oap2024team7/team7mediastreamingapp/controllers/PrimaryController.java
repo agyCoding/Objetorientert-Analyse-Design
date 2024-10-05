@@ -112,15 +112,11 @@ public class PrimaryController {
     public void initialize() {
         loggedInCustomer = SessionData.getInstance().getLoggedInCustomer();
         currentProfile = SessionData.getInstance().getCurrentProfile();
-        String profileName = currentProfile.getProfileName();
 
         /* INITIALIZE USER MENU */
 
         // Setting the logged-in username as empty
-        loggedInUserLabel.setText("Logged in as: " + profileName);
-
-        // DEBUGGING: Print the current profile to the console
-        System.out.println("Current profile: " + currentProfile);
+        updateLoggedInUserLabel();
 
         // Check if the current profile is the main profile
         if (currentProfile != null && currentProfile.isMainProfile()) {
@@ -193,6 +189,24 @@ public class PrimaryController {
         });
     }
 
+    private void updateLoggedInUserLabel() {
+        currentProfile = SessionData.getInstance().getCurrentProfile();
+        String profileName = currentProfile.getProfileName();
+        loggedInUserLabel.setText("Logged in as: " + profileName);
+    
+        // Check if the current profile is the main profile and show/hide the editAccountMenuItem
+        if (currentProfile != null && currentProfile.isMainProfile()) {
+            editAccountMenuItem.setVisible(true);
+        } else {
+            editAccountMenuItem.setVisible(false);
+        }
+    }
+
+    public void reloadUserData() {
+        updateLoggedInUserLabel();
+        loadFilms();
+    }    
+
     // Handles the action when the user clicks the "Manage profiles" menu item.
     private void handleManageProfiles() {
         System.out.println("Manage Profiles clicked");
@@ -248,9 +262,14 @@ public class PrimaryController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/editprofile.fxml"));
             Parent root = loader.load();
 
+            EditProfileController editProfileController = loader.getController();
+
+            // Pass the PrimaryController reference to EditProfileController
+            editProfileController.setPrimaryController(this);
+
             // Create a new stage for the pop-up window
             Stage popupStage = new Stage();
-            popupStage.setTitle("Media Streaming and Rental - Edit Profile");
+            popupStage.setTitle("Streamify - Edit Profile");
 
             // Set the scene for the pop-up stage
             popupStage.setScene(new Scene(root));

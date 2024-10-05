@@ -34,7 +34,13 @@ public class EditProfileController {
     @FXML
     private PasswordField repeatPasswordField;
 
+    private PrimaryController primaryController;
     private Profile profileToEdit;
+
+    // Setter for PrimaryController
+    public void setPrimaryController(PrimaryController primaryController) {
+        this.primaryController = primaryController;
+    }   
 
     public void initialize() {
         // Get the profile to edit from the session data
@@ -69,10 +75,14 @@ public class EditProfileController {
             return;
         }
 
-        // Make sure that the user is unable to delete password from their main profile
+        // Make sure that the user is unable to delete password from their main profile and that main profile owner is at least 18 years old
         boolean isMainProfile = profileToEdit.isMainProfile();
         if (isMainProfile && password.isEmpty()) {
             GeneralUtils.showAlert(AlertType.WARNING, "Invalid Input", "Password Required", "The main profile must have a password.");
+            return;
+        }
+        if (isMainProfile && ProfileManager.isAgeValid(newBirthDate, 18)) {
+            GeneralUtils.showAlert(AlertType.WARNING, "Invalid Input", "Age Restriction", "The main profile must be at least 18 years old.");
             return;
         }
 
@@ -93,6 +103,10 @@ public class EditProfileController {
         if (ProfileManager.updateProfile(profileToEdit)) {
             // If the update was successful, show a success message
             GeneralUtils.showAlert(AlertType.INFORMATION, "Success!", "Profile Updated", "The profile has been updated successfully.");
+
+            // Reload the user data in the primary controller, in case age restrictions have changed or profile name has been updated
+            primaryController.reloadUserData();
+
             // Close the window
             profileNameTF.getScene().getWindow().hide();
         } else {

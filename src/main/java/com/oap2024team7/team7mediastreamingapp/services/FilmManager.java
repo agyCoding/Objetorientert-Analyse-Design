@@ -10,6 +10,8 @@ import com.oap2024team7.team7mediastreamingapp.models.Actor;
 import com.oap2024team7.team7mediastreamingapp.models.Film;
 import com.oap2024team7.team7mediastreamingapp.models.Language;
 import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
+import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
+import com.oap2024team7.team7mediastreamingapp.models.Profile;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -79,6 +81,9 @@ public class FilmManager {
             stmt.setInt(1, storeId);  // Filter by store_id
             ResultSet rs = stmt.executeQuery();
             List<Film> films = new ArrayList<>();
+
+            Profile currentProfile = SessionData.getInstance().getCurrentProfile();
+
             while (rs.next()) {
                 Language language = getLanguageById(conn, rs.getInt("language_id"));
                 GeneralUtils utils = new GeneralUtils();
@@ -98,7 +103,9 @@ public class FilmManager {
                     rs.getDouble("rental_rate"),
                     actors
                 );
-                films.add(film);
+                if (ProfileManager.canWatchFilm(film, currentProfile)) {
+                    films.add(film);
+                }
             }
             return films;
         } catch (SQLException e) {
@@ -120,6 +127,9 @@ public class FilmManager {
              PreparedStatement stmt = conn.prepareStatement(getQuery)) {
             ResultSet rs = stmt.executeQuery();
             List<Film> films = new ArrayList<>();
+
+            Profile currentProfile = SessionData.getInstance().getCurrentProfile();
+
             while (rs.next()) {
                 // Fetch the language object
                 Language language = getLanguageById(conn, rs.getInt("language_id"));
@@ -143,7 +153,9 @@ public class FilmManager {
                     rs.getDouble("rental_rate"),
                     actors
                 );
-                films.add(film);
+                if (ProfileManager.canWatchFilm(film, currentProfile)) {
+                    films.add(film);
+                }
             }
             return films;
         } catch (SQLException e) {
@@ -172,6 +184,10 @@ public class FilmManager {
 
             ResultSet rs = stmt.executeQuery();
             List<Film> films = new ArrayList<>();
+
+            // Get the birth date of the current profile
+            Profile currentProfile = SessionData.getInstance().getCurrentProfile();
+
             while (rs.next()) {
                 // Fetch the language object
                 Language language = getLanguageById(conn, rs.getInt("language_id"));
@@ -196,7 +212,9 @@ public class FilmManager {
                     rs.getDouble("rental_rate"),
                     actors
                 );
-                films.add(film);
+                if (ProfileManager.canWatchFilm(film, currentProfile)) {
+                    films.add(film);
+                }
             }
             return films;
         } catch (SQLException e) {
@@ -314,6 +332,9 @@ public class FilmManager {
 
             ResultSet rs = stmt.executeQuery();
             List<Film> filteredFilms = new ArrayList<>();
+
+            Profile currentProfile = SessionData.getInstance().getCurrentProfile();
+
             while (rs.next()) {
                 // Fetch the language object
                 Language language = getLanguageById(conn, rs.getInt("language_id"));
@@ -341,7 +362,9 @@ public class FilmManager {
                     rs.getDouble("rental_rate"),
                     actors
                 );
-                filteredFilms.add(film);
+                if (ProfileManager.canWatchFilm(film, currentProfile)) {
+                    filteredFilms.add(film);
+                }
             }
             return filteredFilms;
         } catch (SQLException e) {

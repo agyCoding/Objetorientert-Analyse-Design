@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import com.oap2024team7.team7mediastreamingapp.models.Customer;
 import com.oap2024team7.team7mediastreamingapp.models.Customer.AccountType;
 
+
 /**
  * Class for the Customer Manager.
  * This class is responsible for managing Customer objects.
