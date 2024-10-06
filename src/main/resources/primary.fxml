@@ -40,7 +40,8 @@
                 <TextField fx:id="startYearField" promptText="e.g., 2000" />
                 <Label text="To Year:" />
                 <TextField fx:id="endYearField" promptText="e.g., 2020" />
-               <Button fx:id="applyFiltersButton" text="Use Filters" onAction="#applyFilters"/>
+               <Button fx:id="applyFiltersButton" onAction="#applyFilters" text="Use Filters" />
+            <Button fx:id="clearFiltersButton" onAction="#clearFilters" text="Clear Filters" />
                
            </children>
         </VBox>
@@ -58,7 +59,7 @@
                           <RadioButton fx:id="sortByTitle" text="Title" />
                           <RadioButton fx:id="sortByReleaseYear" text="Release Year" />
        
-                      <Button fx:id="applySortButton" text="Apply Sort" onAction="#sortFilms"/>
+                      <Button fx:id="applySortButton" onAction="#sortFilms" text="Apply Sort" />
                   </children>
                </HBox>
    
