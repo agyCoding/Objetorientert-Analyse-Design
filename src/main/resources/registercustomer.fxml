@@ -6,99 +6,107 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="804.0" prefWidth="423.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oap2024team7.team7mediastreamingapp.controllers.RegisterCustomerController">
-   <children>
-        <HBox alignment="TOP_RIGHT">
-           <children>
-                  <Hyperlink fx:id="backToLoginHL" onAction="#switchToLogin" text="&lt;&lt; Back to login page" />
-           </children>
-        </HBox>
-      <Label text="Create account">
-         <font>
-            <Font name="System Bold" size="24.0" />
-         </font></Label>
-      <Label text="Basic information">
-         <font>
-            <Font size="15.0" />
-         </font></Label>
-      <VBox prefHeight="200.0" prefWidth="100.0">
+
+<ScrollPane fitToHeight="true" fitToWidth="true" prefViewportHeight="804.0" prefViewportWidth="423.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oap2024team7.team7mediastreamingapp.controllers.RegisterCustomerController">
+   <content>
+      <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="804.0" prefWidth="423.0" spacing="10.0">
          <children>
-            <Label text="First name" />
-            <TextField fx:id="firstNameField" promptText="First name">
-               <VBox.margin>
-                  <Insets bottom="10.0" />
-               </VBox.margin>
-            </TextField>
-            <Label text="Last name" />
-            <TextField fx:id="lastNameField" promptText="Last Name">
-               <VBox.margin>
-                  <Insets bottom="10.0" />
-               </VBox.margin>
-            </TextField>
-            <Label text="Email" />
-            <TextField fx:id="emailField" promptText="Email">
-               <VBox.margin>
-                  <Insets bottom="10.0" />
-               </VBox.margin>
-            </TextField>
-            <Label text="Birth date" />
-            <DatePicker fx:id="birthDateDP" promptText="Birth date" />
+              <HBox alignment="TOP_RIGHT">
+                 <children>
+                        <Hyperlink fx:id="backToLoginHL" onAction="#switchToLogin" text="&lt;&lt; Back to login page" />
+                 </children>
+              </HBox>
+            <Label text="Create account">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Label>
+            <Label text="Basic information">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Label text="First name" />
+                  <TextField fx:id="firstNameField" promptText="First name">
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </TextField>
+                  <Label text="Last name" />
+                  <TextField fx:id="lastNameField" promptText="Last Name">
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </TextField>
+                  <Label text="Email" />
+                  <TextField fx:id="emailField" promptText="Email">
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </TextField>
+                  <Label text="Birth date" />
+                  <DatePicker fx:id="birthDateDP" promptText="Birth date" />
+               </children>
+            </VBox>
+            <Label text="Contact information">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Label text="Address" />
+                  <TextField fx:id="addressField" promptText="Address">
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </TextField>
+                  <Label text="District" />
+                  <TextField fx:id="districtField" promptText="District">
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </TextField>
+                  <Label text="City" />
+                  <TextField fx:id="cityField" promptText="City">
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </TextField>
+                  <Label text="Postal code" />
+                  <TextField fx:id="postalCodeField" promptText="Postal code">
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </TextField>
+                  <Label text="Phone" />
+                  <TextField fx:id="phoneField" promptText="Phone" />
+               </children>
+            </VBox>
+            <Label text="Create password">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Label text="Create password" />
+                  <PasswordField fx:id="passwordField">
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </PasswordField>
+                  <Label text="Repeat password" />
+                  <PasswordField fx:id="repeatPasswordField" />
+               </children>
+            </VBox>
+            <Button mnemonicParsing="false" onAction="#tryToRegisterNewCustomer" text="Create account" />
          </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
       </VBox>
-      <Label text="Contact information">
-         <font>
-            <Font size="15.0" />
-         </font></Label>
-      <VBox prefHeight="200.0" prefWidth="100.0">
-         <children>
-            <Label text="Address" />
-            <TextField fx:id="addressField" promptText="Address">
-               <VBox.margin>
-                  <Insets bottom="10.0" />
-               </VBox.margin>
-            </TextField>
-            <Label text="District" />
-            <TextField fx:id="districtField" promptText="District">
-               <VBox.margin>
-                  <Insets bottom="10.0" />
-               </VBox.margin>
-            </TextField>
-            <Label text="City" />
-            <TextField fx:id="cityField" promptText="City">
-               <VBox.margin>
-                  <Insets bottom="10.0" />
-               </VBox.margin>
-            </TextField>
-            <Label text="Postal code" />
-            <TextField fx:id="postalCodeField" promptText="Postal code">
-               <VBox.margin>
-                  <Insets bottom="10.0" />
-               </VBox.margin>
-            </TextField>
-            <Label text="Phone" />
-            <TextField fx:id="phoneField" promptText="Phone" />
-         </children>
-      </VBox>
-      <Label text="Create password">
-         <font>
-            <Font size="15.0" />
-         </font>
-      </Label>
-      <VBox prefHeight="200.0" prefWidth="100.0">
-         <children>
-            <Label text="Create password" />
-            <PasswordField fx:id="passwordField">
-               <VBox.margin>
-                  <Insets bottom="10.0" />
-               </VBox.margin>
-            </PasswordField>
-            <Label text="Repeat password" />
-            <PasswordField fx:id="repeatPasswordField" />
-         </children>
-      </VBox>
-      <Button mnemonicParsing="false" onAction="#tryToRegisterNewCustomer" text="Create account" />
-   </children>
-   <padding>
-      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-   </padding>
-</VBox>
+   </content>
+</ScrollPane>
