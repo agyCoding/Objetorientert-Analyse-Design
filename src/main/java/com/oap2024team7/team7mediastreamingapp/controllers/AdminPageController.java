@@ -11,7 +11,9 @@ import com.oap2024team7.team7mediastreamingapp.models.Staff;
 import com.oap2024team7.team7mediastreamingapp.customcells.AdminFilmCell;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.lang.System;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -31,6 +33,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Modality;
+
 
 /**
  * Controller class for the admin page
@@ -67,6 +70,8 @@ public class AdminPageController {
     private RadioButton sortByTitle;
     @FXML
     private RadioButton sortByReleaseYear;
+    @FXML
+    private Button deleteButton;
 
     // Filters menu
     @FXML
@@ -87,6 +92,7 @@ public class AdminPageController {
     private final int limit = 20; // Load 20 films per page
     private CategoryManager categoryManager = new CategoryManager();
     private Staff loggedInStaff;
+    private List<Film> selectedFilms = new ArrayList<>();
 
     // Store filter criteria
     private Category selectedCategory;
@@ -137,7 +143,7 @@ public class AdminPageController {
         loadFilms();
 
         // Indicate how to present films in the LV (show only some information from Film class)
-        filmListView.setCellFactory(listView -> new AdminFilmCell());
+        filmListView.setCellFactory(listView -> new AdminFilmCell(this));
 
         // Handle next and previous page
         nextButton.setOnAction(event -> nextPage());
@@ -227,6 +233,7 @@ public class AdminPageController {
     
         // Disable the previous button if on the first page
         prevButton.setDisable(offset == 0);
+
     }
 
     // Pagination methods
@@ -420,6 +427,52 @@ public class AdminPageController {
 
         // Update page label
         updateCurrentPageLabel();
+    }
+
+    // Method to handle checkbox selection
+    public void notifyFilmSelected(Film film) {
+        if (!selectedFilms.contains(film)) {
+            selectedFilms.add(film);
+            updateDeleteButtonVisibility();
+        }
+    }
+
+    public void notifyFilmDeselected(Film film) {
+        selectedFilms.remove(film);
+        updateDeleteButtonVisibility();
+    }
+
+    private void updateDeleteButtonVisibility() {
+        deleteButton.setVisible(!selectedFilms.isEmpty());
+    }
+
+    @FXML
+    private void deleteSelectedFilms() {
+        if (selectedFilms.isEmpty()) {
+            GeneralUtils.showAlert(AlertType.WARNING, "No Selection", "No films selected", "Please select at least one film to delete.");
+            return;
+        }
+
+        List<Film> filmsToDelete = new ArrayList<>(selectedFilms);
+        for (Film film : filmsToDelete) {
+            try {
+                boolean deleted = filmManager.deleteFilm(film);
+                if (!deleted) {
+                    GeneralUtils.showAlert(AlertType.ERROR, "Error", "Could not delete film", "The film '" + film.getTitle() + "' is currently rented.");
+                } else {
+                    selectedFilms.remove(film);
+                    GeneralUtils.showAlert(AlertType.INFORMATION, "Success", "Film deleted", "The film '" + film.getTitle() + "' has been deleted.");
+                }
+            } catch (Exception e) {
+                GeneralUtils.showAlert(AlertType.ERROR, "Error", "An error occurred", "An error occurred while trying to delete the film '" + film.getTitle() + "'.");
+                e.printStackTrace();
+            }
+        }
+    
+        // Refresh the film list
+        loadFilms();
+        selectedFilms.clear(); // Clear selection after deletion
+        updateDeleteButtonVisibility(); // Update delete button visibility
     }
 
     // Redirect to the login screen

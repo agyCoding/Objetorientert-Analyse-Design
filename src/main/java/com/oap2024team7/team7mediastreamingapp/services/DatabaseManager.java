@@ -24,7 +24,6 @@ public class DatabaseManager {
      */
     public static Connection getConnection() throws SQLException {
         try {
-            System.out.println("Loading MySQL JDBC Driver...");
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -32,12 +31,9 @@ public class DatabaseManager {
         }
     
         try {
-            System.out.println("Attempting to connect to database...");
             Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
-            System.out.println("Connection successful!");
             return connection;
         } catch (SQLException e) {
-            System.err.println("Error: Unable to connect to the database");
             System.err.println("SQLException: " + e.getMessage());
             System.err.println("SQLState: " + e.getSQLState());
             System.err.println("VendorError: " + e.getErrorCode());
