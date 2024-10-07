@@ -12,6 +12,7 @@ import com.oap2024team7.team7mediastreamingapp.models.Language;
 import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
 import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 import com.oap2024team7.team7mediastreamingapp.models.Profile;
+import com.oap2024team7.team7mediastreamingapp.models.Staff;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -103,7 +104,13 @@ public class FilmManager {
                     rs.getDouble("rental_rate"),
                     actors
                 );
-                if (ProfileManager.canWatchFilm(film, currentProfile)) {
+                // The method is reused between primary controller and admin page
+                // Admins don't have profiles so we don't need to check if the film is watchable
+                // Check which user is not null in the Session data and filter the films accordingly
+                Staff currentStaff = SessionData.getInstance().getLoggedInStaff();
+                if (currentStaff != null) {
+                    films.add(film);
+                } else if (ProfileManager.canWatchFilm(film, currentProfile)) {
                     films.add(film);
                 }
             }
@@ -153,7 +160,13 @@ public class FilmManager {
                     rs.getDouble("rental_rate"),
                     actors
                 );
-                if (ProfileManager.canWatchFilm(film, currentProfile)) {
+                // The method is reused between primary controller and admin page
+                // Admins don't have profiles so we don't need to check if the film is watchable
+                // Check which user is not null in the Session data and filter the films accordingly
+                Staff currentStaff = SessionData.getInstance().getLoggedInStaff();
+                if (currentStaff != null) {
+                    films.add(film);
+                } else if (ProfileManager.canWatchFilm(film, currentProfile)) {
                     films.add(film);
                 }
             }
@@ -212,7 +225,13 @@ public class FilmManager {
                     rs.getDouble("rental_rate"),
                     actors
                 );
-                if (ProfileManager.canWatchFilm(film, currentProfile)) {
+                // The method is reused between primary controller and admin page
+                // Admins don't have profiles so we don't need to check if the film is watchable
+                // Check which user is not null in the Session data and filter the films accordingly
+                Staff currentStaff = SessionData.getInstance().getLoggedInStaff();
+                if (currentStaff != null) {
+                    films.add(film);
+                } else if (ProfileManager.canWatchFilm(film, currentProfile)) {
                     films.add(film);
                 }
             }
@@ -362,7 +381,14 @@ public class FilmManager {
                     rs.getDouble("rental_rate"),
                     actors
                 );
-                if (ProfileManager.canWatchFilm(film, currentProfile)) {
+
+                // The method is reused between primary controller and admin page
+                // Admins don't have profiles so we don't need to check if the film is watchable
+                // Check which user is not null in the Session data and filter the films accordingly
+                Staff currentStaff = SessionData.getInstance().getLoggedInStaff();
+                if (currentStaff != null) {
+                    filteredFilms.add(film);
+                } else if (ProfileManager.canWatchFilm(film, currentProfile)) {
                     filteredFilms.add(film);
                 }
             }
