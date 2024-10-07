@@ -12,7 +12,7 @@ public class Staff {
     private String lastName;
     private int addressId;
     private String email;
-    private int storeId; // we are not planning on using this attribute but it's NN in the database so we will hardcode it to 1 in case of staff creation
+    private int storeId; // NN in the database so we will hardcode it to 1 in case of staff creation
     private int active; // this maps to TINYINT in the database with 1 for active and 0 for inactive
     private String username;
     private String password; // hashed password
@@ -78,6 +78,14 @@ public class Staff {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public int getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(int storeId) {
+        this.storeId = storeId;
     }
 
     public String getUsername() {

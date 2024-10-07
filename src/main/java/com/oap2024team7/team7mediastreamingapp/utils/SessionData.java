@@ -4,6 +4,7 @@ import com.oap2024team7.team7mediastreamingapp.models.Address;
 import com.oap2024team7.team7mediastreamingapp.models.Customer;
 import com.oap2024team7.team7mediastreamingapp.models.Profile;
 import com.oap2024team7.team7mediastreamingapp.models.Film;
+import com.oap2024team7.team7mediastreamingapp.models.Staff;
 
 /**
  * Class for the SessionData object.
@@ -15,6 +16,7 @@ import com.oap2024team7.team7mediastreamingapp.models.Film;
 public class SessionData {
     private static SessionData instance;
     private Customer loggedInCustomer;
+    private Staff loggedInStaff;
     private Profile currentProfile;
     private Address customerAddress;
     private Film selectedFilm;
@@ -34,6 +36,14 @@ public class SessionData {
 
     public void setLoggedInCustomer(Customer loggedInCustomer) {
         this.loggedInCustomer = loggedInCustomer;
+    }
+
+    public Staff getLoggedInStaff() {
+        return loggedInStaff;
+    }
+
+    public void setLoggedInStaff(Staff loggedInStaff) {
+        this.loggedInStaff = loggedInStaff;
     }
 
     public Profile getCurrentProfile() {
@@ -62,6 +72,7 @@ public class SessionData {
 
     public void clearSessionData() {
         loggedInCustomer = null;
+        loggedInStaff = null;
         currentProfile = null;
         customerAddress = null;
         selectedFilm = null;

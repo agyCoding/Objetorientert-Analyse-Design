@@ -1,4 +1,4 @@
-// Last Modified: 30.09.2024
+// Last Modified: 07.10.2024
 package com.oap2024team7.team7mediastreamingapp.controllers;
 
 import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
@@ -6,10 +6,9 @@ import com.oap2024team7.team7mediastreamingapp.models.Film;
 import com.oap2024team7.team7mediastreamingapp.services.CategoryManager;
 import com.oap2024team7.team7mediastreamingapp.services.FilmManager;
 import com.oap2024team7.team7mediastreamingapp.models.Category;
-import com.oap2024team7.team7mediastreamingapp.models.Customer;
 import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
-import com.oap2024team7.team7mediastreamingapp.models.Profile;
-import com.oap2024team7.team7mediastreamingapp.customcells.CustomerFilmCell;
+import com.oap2024team7.team7mediastreamingapp.models.Staff;
+import com.oap2024team7.team7mediastreamingapp.customcells.AdminFilmCell;
 
 import java.io.IOException;
 import java.util.List;
@@ -33,15 +32,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Modality;
 
-
 /**
- * Controller class for the primary screen.
- * It displays a list of films and allows the user to filter and sort the films.
- * The controller also allows the user to view film details and navigate to the edit profile screen or logout.
+ * Controller class for the admin page
+ * This class is responsible for handling the user interactions and updating the UI for the admin page.
  * @author  Agata (Agy) Olaussen (@agyCoding)
  */
 
-public class PrimaryController {
+public class AdminPageController {
 
     // User menu
     @FXML
@@ -49,11 +46,7 @@ public class PrimaryController {
     @FXML
     private MenuButton userAccountMenuButton;
     @FXML
-    private MenuItem manageProfilesMenuItem;
-    @FXML
     private MenuItem editAccountMenuItem;
-    @FXML
-    private MenuItem editProfileMenuItem;
     @FXML
     private MenuItem logoutMenuItem;
     @FXML
@@ -64,7 +57,6 @@ public class PrimaryController {
     private ListView<Film> filmListView;
     @FXML
     private Label currentPageLabel;
-
     @FXML
     private Button nextButton;
     @FXML
@@ -94,8 +86,7 @@ public class PrimaryController {
     private int offset = 0;
     private final int limit = 20; // Load 20 films per page
     private CategoryManager categoryManager = new CategoryManager();
-    private Customer loggedInCustomer;
-    private Profile currentProfile;
+    private Staff loggedInStaff;
 
     // Store filter criteria
     private Category selectedCategory;
@@ -110,29 +101,15 @@ public class PrimaryController {
      */
     @FXML
     public void initialize() {
-        loggedInCustomer = SessionData.getInstance().getLoggedInCustomer();
-        currentProfile = SessionData.getInstance().getCurrentProfile();
+        loggedInStaff = SessionData.getInstance().getLoggedInStaff();
 
         /* INITIALIZE USER MENU */
 
         // Setting the logged-in username as empty
         updateLoggedInUserLabel();
 
-        // Check if the current profile is the main profile
-        if (currentProfile != null && currentProfile.isMainProfile()) {
-            editAccountMenuItem.setVisible(true);  // Show the Edit Account menu item if mainProfile = true
-        } else {
-            editAccountMenuItem.setVisible(false);  // Hide the Edit Account menu item if mainProfile = false
-        }        
-    
-        // Handle manage profiles action
-        manageProfilesMenuItem.setOnAction(event -> handleManageProfiles());
-
         // Handle edit account action
         editAccountMenuItem.setOnAction(event -> handleEditAccount());
-    
-        // Handle edit profile action
-        editProfileMenuItem.setOnAction(event -> handleEditProfile());
 
         // Handle logout action
         logoutMenuItem.setOnAction(event -> handleLogout());
@@ -160,7 +137,7 @@ public class PrimaryController {
         loadFilms();
 
         // Indicate how to present films in the LV (show only some information from Film class)
-        filmListView.setCellFactory(lv -> new CustomerFilmCell());
+        filmListView.setCellFactory(listView -> new AdminFilmCell());
 
         // Handle next and previous page
         nextButton.setOnAction(event -> nextPage());
@@ -177,43 +154,14 @@ public class PrimaryController {
     }
 
     private void updateLoggedInUserLabel() {
-        currentProfile = SessionData.getInstance().getCurrentProfile();
-        String profileName = currentProfile.getProfileName();
-        loggedInUserLabel.setText("Logged in as: " + profileName);
-    
-        // Check if the current profile is the main profile and show/hide the editAccountMenuItem
-        if (currentProfile != null && currentProfile.isMainProfile()) {
-            editAccountMenuItem.setVisible(true);
-        } else {
-            editAccountMenuItem.setVisible(false);
-        }
+        String staffName = loggedInStaff.getUsername();
+        loggedInUserLabel.setText("Logged in as: " + staffName);
     }
 
     public void reloadUserData() {
         updateLoggedInUserLabel();
         loadFilms();
     }    
-
-    // Handles the action when the user clicks the "Manage profiles" menu item.
-    private void handleManageProfiles() {
-        System.out.println("Manage Profiles clicked");
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/manageprofiles.fxml"));
-            Parent root = loader.load();
-
-            // Get the current stage from the loggedInUserLabel
-            Stage currentStage = (Stage) loggedInUserLabel.getScene().getWindow();
-
-            // Set the new scene for the current stage
-            currentStage.setScene(new Scene(root));
-
-            currentStage.setTitle("Streamify - Manage Profiles");
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the manage profiles screen", "An error occurred while trying to load the manage profiles screen");
-        }
-    }
    
     // Handles the action when the user clicks the "Edit Account" menu item.
     private void handleEditAccount() {
@@ -242,38 +190,7 @@ public class PrimaryController {
         }
     }
 
-    // Handles the action when the user clicks the "Edit Profile" menu item.
-    private void handleEditProfile() {
-        System.out.println("Edit Profile clicked");
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/editprofile.fxml"));
-            Parent root = loader.load();
-
-            EditProfileController editProfileController = loader.getController();
-
-            // Pass the PrimaryController reference to EditProfileController
-            editProfileController.setPrimaryController(this);
-
-            // Create a new stage for the pop-up window
-            Stage popupStage = new Stage();
-            popupStage.setTitle("Streamify - Edit Profile");
-
-            // Set the scene for the pop-up stage
-            popupStage.setScene(new Scene(root));
-
-            // Make the pop-up window modal (blocks interaction with other windows until closed)
-            popupStage.initModality(Modality.WINDOW_MODAL);
-            popupStage.initOwner(loggedInUserLabel.getScene().getWindow());
-
-            // Show the pop-up window
-            popupStage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-
-            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the edit profile screen", "An error occurred while trying to load the edit profile screen");
-        }
-    }
-    
+   
     // Handles the action when the user clicks the "Logout" menu item.
     private void handleLogout() {
         // Logic to log out the user
@@ -285,16 +202,16 @@ public class PrimaryController {
     // Load films based on the current filters
     private void loadFilms() {
         List<Film> films;
-        int customersStoreId = loggedInCustomer.getStoreId();
+        int staffsStoreId = loggedInStaff.getStoreId();
     
         // Check if filters are applied
         if (selectedCategory != null || selectedRating != null || selectedMaxLength != null || selectedStartYear != null || selectedEndYear != null) {
             // If filters are applied, use the filterFilms method
             Integer categoryId = selectedCategory != null ? selectedCategory.getCategoryId() : null;
-            films = filmManager.filterFilms(categoryId, selectedRating, selectedMaxLength, selectedStartYear, selectedEndYear, offset, limit, customersStoreId);
+            films = filmManager.filterFilms(categoryId, selectedRating, selectedMaxLength, selectedStartYear, selectedEndYear, offset, limit, staffsStoreId);
         } else {
             // No filters applied, load all films
-            films = filmManager.getAllFilms(offset, limit, customersStoreId);
+            films = filmManager.getAllFilms(offset, limit, staffsStoreId);
         }
     
         // Clear the film list view and populate with filtered results
@@ -302,7 +219,7 @@ public class PrimaryController {
         filmListView.getItems().addAll(films);
     
         // Check if there are more films to load for pagination
-        if (films.size() < limit || filmManager.getAllFilms(offset + limit, limit, customersStoreId).isEmpty()) {
+        if (films.size() < limit || filmManager.getAllFilms(offset + limit, limit, staffsStoreId).isEmpty()) {
             nextButton.setDisable(true);
         } else {
             nextButton.setDisable(false);
@@ -338,12 +255,12 @@ public class PrimaryController {
     private void sortFilms() {
         String selectedSort = sortComboBox.getValue();
         List<Film> sortedFilms;
-        int customersStoreId = loggedInCustomer.getStoreId();
+        int staffsStoreId = loggedInStaff.getStoreId();
 
         if ("Sort by Title".equals(selectedSort)) {
-            sortedFilms = filmManager.getFilmsSortedByTitle(customersStoreId);
+            sortedFilms = filmManager.getFilmsSortedByTitle(staffsStoreId);
         } else {
-            sortedFilms = filmManager.getFilmsSortedByYear(customersStoreId);
+            sortedFilms = filmManager.getFilmsSortedByYear(staffsStoreId);
         }
         filmListView.getItems().clear();
         filmListView.getItems().addAll(sortedFilms);

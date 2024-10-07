@@ -17,65 +17,89 @@ import java.sql.SQLException;
 
 public class UserManager {
 
-    /**
-     * Checks if the user can log in.
-     * @param userName
-     * @param password
-     * @return True if the user can log in, false otherwise
-     */
-    public boolean canLogin(String userName, String password) {
-        // Check if the password is empty or null
+    public class LoginResult {
+        private boolean success;
+        private String userType; // "customer" or "staff"
+    
+        public LoginResult(boolean success, String userType) {
+            this.success = success;
+            this.userType = userType;
+        }
+    
+        public boolean isSuccess() {
+            return success;
+        }
+    
+        public String getUserType() {
+            return userType;
+        }
+    }
+    
+    public LoginResult canLogin(String userName, String password) {
         boolean passwordIsNull = password == null || password.isEmpty();
         String hashedPassword = null;
         
         if (!passwordIsNull) {
-            // Hash the password only if it's not empty
             hashedPassword = PasswordUtils.hashPassword(password);
         }
     
-        // First check if the user is active. Only active users can log in
-        String query = "SELECT customer_id FROM customer WHERE email = ? AND active = 1";  // Updated query
+        String customerQuery = "SELECT customer_id FROM customer WHERE email = ? AND active = 1";
+        String staffQuery = "SELECT staff_id FROM staff WHERE username = ?";
     
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, userName);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                int customerId = rs.getInt("customer_id");
-    
-                // Now, retrieve the main profile's hashed password for this customer
-                String profileQuery = "SELECT hashed_password FROM profile WHERE customer_id = ? AND main_profile = 1";
-                try (PreparedStatement profileStmt = conn.prepareStatement(profileQuery)) {
-                    profileStmt.setInt(1, customerId);
-                    ResultSet profileRs = profileStmt.executeQuery();
-                    
-                    if (profileRs.next()) {
-                        String storedHashedPassword = profileRs.getString("hashed_password");
-
-                        // Check if both the password and stored password are null
-                        if (passwordIsNull && storedHashedPassword == null) {
-                            System.out.println("Login successful (passwords are null)");
-                            return true;  // Login successful when both passwords are null
+        try (Connection conn = DatabaseManager.getConnection()) {
+            // Check in customer table
+            try (PreparedStatement stmt = conn.prepareStatement(customerQuery)) {
+                stmt.setString(1, userName);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    int customerId = rs.getInt("customer_id");
+                    // Retrieve the main profile's hashed password for this customer
+                    String profileQuery = "SELECT hashed_password FROM profile WHERE customer_id = ? AND main_profile = 1";
+                    try (PreparedStatement profileStmt = conn.prepareStatement(profileQuery)) {
+                        profileStmt.setInt(1, customerId);
+                        ResultSet profileRs = profileStmt.executeQuery();
+                        if (profileRs.next()) {
+                            String storedHashedPassword = profileRs.getString("hashed_password");
+                            if (passwordIsNull && storedHashedPassword == null) {
+                                return new LoginResult(true, "customer");
+                            }
+                            if (hashedPassword != null && hashedPassword.equals(storedHashedPassword)) {
+                                return new LoginResult(true, "customer");
+                            }
                         }
-
-                        // Check if the provided password matches the stored hashed password
-                        if (hashedPassword != null && hashedPassword.equals(storedHashedPassword)) {
-                            System.out.println("Login successful");
-                            return true;  // Password is valid, login successful
-                        } else {
-                            System.out.println("Invalid password");
-                        }
-                    } else {
-                        System.out.println("Main profile not found");
                     }
                 }
-            } else {
-                System.out.println("Customer not found or inactive");
             }
+    
+            // Check in staff table
+            try (PreparedStatement stmt = conn.prepareStatement(staffQuery)) {
+                stmt.setString(1, userName);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    int staffId = rs.getInt("staff_id");
+                    // Retrieve staff's hashed password
+                    String staffPasswordQuery = "SELECT password FROM staff WHERE staff_id = ?";
+                    try (PreparedStatement staffStmt = conn.prepareStatement(staffPasswordQuery)) {
+                        staffStmt.setInt(1, staffId);
+                        ResultSet staffRs = staffStmt.executeQuery();
+                        if (staffRs.next()) {
+                            String storedHashedPassword = staffRs.getString("password");
+                            if (passwordIsNull && storedHashedPassword == null) {
+                                return new LoginResult(true, "staff");
+                            }
+                            if (hashedPassword != null && hashedPassword.equals(storedHashedPassword)) {
+                                return new LoginResult(true, "staff");
+                            }
+                        }
+                    }
+                }
+            }
+    
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        System.out.println("Login failed");
-        return false;  // Login failed
-    }    
+        
+        return new LoginResult(false, null);  // Login failed
+    }
+    
 }
