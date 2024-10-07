@@ -81,7 +81,7 @@ public class EditProfileController {
             GeneralUtils.showAlert(AlertType.WARNING, "Invalid Input", "Password Required", "The main profile must have a password.");
             return;
         }
-        if (isMainProfile && ProfileManager.isAgeValid(newBirthDate, 18)) {
+        if (isMainProfile && !ProfileManager.isAgeValid(newBirthDate, 18)) {
             GeneralUtils.showAlert(AlertType.WARNING, "Invalid Input", "Age Restriction", "The main profile must be at least 18 years old.");
             return;
         }

@@ -56,8 +56,6 @@ public class PrimaryController {
     private MenuItem logoutMenuItem;
     @FXML
     private VBox filterMenu;
-    @FXML
-    private Button toggleFilterMenuButton;
 
     // Pirmary content viewer (LV)
     @FXML
@@ -155,8 +153,6 @@ public class PrimaryController {
 
         // Set default selection if needed
         sortByTitle.setSelected(true);
-
-        toggleFilterMenuButton.setOnAction(event -> toggleFilterMenu());
 
         // Load the first page of films
         loadFilms();
@@ -295,17 +291,6 @@ public class PrimaryController {
         switchToLogin();
     }
 
-    // Toggle the filter menu visibility
-    private void toggleFilterMenu() {
-        if (filterMenu.isVisible()) {
-            filterMenu.setVisible(false);
-            toggleFilterMenuButton.setText(">>"); // Change button text to indicate action
-        } else {
-            filterMenu.setVisible(true);
-            toggleFilterMenuButton.setText("<<"); // Change button text to indicate action
-        }
-    }
-
     // Load films based on the current filters
     private void loadFilms() {
         List<Film> films;
@@ -418,9 +403,9 @@ public class PrimaryController {
             return;
         } else {
             genreComboBox.getItems().clear();
-            // Add a null option
-            genreComboBox.getItems().add(null);  // This will be displayed as an empty choice
-            
+            // Add a null option for the empty category
+            genreComboBox.getItems().add(null);  // Displayed as an empty option
+    
             // Set how the selected category will be displayed in the button area
             genreComboBox.setButtonCell(new ListCell<Category>() {
                 @Override
@@ -441,8 +426,19 @@ public class PrimaryController {
     
             // Add categories to the ComboBox
             genreComboBox.getItems().addAll(categories);
+    
+            // Add a listener to update selectedCategory when the user changes the selection
+            genreComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+                // If the user selects the empty option, set selectedCategory to null
+                if (newValue == null) {
+                    selectedCategory = null;
+                } else {
+                    selectedCategory = newValue;
+                }
+            });
         }
     }
+    
     
     // Load all ratings and add them to the ComboBox
     private void loadRatings() {
