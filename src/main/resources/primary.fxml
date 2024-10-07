@@ -83,6 +83,7 @@
                <RadioButton fx:id="sortByTitle" text="Title" />
                <RadioButton fx:id="sortByReleaseYear" text="Release Year" />
                <Button fx:id="applySortButton" onAction="#sortFilms" text="Apply Sort" />
+               <Button fx:id="clearFiltersButton" onAction="#clearFilters" text="Clear Filters" />
             </children>
          </HBox>
       <!-- Logo -->

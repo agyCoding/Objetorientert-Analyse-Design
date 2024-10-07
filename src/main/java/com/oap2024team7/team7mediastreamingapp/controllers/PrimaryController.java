@@ -492,6 +492,28 @@ public class PrimaryController {
         updateCurrentPageLabel();
     }
     
+    //Clear all filters and reload the films
+    @FXML
+    private void clearFilters() {
+        genreComboBox.getSelectionModel().clearSelection();
+        ratingComboBox.getSelectionModel().clearSelection();
+        maxLengthField.clear();
+        startYearField.clear();
+        endYearField.clear();
+    
+        // Reset offset when clearing filters
+        offset = 0;
+
+        // Set filters to null
+        applyFilters();
+    
+        // Load films with no filters applied
+        loadFilms();
+
+        // Update page label
+        updateCurrentPageLabel();
+    }
+
     // Redirect to the login screen
     @FXML
     private void switchToLogin() {
