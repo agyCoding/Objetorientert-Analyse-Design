@@ -507,15 +507,15 @@ public class PrimaryController {
     
         // Reset offset when clearing filters
         offset = 0;
+
+        // Set filters to null
+        applyFilters();
     
         // Load films with no filters applied
         loadFilms();
 
         // Update page label
         updateCurrentPageLabel();
-
-        // Show all movies again unfiltered
-        applyFilters();
     }
 
     // Redirect to the login screen
