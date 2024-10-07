@@ -69,6 +69,93 @@ public class FilmManager {
     } 
 
     /**
+     * Deletes a film from the database,
+     * taking under account all tables that have a foreign key relationship with the film.
+     * @param film
+     * @return boolean indicating if the film was deleted successfully
+     */
+    public boolean deleteFilm(Film film) {
+        int filmId = film.getFilmId();
+    
+        // Step 1: Check if any inventory of the film is currently rented out
+        String checkRentedQuery = "SELECT COUNT(*) FROM rental WHERE inventory_id IN (SELECT inventory_id FROM inventory WHERE film_id = ?)";
+        int rentedCount = 0;
+        
+        try (Connection conn = DatabaseManager.getConnection(); 
+             PreparedStatement pstmt = conn.prepareStatement(checkRentedQuery)) {
+             
+            pstmt.setInt(1, filmId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                rentedCount = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        
+        // Step 2: If rented out, return false
+        if (rentedCount > 0) {
+            return false;
+        }
+    
+        // Step 3: Proceed to delete the film and related entries
+        String deleteFilmQuery = "DELETE FROM film WHERE film_id = ?";
+        String deleteInventoryQuery = "DELETE FROM inventory WHERE film_id = ?";
+        String deleteFilmCategoryQuery = "DELETE FROM film_category WHERE film_id = ?";
+        String deleteFilmActorQuery = "DELETE FROM film_actor WHERE film_id = ?";
+        String deleteFilmTextQuery = "DELETE FROM film_text WHERE film_id = ?";
+        String deleteRentalQuery = "DELETE FROM rental WHERE inventory_id IN (SELECT inventory_id FROM inventory WHERE film_id = ?)";
+    
+        try (Connection conn = DatabaseManager.getConnection()) {
+            conn.setAutoCommit(false); // Start a transaction
+    
+            try (PreparedStatement pstmt = conn.prepareStatement(deleteInventoryQuery)) {
+                pstmt.setInt(1, filmId);
+                pstmt.executeUpdate();
+            }
+    
+            try (PreparedStatement pstmt = conn.prepareStatement(deleteFilmCategoryQuery)) {
+                pstmt.setInt(1, filmId);
+                pstmt.executeUpdate();
+            }
+    
+            try (PreparedStatement pstmt = conn.prepareStatement(deleteFilmActorQuery)) {
+                pstmt.setInt(1, filmId);
+                pstmt.executeUpdate();
+            }
+    
+            try (PreparedStatement pstmt = conn.prepareStatement(deleteFilmTextQuery)) {
+                pstmt.setInt(1, filmId);
+                pstmt.executeUpdate();
+            }
+    
+            try (PreparedStatement pstmt = conn.prepareStatement(deleteRentalQuery)) {
+                pstmt.setInt(1, filmId);
+                pstmt.executeUpdate();
+            }
+
+            // Call this last to avoid foreign key constraint issues
+            try (PreparedStatement pstmt = conn.prepareStatement(deleteFilmQuery)) {
+                pstmt.setInt(1, filmId);
+                pstmt.executeUpdate();
+            }
+             
+            conn.commit(); // Commit the transaction
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try (Connection conn = DatabaseManager.getConnection()) {
+                conn.rollback(); // Rollback in case of error
+            } catch (SQLException rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
+            return false;
+        }
+        
+        return true; // Film deleted successfully
+    }
+
+    /**
      * Fetches all films from the database, sorted by title.
      * @return List of all films
      */

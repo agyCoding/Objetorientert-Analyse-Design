@@ -1,5 +1,6 @@
 package com.oap2024team7.team7mediastreamingapp.customcells;
 
+import com.oap2024team7.team7mediastreamingapp.controllers.AdminPageController;
 import com.oap2024team7.team7mediastreamingapp.models.Film;
 
 import javafx.scene.control.CheckBox;
@@ -12,9 +13,22 @@ public class AdminFilmCell extends ListCell<Film> {
     private HBox hbox = new HBox();
     private CheckBox checkBox = new CheckBox();
     private Text filmItem = new Text();
+    private Film film;
+    private AdminPageController controller;
     
-    public AdminFilmCell() {
+    public AdminFilmCell(AdminPageController controller) {
+        this.controller = controller;
         hbox.getChildren().addAll(checkBox, filmItem);
+
+        // Add listener to checkbox
+        checkBox.setOnAction(event -> {
+            if (checkBox.isSelected()) {
+                // Notify AdminPageController that this film is selected
+                controller.notifyFilmSelected(film);
+            } else {
+                controller.notifyFilmDeselected(film);
+            }
+        });
     }
 
     @Override
@@ -23,7 +37,10 @@ public class AdminFilmCell extends ListCell<Film> {
         if (empty || film == null) {
             setText(null);
             setGraphic(null);
+            this.film = null;
+            checkBox.setSelected(false);
         } else {
+            this.film = film;
             filmItem.setText(film.getTitle() + " (" + film.getReleaseYear() + ")");
             setGraphic(hbox);
         }
