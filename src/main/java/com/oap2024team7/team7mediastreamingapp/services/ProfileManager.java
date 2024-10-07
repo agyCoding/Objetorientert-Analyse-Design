@@ -250,10 +250,15 @@ public class ProfileManager {
 
     public static boolean isAgeValid(LocalDate birthDate, int ageLimit) {
         LocalDate today = LocalDate.now();
+        // Calculate the difference in years
         int age = today.getYear() - birthDate.getYear();
-        if (birthDate.getDayOfYear() > today.getDayOfYear()) {
-            age--; // Adjust if the birth date hasn't occurred yet this year
+    
+        // Check if the birthday has not occurred yet this year, adjust the age
+        if (today.isBefore(birthDate.withYear(today.getYear()))) {
+            age--;
         }
+    
+        // Return true if the calculated age is greater than or equal to the limit
         return age >= ageLimit;
     }
 }
