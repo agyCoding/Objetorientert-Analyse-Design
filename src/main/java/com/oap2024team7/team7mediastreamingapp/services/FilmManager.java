@@ -26,25 +26,7 @@ import java.sql.SQLException;
  */
 
 public class FilmManager {
-
-    /**
-     * Helper method to extract language data and create a Language object
-     * @param conn
-     * @param languageId
-     * @return Language object
-     * @throws SQLException
-     */
-    private Language getLanguageById(Connection conn, int languageId) throws SQLException {
-        String query = "SELECT * FROM language WHERE language_id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, languageId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return new Language(rs.getInt("language_id"), rs.getString("name"));
-            }
-        }
-        return null;
-    }
+    private static Connection connection;
 
     /**
      * Helper method to map the database rating to the Film.Rating enum that's without the hyphen
@@ -66,7 +48,7 @@ public class FilmManager {
             default:
                 return null;
         }
-    } 
+    }
 
     /**
      * Deletes a film from the database,
@@ -173,7 +155,8 @@ public class FilmManager {
             Profile currentProfile = SessionData.getInstance().getCurrentProfile();
 
             while (rs.next()) {
-                Language language = getLanguageById(conn, rs.getInt("language_id"));
+                LanguageManager languageManager = new LanguageManager();
+                Language language = languageManager.getLanguageById(conn, rs.getInt("language_id"));
                 GeneralUtils utils = new GeneralUtils();
                 Set<String> specialFeatures = utils.convertToSet(rs.getString("special_features"));
                 List<Actor> actors = ActorManager.getInstance().getActorsForFilm(rs.getInt("film_id"));
@@ -226,7 +209,8 @@ public class FilmManager {
 
             while (rs.next()) {
                 // Fetch the language object
-                Language language = getLanguageById(conn, rs.getInt("language_id"));
+                LanguageManager languageManager = new LanguageManager();
+                Language language = languageManager.getLanguageById(conn, rs.getInt("language_id"));
 
                 GeneralUtils utils = new GeneralUtils();
                 Set<String> specialFeatures = utils.convertToSet(rs.getString("special_features"));
@@ -290,7 +274,8 @@ public class FilmManager {
 
             while (rs.next()) {
                 // Fetch the language object
-                Language language = getLanguageById(conn, rs.getInt("language_id"));
+                LanguageManager languageManager = new LanguageManager();
+                Language language = languageManager.getLanguageById(conn, rs.getInt("language_id"));
 
                 // Fetch special features
                 GeneralUtils utils = new GeneralUtils();
@@ -342,7 +327,8 @@ public class FilmManager {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 // Fetch the language object
-                Language language = getLanguageById(conn, rs.getInt("language_id"));
+                LanguageManager languageManager = new LanguageManager();
+                Language language = languageManager.getLanguageById(conn, rs.getInt("language_id"));
 
                 // Convert special_features from String to Set<String>
                 String specialFeaturesString = rs.getString("special_features");
@@ -443,7 +429,8 @@ public class FilmManager {
 
             while (rs.next()) {
                 // Fetch the language object
-                Language language = getLanguageById(conn, rs.getInt("language_id"));
+                LanguageManager languageManager = new LanguageManager();
+                Language language = languageManager.getLanguageById(conn, rs.getInt("language_id"));
 
                 // Convert special_features from String to Set<String>
                 String specialFeaturesString = rs.getString("special_features");

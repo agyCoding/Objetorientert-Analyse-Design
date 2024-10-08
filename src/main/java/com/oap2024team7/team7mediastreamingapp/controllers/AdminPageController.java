@@ -280,18 +280,18 @@ public class AdminPageController {
     private void showFilmDetails(Film film) {
         // Load the edit account screen
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/filmdetails.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/adminfilmmanagement.fxml"));
             Parent root = loader.load();
 
             // Get the controller of the next scene
-            FilmDetailsController filmDetailsController = loader.getController();
+            AdminFilmManagementController controller = loader.getController();
 
             // Pass the customer object to the edit account controller
-            filmDetailsController.setSelectedFilm(film);
+            controller.setSelectedFilm(film);
 
             // Create a new stage for the pop-up window
             Stage popupStage = new Stage();
-            popupStage.setTitle("Media Streaming and Rental - Film Details");
+            popupStage.setTitle("Streamify - Manage film");
 
             // Set the scene for the pop-up stage
             popupStage.setScene(new Scene(root));
@@ -446,6 +446,11 @@ public class AdminPageController {
         deleteButton.setVisible(!selectedFilms.isEmpty());
     }
 
+    /**
+     * Deletes the selected films from the database.
+     * If a film is currently rented, it cannot be deleted.
+     * If a film is deleted, it is removed from the list view.
+     */
     @FXML
     private void deleteSelectedFilms() {
         if (selectedFilms.isEmpty()) {

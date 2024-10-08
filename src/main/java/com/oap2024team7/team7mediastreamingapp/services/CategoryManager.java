@@ -1,10 +1,15 @@
 package com.oap2024team7.team7mediastreamingapp.services;
 
+import com.oap2024team7.team7mediastreamingapp.models.Actor;
 import com.oap2024team7.team7mediastreamingapp.models.Category;
+import com.oap2024team7.team7mediastreamingapp.models.Film;
+import com.oap2024team7.team7mediastreamingapp.models.Language;
 
 import java.util.List;
+import java.util.Set;
 import java.util.ArrayList;
-
+import java.util.Arrays;
+import java.util.HashSet;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -33,6 +38,29 @@ public class CategoryManager {
                 categories.add(category);
             }
             return categories;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Category getCategoryByFilmId(int filmId) {
+        // Get the category of a film from the database
+        String getQuery = "SELECT c.* FROM category c " +
+                   "JOIN film_category fc ON c.category_id = fc.category_id " +
+                   "WHERE fc.film_id = ?";
+
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(getQuery)) {
+            stmt.setInt(1, filmId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                int category_id = rs.getInt("category_id");
+                String name = rs.getString("name");
+                return new Category(category_id, name);
+            } else {
+                return null;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
