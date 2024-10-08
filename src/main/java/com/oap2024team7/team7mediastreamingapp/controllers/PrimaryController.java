@@ -9,7 +9,9 @@ import com.oap2024team7.team7mediastreamingapp.models.Category;
 import com.oap2024team7.team7mediastreamingapp.models.Customer;
 import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 import com.oap2024team7.team7mediastreamingapp.models.Profile;
+import com.oap2024team7.team7mediastreamingapp.customcells.CategoryCell;
 import com.oap2024team7.team7mediastreamingapp.customcells.CustomerFilmCell;
+import com.oap2024team7.team7mediastreamingapp.customcells.RatingCell;
 
 import java.io.IOException;
 import java.util.List;
@@ -397,23 +399,9 @@ public class PrimaryController {
             // Add a null option for the empty category
             genreComboBox.getItems().add(null);  // Displayed as an empty option
     
-            // Set how the selected category will be displayed in the button area
-            genreComboBox.setButtonCell(new ListCell<Category>() {
-                @Override
-                protected void updateItem(Category category, boolean empty) {
-                    super.updateItem(category, empty);
-                    setText(empty || category == null ? "" : category.getCategoryName());
-                }
-            });
-    
-            // Set the display for ComboBox to show the categoryName instead of the whole object
-            genreComboBox.setCellFactory(lv -> new ListCell<Category>() {
-                @Override
-                protected void updateItem(Category category, boolean empty) {
-                    super.updateItem(category, empty);
-                    setText(empty || category == null ? "" : category.getCategoryName());
-                }
-            });
+            // Set custom cells for displaying category names
+            genreComboBox.setButtonCell(new CategoryCell());
+            genreComboBox.setCellFactory(lv -> new CategoryCell());
     
             // Add categories to the ComboBox
             genreComboBox.getItems().addAll(categories);
@@ -441,23 +429,9 @@ public class PrimaryController {
         // Add a null option
         ratingComboBox.getItems().add(null);  // This will be displayed as an empty choice
 
-        // Set how the rating will be displayed in the dropdown
-        ratingComboBox.setCellFactory(lv -> new ListCell<Film.Rating>() {
-            @Override
-            protected void updateItem(Film.Rating rating, boolean empty) {
-                super.updateItem(rating, empty);
-                setText(empty || rating == null ? "" : rating.name());
-            }
-        });
-
-        // Set how the selected rating is displayed in the ComboBox button
-        ratingComboBox.setButtonCell(new ListCell<Film.Rating>() {
-            @Override
-            protected void updateItem(Film.Rating rating, boolean empty) {
-                super.updateItem(rating, empty);
-                setText(empty || rating == null ? "" : rating.name());
-            }
-        });
+        // Set custom cells for displaying rating names
+        ratingComboBox.setCellFactory(lv -> new RatingCell());
+        ratingComboBox.setButtonCell(new RatingCell());
 
         // Add all the enum values to the ComboBox
         ratingComboBox.getItems().addAll(ratings);

@@ -2,6 +2,8 @@ package com.oap2024team7.team7mediastreamingapp.models;
 
 import java.util.Set;
 import java.util.List;
+import java.util.HashSet;
+import java.util.Collections;
 
 /**
  * Class for the Film object.
@@ -25,6 +27,24 @@ public class Film {
     public enum Rating { G, PG, PG13, R, NC17 }
 
     private Rating rating;
+
+    // Static set to hold all possible special features
+    private static Set<String> predefinedSpecialFeatures;
+
+    // Static block to initialize the predefined special features set
+    static {
+        Set<String> features = new HashSet<>();
+        features.add("Trailers");
+        features.add("Commentaries");
+        features.add("Deleted Scenes");
+        features.add("Behind the Scenes");
+        predefinedSpecialFeatures = Collections.unmodifiableSet(features);
+    }
+
+    // Getter for predefinedSpecialFeatures
+    public static Set<String> getPredefinedSpecialFeatures() {
+        return predefinedSpecialFeatures;
+    }
 
     // Constructor for creating a new film from the database
     public Film(int filmId, String title, String description, int releaseYear, Language language, int rentalDuration, int length, Rating rating, Set<String> specialFeatures, Double rentalRate, List<Actor> actors) {
