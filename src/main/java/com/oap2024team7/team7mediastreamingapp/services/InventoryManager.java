@@ -2,6 +2,8 @@ package com.oap2024team7.team7mediastreamingapp.services;
 
 import com.oap2024team7.team7mediastreamingapp.models.Inventory;
 import com.oap2024team7.team7mediastreamingapp.models.Customer;
+import com.oap2024team7.team7mediastreamingapp.models.Film;
+import com.oap2024team7.team7mediastreamingapp.models.Staff;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,6 +22,38 @@ import java.sql.Timestamp;
  */
 
 public class InventoryManager {
+
+    /**
+     * Checks for inventory for a given film and store.
+     * @param film
+     * @param staff
+     * @return A list of Inventory objects
+     */
+    public List<Inventory> checkInventoryForFilmAndStore(Film film, Staff staff) {
+        String sql = "SELECT * FROM inventory WHERE film_id = ? AND store_id = ?";
+        List<Inventory> inventories = new ArrayList<>();
+
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setInt(1, film.getFilmId());
+            stmt.setInt(2, staff.getStoreId());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Inventory inventory = new Inventory();
+                    inventory.setInventoryId(rs.getInt("inventory_id"));
+                    inventory.setFilmId(rs.getInt("film_id"));
+                    inventory.setStoreId(rs.getInt("store_id"));
+                    inventories.add(inventory);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return inventories;
+    }
 
     /**
      * Checks for available inventory for a given film, store, and date range.

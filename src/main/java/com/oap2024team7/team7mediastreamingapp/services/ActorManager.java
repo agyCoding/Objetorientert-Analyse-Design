@@ -59,5 +59,42 @@ public class ActorManager {
             e.printStackTrace();
         }
         return actors;
-    }    
+    }
+    
+    /**
+     * Set actors for a specific film.
+     * @param actors List of actors to be set for the film
+     * @param filmId The ID of the film
+     * @return boolean indicating success or failure
+     */
+    public boolean setActorsForFilm(List<Actor> actors, int filmId) {
+        String deleteQuery = "DELETE FROM film_actor WHERE film_id = ?";
+        String insertQuery = "INSERT INTO film_actor (film_id, actor_id) VALUES (?, ?)";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement deleteStmt = conn.prepareStatement(deleteQuery);
+             PreparedStatement insertStmt = conn.prepareStatement(insertQuery)) {
+            
+            // Start transaction
+            conn.setAutoCommit(false);
+            
+            // Delete existing actors for the film
+            deleteStmt.setInt(1, filmId);
+            deleteStmt.executeUpdate();
+            
+            // Insert new actors for the film
+            for (Actor actor : actors) {
+                insertStmt.setInt(1, filmId);
+                insertStmt.setInt(2, actor.getActorId());
+                insertStmt.addBatch();
+            }
+            insertStmt.executeBatch();
+            
+            // Commit transaction
+            conn.commit();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

@@ -66,4 +66,24 @@ public class CategoryManager {
             return null;
         }
     }
+
+    /**
+     * Updates the category of an existing film.
+     * @param film The film to update the category for
+     * @param category The new category to set for the film
+     * @return true if the update was successful, false otherwise
+     */
+    public boolean updateCategoryForFilm(Film film, Category category) {
+        String updateQuery = "UPDATE film_category SET category_id = ? WHERE film_id = ?";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+            stmt.setInt(1, category.getCategoryId());
+            stmt.setInt(2, film.getFilmId());
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

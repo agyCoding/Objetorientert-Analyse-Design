@@ -3,6 +3,7 @@ package com.oap2024team7.team7mediastreamingapp.controllers;
 import com.oap2024team7.team7mediastreamingapp.models.Film;
 
 import java.util.List;
+import java.util.HashSet;
 
 import com.oap2024team7.team7mediastreamingapp.customcells.CategoryCell;
 import com.oap2024team7.team7mediastreamingapp.customcells.LanguageCell;
@@ -13,12 +14,18 @@ import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 import com.oap2024team7.team7mediastreamingapp.services.CategoryManager;
 import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
 import com.oap2024team7.team7mediastreamingapp.services.LanguageManager;
+import com.oap2024team7.team7mediastreamingapp.models.Actor;
+import com.oap2024team7.team7mediastreamingapp.models.Staff;
+import com.oap2024team7.team7mediastreamingapp.services.InventoryManager;
+import com.oap2024team7.team7mediastreamingapp.models.Inventory;
+import com.oap2024team7.team7mediastreamingapp.customcells.AdminActorCell;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -30,6 +37,8 @@ import javafx.collections.ObservableList;
 public class AdminFilmManagementController {
     @FXML
     private Button updateButton;
+
+    // Basic film information from FXML
     @FXML
     private TextField filmTitleTF;
     @FXML
@@ -43,19 +52,29 @@ public class AdminFilmManagementController {
     @FXML
     private ComboBox<Language> languageCB;
     @FXML
+    private TextField lengthTF;
+
+    // Special features and actors from FXML
+    @FXML
     private ComboBox<String> specialfeaturesCB;
     @FXML
-    private Label currentSpecialFeaturesLabel;
+    private ListView<String> specialFeaturesLV;
     @FXML
     private ComboBox<String> actorsCB;
     @FXML
-    private Label currentActorsLabel;
+    private ListView<Actor> actorsLV;
+
+    // Rental information from FXML
+    @FXML
+    private TextField rentalDurationTF;
+    @FXML
+    private TextField rentalRateTF;
+
+    // Inventory information from FXML
     @FXML
     private Label currentInventoryLabel;
     @FXML
     private TextField inventoryAmountTF;
-    @FXML
-    private ComboBox<Integer> inventoryStoreCB;
 
     // Local variables
     private Film selectedFilm;
@@ -65,13 +84,9 @@ public class AdminFilmManagementController {
 
     // Store information about chosen inputs
     private Category selectedCategory;
-    private String selectedReleaseYear;
-    private Film.Rating selectedRating;
-    private Language selectedLanguage;
     private String selectedSpecialFeature;
-    private String selectedActor;
-    private int selectedInventoryAmount;
-    private int selectedInventoryStore;
+    private Language selectedLanguage = null;
+
 
 
     public void initialize() {     
@@ -79,7 +94,9 @@ public class AdminFilmManagementController {
         loadCategories();
         loadRatings();
         loadLanguages();
-        loadSpecialFeatures();       
+        loadSpecialFeatures();
+        loadCurrentSpecialFeatures();
+        loadCurrentActors();       
     }
 
     private void loadDummyValues() {
@@ -93,12 +110,6 @@ public class AdminFilmManagementController {
         
         // Set the items to the ComboBox
         actorsCB.setItems(dummyActors);
-
-        // Create an ObservableList of dummy stores
-        ObservableList<Integer> dummyStores = FXCollections.observableArrayList(
-            1, 2, 3, 4, 5
-        );
-        inventoryStoreCB.setItems(dummyStores);
     }    
 
     /**
@@ -136,15 +147,23 @@ public class AdminFilmManagementController {
         filmTitleTF.setText(selectedFilm.getTitle());
         descriptionTA.setText(selectedFilm.getDescription());
         releaseYearTF.setText(String.valueOf(selectedFilm.getReleaseYear()));
-        // categoryCB.setValue(selectedFilm.getCategory());
-        currentSpecialFeaturesLabel.setText(selectedFilm.getSpecialFeatures().toString());
-        currentActorsLabel.setText(selectedFilm.getActors().toString());
-        currentInventoryLabel.setText("placeholder!");
+        lengthTF.setText(String.valueOf(selectedFilm.getLength()));
+        rentalDurationTF.setText(String.valueOf(selectedFilm.getRentalDuration()));
+        rentalRateTF.setText(String.valueOf(selectedFilm.getRentalRate()));
+
+        // Set the current inventory label
+        InventoryManager inventoryManager = new InventoryManager();
+        Staff staff = SessionData.getInstance().getLoggedInStaff();
+        List<Inventory> currentInventory = inventoryManager.checkInventoryForFilmAndStore(selectedFilm, staff);
+        int currentInventorySize = currentInventory.size();
+        
+        inventoryAmountTF.setText(String.valueOf(currentInventorySize));
 
         // Preselect the film's rating
         if (selectedFilm.getRating() != null) {
             pgRatingCB.setValue(selectedFilm.getRating());
         }
+
         // Preselect the film's language
         if (selectedFilm.getLanguage() != null) {
             Language selectedFilmLanguage = selectedFilm.getLanguage();
@@ -156,8 +175,9 @@ public class AdminFilmManagementController {
                 }
             }
         }
-        selectedCategory = categoryManager.getCategoryByFilmId(selectedFilm.getFilmId());
+
         // Pre-select the category for the current film
+        selectedCategory = categoryManager.getCategoryByFilmId(selectedFilm.getFilmId());
         if (selectedCategory != null) {
             for (Category category : categoryCB.getItems()) {
                 if (category.getCategoryId() == selectedCategory.getCategoryId()) {
@@ -233,8 +253,8 @@ public class AdminFilmManagementController {
 
         // Add a listener to update selectedLanguage when the user changes the selection
         languageCB.valueProperty().addListener((observable, oldValue, newValue) -> {
-        selectedLanguage = newValue;
-    });
+            selectedLanguage = newValue;
+        });
     }
     
     private void loadSpecialFeatures() {
@@ -245,20 +265,90 @@ public class AdminFilmManagementController {
         specialfeaturesCB.getItems().addAll(Film.getPredefinedSpecialFeatures());
     }    
 
+    private void loadCurrentSpecialFeatures() {
+        // Clear existing items
+        specialFeaturesLV.getItems().clear();
+
+        Film film = SessionData.getInstance().getSelectedFilm();
+        if (film != null && film.getSpecialFeatures() != null) {
+            // Add the special features of the selected film to the ListView
+            specialFeaturesLV.getItems().addAll(film.getSpecialFeatures());
+        }
+    }
+
+    private void loadCurrentActors() {
+        // Clear existing items
+        actorsLV.getItems().clear();
+
+        // Set custom cells for displaying actors
+        actorsLV.setCellFactory(lv -> new AdminActorCell(this));
+
+        Film film = SessionData.getInstance().getSelectedFilm();
+        if (film != null && film.getActors() != null) {
+            // Add the actors of the selected film to the ListView
+            actorsLV.getItems().addAll(film.getActors());
+        }
+    }
+    
     @FXML
     public void tryToUpdateFilm() {
         System.out.println("Trying to update film...");
+        // Get the values from the input fields related to the Film class
+        String title = filmTitleTF.getText();
+        String description = descriptionTA.getText();
+        String releaseYear = releaseYearTF.getText();
+        Film.Rating rating = pgRatingCB.getValue();
+        Language language = languageCB.getValue();
+        List<String> specialFeatures = specialFeaturesLV.getItems();
+        List<Actor> actors = actorsLV.getItems();
+
+        Category category = categoryCB.getValue();
+        System.out.println("Selected category: " + category.getCategoryId());
+
+        // int inventoryAmount = Integer.parseInt(inventoryAmountTF.getText());
+        // int inventoryStore = inventoryStoreCB.getValue();
+
+        // Check if all required fields are filled
+        if (title.isEmpty() || language == null || category == null) {
+            GeneralUtils.showAlert(AlertType.WARNING, "Warning", "Missing information", "Please fill in all required fields.");
+            return;
+        }
+
+        // Update Film object with the new values
+        selectedFilm.setTitle(title);
+        selectedFilm.setDescription(description);
+        selectedFilm.setReleaseYear(Integer.parseInt(releaseYear));
+        selectedFilm.setRating(rating);
+        selectedFilm.setLanguage(language);
+        selectedFilm.setSpecialFeatures(new HashSet<>(specialFeatures));
+        selectedFilm.setActors(actors);
+
+
+
+        // Try to update the film in the database
+        // boolean updated = selectedFilm.updateFilm(selectedFilm);
+
+        // Try to update category in the database
+        // boolean updated = categoryManager.updateCategoryForFilm(selectedFilm, category);
     }
     @FXML
     public void tryToAddSF() {
         System.out.println("Trying to add special feature...");
+            // Get the selected special feature from the ComboBox
+            selectedSpecialFeature = specialfeaturesCB.getValue();
+            
+            // Check if a special feature is selected and not already in the ListView
+            if (selectedSpecialFeature != null && !specialFeaturesLV.getItems().contains(selectedSpecialFeature)) {
+                // Add the selected special feature to the ListView
+                specialFeaturesLV.getItems().add(selectedSpecialFeature);
+            } else {
+                // Show an alert if no special feature is selected or if it is already in the ListView
+                GeneralUtils.showAlert(AlertType.WARNING, "Warning", "Special Feature not added", "Please select a valid special feature that is not already added.");
+            }
     }
     @FXML
     public void tryToAddActor() {
         System.out.println("Trying to add actor...");
     }
-    @FXML
-    public void tryToAddInventory() {
-        System.out.println("Trying to add inventory...");
-    }
+
 }
