@@ -24,6 +24,7 @@ import java.io.IOException;
 /**
  * Controller class for the Film Details screen.
  * This class is responsible for displaying the details of a selected film.
+ * 
  * @author Agata (Agy) Olaussen (@agyCoding)
  */
 
@@ -50,6 +51,16 @@ public class FilmDetailsController {
     private Film selectedFilm;
     private Stage stage;
 
+    @FXML
+    private void handleSaveToList() {
+        if (selectedFilm != null) {
+            SessionData.getInstance().addFilmToSavedList(selectedFilm);
+        } else {
+            // Handle the case where selectedFilm is not initialized
+            System.out.println("No film selected to save.");
+        }
+    }
+
     /**
      * The stage for the Film Details window.
      * This is used to set a listener to clear the selected film when the window is closed.
@@ -68,12 +79,13 @@ public class FilmDetailsController {
 
     /**
      * This method is called when a film is clicked in the main screen.
+     * 
      * @param film The film object that was clicked.
      */
     public void setSelectedFilm(Film film) {
         // Set the film object to the film object that was clicked
         selectedFilm = film;
-        
+
         // Now that the film is set, update the labels with the film's details
         updateFilmDetails();
 
@@ -84,21 +96,20 @@ public class FilmDetailsController {
         SessionData.getInstance().setSelectedFilm(selectedFilm);
     }
 
-
     // This method updates the labels with the details of the selected film.
     private void updateFilmDetails() {
         // Update the labels based on the film's details
         titleLabel.setText(selectedFilm.getTitle());
         releaseYearLabel.setText("Release year: " + selectedFilm.getReleaseYear());
         descriptionLabel.setText("Film description: " + selectedFilm.getDescription());
-    
+
         // Assuming you have a method to get the language name
         languageLabel.setText("Language: " + selectedFilm.getLanguage().getLanguageName());
-        
+
         // Join special features into a single string
         String specialFeatures = String.join(", ", selectedFilm.getSpecialFeatures());
         specialFeaturesLabel.setText("Special features: " + specialFeatures);
-    
+
         // Display the PG rating
         pgRatingLabel.setText("PG rating: " + selectedFilm.getRating().toString());
 
@@ -115,15 +126,15 @@ public class FilmDetailsController {
         }
         actorsLabel.setText(actorsText.toString());
     }
-    
+
     // This method sets the visibility of the Rent and Stream buttons based on the logged-in customer's account type.
     private void setButtonVisibility() {
         // Retrieve the logged-in customer
         Customer loggedInCustomer = SessionData.getInstance().getLoggedInCustomer();
-        
+
         if (loggedInCustomer != null) {
             AccountType accountType = loggedInCustomer.getAccountType();
-            
+
             if (accountType == AccountType.FREE) {
                 // Show Rent button and hide Stream button for FREE users
                 rentButton.setVisible(true);

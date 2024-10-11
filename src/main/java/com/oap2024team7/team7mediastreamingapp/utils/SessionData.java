@@ -6,6 +6,9 @@ import com.oap2024team7.team7mediastreamingapp.models.Profile;
 import com.oap2024team7.team7mediastreamingapp.models.Film;
 import com.oap2024team7.team7mediastreamingapp.models.Staff;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Class for the SessionData object.
  * This class is responsible for managing the session data of the application.
@@ -20,8 +23,12 @@ public class SessionData {
     private Profile currentProfile;
     private Address customerAddress;
     private Film selectedFilm;
+    private List<Film> savedFilms; // List to store saved films
 
-    private SessionData() {}
+    // Constructor is private to implement the Singleton pattern
+    private SessionData() {
+        savedFilms = new ArrayList<>(); // Initialize the saved films list
+    }
 
     public static SessionData getInstance() {
         if (instance == null) {
@@ -76,9 +83,36 @@ public class SessionData {
         currentProfile = null;
         customerAddress = null;
         selectedFilm = null;
+        savedFilms.clear(); // Clear saved films when session is cleared
     }
 
     public void clearProfileData() {
         currentProfile = null;
+    }
+    
+    /**
+     * Get the list of saved films
+     * @return List of saved films
+     */
+    public List<Film> getSavedFilms() {
+        return savedFilms;
+    }
+
+    /**
+     * Add a film to the saved list
+     * @param film The film to add
+     */
+    public void addFilmToSavedList(Film film) {
+        if (!savedFilms.contains(film)) {
+            savedFilms.add(film);
+        }
+    }
+
+    /**
+     * Remove a film from the saved list
+     * @param film The film to remove
+     */
+    public void removeFilmFromSavedList(Film film) {
+        savedFilms.remove(film);
     }
 }
