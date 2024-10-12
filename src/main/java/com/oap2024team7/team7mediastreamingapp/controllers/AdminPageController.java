@@ -11,6 +11,8 @@ import com.oap2024team7.team7mediastreamingapp.models.Staff;
 import com.oap2024team7.team7mediastreamingapp.customcells.AdminFilmCell;
 
 import java.io.IOException;
+import java.util.Comparator;
+import java.util.stream.Collectors;
 import java.util.ArrayList;
 import java.util.List;
 import java.lang.System;
@@ -93,6 +95,7 @@ public class AdminPageController {
     private CategoryManager categoryManager = new CategoryManager();
     private Staff loggedInStaff;
     private List<Film> selectedFilms = new ArrayList<>();
+    private List<Film> filteredFilms;
 
     // Store filter criteria
     private Category selectedCategory;
@@ -219,6 +222,9 @@ public class AdminPageController {
             // No filters applied, load all films
             films = filmManager.getAllFilms(offset, limit, staffsStoreId);
         }
+
+        // Store the filtered films in the class variable
+        filteredFilms = films;
     
         // Clear the film list view and populate with filtered results
         filmListView.getItems().clear();
@@ -260,15 +266,33 @@ public class AdminPageController {
     // Sort films based on the selected option
     @FXML    
     private void sortFilms() {
-        String selectedSort = sortComboBox.getValue();
-        List<Film> sortedFilms;
-        int staffsStoreId = loggedInStaff.getStoreId();
 
-        if ("Sort by Title".equals(selectedSort)) {
-            sortedFilms = filmManager.getFilmsSortedByTitle(staffsStoreId);
-        } else {
-            sortedFilms = filmManager.getFilmsSortedByYear(staffsStoreId);
+        if (filteredFilms == null || filteredFilms.isEmpty()) {
+            // If no films are loaded or filtered, just return
+            System.out.println("No films to sort");
+            return;
         }
+
+            List<Film> sortedFilms;
+
+        if (sortByTitle.isSelected()) {
+            // Sort by title using a comparator
+            sortedFilms = filteredFilms.stream()
+                .sorted(Comparator.comparing(Film::getTitle))
+                .collect(Collectors.toList());
+        } else if (sortByReleaseYear.isSelected()) {
+            // Sort by release year using a comparator
+            sortedFilms = filteredFilms.stream()
+                .sorted(Comparator.comparing(Film::getReleaseYear))
+                .collect(Collectors.toList());
+        } else {
+            // Default to sorting by title if no radio button is selected
+            sortedFilms = filteredFilms.stream()
+                .sorted(Comparator.comparing(Film::getTitle))
+                .collect(Collectors.toList());
+        }
+
+        // Clear the film list view and populate with sorted results
         filmListView.getItems().clear();
         filmListView.getItems().addAll(sortedFilms);
     }

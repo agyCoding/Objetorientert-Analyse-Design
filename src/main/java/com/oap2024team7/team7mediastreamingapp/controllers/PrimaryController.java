@@ -14,7 +14,9 @@ import com.oap2024team7.team7mediastreamingapp.customcells.CustomerFilmCell;
 import com.oap2024team7.team7mediastreamingapp.customcells.RatingCell;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -98,6 +100,8 @@ public class PrimaryController {
     private CategoryManager categoryManager = new CategoryManager();
     private Customer loggedInCustomer;
     private Profile currentProfile;
+    private List<Film> filteredFilms;
+
 
     // Store filter criteria
     private Category selectedCategory;
@@ -284,35 +288,38 @@ public class PrimaryController {
         switchToLogin();
     }
 
-    // Load films based on the current filters
-    private void loadFilms() {
-        List<Film> films;
-        int customersStoreId = loggedInCustomer.getStoreId();
-    
-        // Check if filters are applied
-        if (selectedCategory != null || selectedRating != null || selectedMaxLength != null || selectedStartYear != null || selectedEndYear != null) {
-            // If filters are applied, use the filterFilms method
-            Integer categoryId = selectedCategory != null ? selectedCategory.getCategoryId() : null;
-            films = filmManager.filterFilms(categoryId, selectedRating, selectedMaxLength, selectedStartYear, selectedEndYear, offset, limit, customersStoreId);
-        } else {
-            // No filters applied, load all films
-            films = filmManager.getAllFilms(offset, limit, customersStoreId);
-        }
-    
-        // Clear the film list view and populate with filtered results
-        filmListView.getItems().clear();
-        filmListView.getItems().addAll(films);
-    
-        // Check if there are more films to load for pagination
-        if (films.size() < limit || filmManager.getAllFilms(offset + limit, limit, customersStoreId).isEmpty()) {
-            nextButton.setDisable(true);
-        } else {
-            nextButton.setDisable(false);
-        }
-    
-        // Disable the previous button if on the first page
-        prevButton.setDisable(offset == 0);
+// Load films based on the current filters
+private void loadFilms() {
+    List<Film> films;
+    int customersStoreId = loggedInCustomer.getStoreId();
+
+    // Check if filters are applied
+    if (selectedCategory != null || selectedRating != null || selectedMaxLength != null || selectedStartYear != null || selectedEndYear != null) {
+        // If filters are applied, use the filterFilms method
+        Integer categoryId = selectedCategory != null ? selectedCategory.getCategoryId() : null;
+        films = filmManager.filterFilms(categoryId, selectedRating, selectedMaxLength, selectedStartYear, selectedEndYear, offset, limit, customersStoreId);
+    } else {
+        // No filters applied, load all films
+        films = filmManager.getAllFilms(offset, limit, customersStoreId);
     }
+
+    // Store the filtered films in the class variable
+    filteredFilms = films;
+
+    // Clear the film list view and populate with filtered results
+    filmListView.getItems().clear();
+    filmListView.getItems().addAll(films);
+
+    // Check if there are more films to load for pagination
+    if (films.size() < limit || filmManager.getAllFilms(offset + limit, limit, customersStoreId).isEmpty()) {
+        nextButton.setDisable(true);
+    } else {
+        nextButton.setDisable(false);
+    }
+
+    // Disable the previous button if on the first page
+    prevButton.setDisable(offset == 0);
+}
 
     // Pagination methods
     private void nextPage() {
@@ -336,17 +343,35 @@ public class PrimaryController {
     }
 
     // Sort films based on the selected option
-    @FXML    
+    @FXML
     private void sortFilms() {
-        String selectedSort = sortComboBox.getValue();
-        List<Film> sortedFilms;
-        int customersStoreId = loggedInCustomer.getStoreId();
 
-        if ("Sort by Title".equals(selectedSort)) {
-            sortedFilms = filmManager.getFilmsSortedByTitle(customersStoreId);
-        } else {
-            sortedFilms = filmManager.getFilmsSortedByYear(customersStoreId);
+        if (filteredFilms == null || filteredFilms.isEmpty()) {
+            // If no films are loaded or filtered, just return
+            System.out.println("No films to sort");
+            return;
         }
+
+            List<Film> sortedFilms;
+
+        if (sortByTitle.isSelected()) {
+            // Sort by title using a comparator
+            sortedFilms = filteredFilms.stream()
+                .sorted(Comparator.comparing(Film::getTitle))
+                .collect(Collectors.toList());
+        } else if (sortByReleaseYear.isSelected()) {
+            // Sort by release year using a comparator
+            sortedFilms = filteredFilms.stream()
+                .sorted(Comparator.comparing(Film::getReleaseYear))
+                .collect(Collectors.toList());
+        } else {
+            // Default to sorting by title if no radio button is selected
+            sortedFilms = filteredFilms.stream()
+                .sorted(Comparator.comparing(Film::getTitle))
+                .collect(Collectors.toList());
+        }
+
+        // Clear the film list view and populate with sorted results
         filmListView.getItems().clear();
         filmListView.getItems().addAll(sortedFilms);
     }

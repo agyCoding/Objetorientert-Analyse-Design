@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch Application",
+            "request": "launch",
+            "mainClass": "com.oap2024team7.team7mediastreamingapp.App",
+            "startupClass": "com.oap2024team7.team7mediastreamingapp.App",
+            "cwd": "${workspaceFolder}", // Dette setter arbeidskatalogen til prosjektmappen
+            "vmArgs": "-XX:ReservedCodeCacheSize=2048M"
+        }
+    ]
+}

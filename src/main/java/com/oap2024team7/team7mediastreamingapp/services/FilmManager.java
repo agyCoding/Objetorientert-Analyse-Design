@@ -138,123 +138,12 @@ public class FilmManager {
     }
 
     /**
-     * Fetches all films from the database, sorted by title.
-     * @return List of all films
-     */
-    public List<Film> getFilmsSortedByTitle(int storeId) {
-        String getQuery = "SELECT DISTINCT f.* FROM film f " +
-                          "JOIN inventory i ON f.film_id = i.film_id " +
-                          "WHERE i.store_id = ? " +
-                          "ORDER BY f.title";
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(getQuery)) {
-            stmt.setInt(1, storeId);  // Filter by store_id
-            ResultSet rs = stmt.executeQuery();
-            List<Film> films = new ArrayList<>();
-
-            Profile currentProfile = SessionData.getInstance().getCurrentProfile();
-
-            while (rs.next()) {
-                LanguageManager languageManager = new LanguageManager();
-                Language language = languageManager.getLanguageById(conn, rs.getInt("language_id"));
-                GeneralUtils utils = new GeneralUtils();
-                Set<String> specialFeatures = utils.convertToSet(rs.getString("special_features"));
-                List<Actor> actors = ActorManager.getInstance().getActorsForFilm(rs.getInt("film_id"));
-    
-                Film film = new Film(
-                    rs.getInt("film_id"),
-                    rs.getString("title"),
-                    rs.getString("description"),
-                    rs.getInt("release_year"),
-                    language,
-                    rs.getInt("rental_duration"),
-                    rs.getInt("length"),
-                    Film.Rating.valueOf(rs.getString("rating").replace("-", "")),
-                    specialFeatures,
-                    rs.getDouble("rental_rate"),
-                    actors
-                );
-                // The method is reused between primary controller and admin page
-                // Admins don't have profiles so we don't need to check if the film is watchable
-                // Check which user is not null in the Session data and filter the films accordingly
-                Staff currentStaff = SessionData.getInstance().getLoggedInStaff();
-                if (currentStaff != null) {
-                    films.add(film);
-                } else if (ProfileManager.canWatchFilm(film, currentProfile)) {
-                    films.add(film);
-                }
-            }
-            return films;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
-     * Fetches all films from the database, sorted by release year.
-     * @return List of all films
-     */
-    public List<Film> getFilmsSortedByYear(int storeId) {
-        String getQuery = "SELECT DISTINCT f.* FROM film f " +
-                      "JOIN inventory i ON f.film_id = i.film_id " +
-                      "WHERE i.store_id = ? " +
-                      "ORDER BY f.release_year";
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(getQuery)) {
-            ResultSet rs = stmt.executeQuery();
-            List<Film> films = new ArrayList<>();
-
-            Profile currentProfile = SessionData.getInstance().getCurrentProfile();
-
-            while (rs.next()) {
-                // Fetch the language object
-                LanguageManager languageManager = new LanguageManager();
-                Language language = languageManager.getLanguageById(conn, rs.getInt("language_id"));
-
-                GeneralUtils utils = new GeneralUtils();
-                Set<String> specialFeatures = utils.convertToSet(rs.getString("special_features"));
-
-                // Fetch the actors for this film
-                List<Actor> actors = ActorManager.getInstance().getActorsForFilm(rs.getInt("film_id"));
-
-                Film film = new Film(
-                    rs.getInt("film_id"),
-                    rs.getString("title"),
-                    rs.getString("description"),
-                    rs.getInt("release_year"),
-                    language,  // Pass the Language object instead of language_id
-                    rs.getInt("rental_duration"),
-                    rs.getInt("length"),
-                    Film.Rating.valueOf(rs.getString("rating").replace("-", "")),
-                    specialFeatures,
-                    rs.getDouble("rental_rate"),
-                    actors
-                );
-                // The method is reused between primary controller and admin page
-                // Admins don't have profiles so we don't need to check if the film is watchable
-                // Check which user is not null in the Session data and filter the films accordingly
-                Staff currentStaff = SessionData.getInstance().getLoggedInStaff();
-                if (currentStaff != null) {
-                    films.add(film);
-                } else if (ProfileManager.canWatchFilm(film, currentProfile)) {
-                    films.add(film);
-                }
-            }
-            return films;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
      * Fetches films from the database based on the offset and limit.
      * @param offset
      * @param limit
      * @return List of films
      */
-    public List<Film> getAllFilms(int offset, int limit, int storeId) {
+   public List<Film> getAllFilms(int offset, int limit, int storeId) {
         String getQuery = "SELECT DISTINCT f.* FROM film f " +
         "JOIN inventory i ON f.film_id = i.film_id " +
         "WHERE i.store_id = ? " +
