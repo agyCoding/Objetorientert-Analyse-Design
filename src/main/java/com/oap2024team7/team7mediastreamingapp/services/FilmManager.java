@@ -51,6 +51,36 @@ public class FilmManager {
     }
 
     /**
+     * Updates a film in the database.
+     * @param film The film object containing updated information.
+     * @return boolean indicating if the film was updated successfully.
+     */
+    public boolean updateFilm(Film film) {
+        String updateQuery = "UPDATE film SET title = ?, description = ?, release_year = ?, language_id = ?, rental_duration = ?, rental_rate = ?, length = ?, rating = ?, special_features = ? WHERE film_id = ?";
+        
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+            
+            stmt.setString(1, film.getTitle());
+            stmt.setString(2, film.getDescription());
+            stmt.setInt(3, film.getReleaseYear());
+            stmt.setInt(4, film.getLanguage().getLanguageId());
+            stmt.setInt(5, film.getRentalDuration());
+            stmt.setDouble(6, film.getRentalRate());
+            stmt.setInt(7, film.getLength());
+            stmt.setString(8, mapRating(film.getRating()));
+            stmt.setString(9, String.join(",", film.getSpecialFeatures()));
+            stmt.setInt(10, film.getFilmId());
+            
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
      * Deletes a film from the database,
      * taking under account all tables that have a foreign key relationship with the film.
      * @param film
@@ -329,17 +359,21 @@ public class FilmManager {
                 // Fetch the language object
                 LanguageManager languageManager = new LanguageManager();
                 Language language = languageManager.getLanguageById(conn, rs.getInt("language_id"));
-
+    
                 // Convert special_features from String to Set<String>
                 String specialFeaturesString = rs.getString("special_features");
                 Set<String> specialFeatures = new HashSet<>();
                 if (specialFeaturesString != null && !specialFeaturesString.isEmpty()) {
                     specialFeatures.addAll(Arrays.asList(specialFeaturesString.split(",")));
                 }
-
+    
                 // Fetch the actors for this film
                 List<Actor> actors = ActorManager.getInstance().getActorsForFilm(rs.getInt("film_id"));
-
+    
+                // Debug: Print actors and special features to terminal
+                System.out.println("Special Features: " + specialFeatures);
+                System.out.println("Actors: " + actors);
+    
                 return new Film(
                     rs.getInt("film_id"),
                     rs.getString("title"),
@@ -361,6 +395,7 @@ public class FilmManager {
             return null;
         }
     }
+    
 
     /**
      * Fetches all films from the database that match the search query (based on filters set by the user)

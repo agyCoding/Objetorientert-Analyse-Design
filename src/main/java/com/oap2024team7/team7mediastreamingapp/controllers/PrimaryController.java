@@ -246,7 +246,7 @@ public class PrimaryController {
     @FXML
     private void handleMyList() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/mylist.fxml")); // Adjust the path to the FXML file
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/mylist.fxml"));
             Parent root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("My List");
@@ -410,9 +410,11 @@ public class PrimaryController {
             return;
         } else {
             genreComboBox.getItems().clear();
+            
             // Add a null option for the empty category
             genreComboBox.getItems().add(null);  // Displayed as an empty option
     
+            // OBS! Is it several places in the code? looks like a bug
             // Set custom cells for displaying category names
             genreComboBox.setButtonCell(new CategoryCell());
             genreComboBox.setCellFactory(lv -> new CategoryCell());

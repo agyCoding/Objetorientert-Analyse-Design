@@ -126,7 +126,7 @@ public class Film {
         return language;
     }
 
-    public void setLanguageId(Language language) {
+    public void setLanguage(Language language) {
         this.language = language;
     }
 
