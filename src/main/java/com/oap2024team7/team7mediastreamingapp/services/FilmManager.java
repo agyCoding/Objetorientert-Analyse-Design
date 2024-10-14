@@ -309,7 +309,7 @@ public class FilmManager {
 
                 // Fetch special features
                 GeneralUtils utils = new GeneralUtils();
-                Set<String> specialFeatures = utils.convertToSet(rs.getString("special_features"));
+                Set<String> specialFeatures = utils.convertToSet(rs.getString("special_features"));                
 
                 // Fetch the actors for this film
                 List<Actor> actors = ActorManager.getInstance().getActorsForFilm(rs.getInt("film_id"));
