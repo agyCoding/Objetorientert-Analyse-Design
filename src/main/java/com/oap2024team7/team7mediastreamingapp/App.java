@@ -20,7 +20,7 @@ public class App extends Application {
 	@Override
     public void start(Stage stage) throws IOException {
         scene = new Scene(loadFXML("login"), 206, 256);
-        stage.setTitle("Media Streaming and Rental - Login");
+        stage.setTitle("Streamify - Login");
         
         // Set the application logo
         stage.getIcons().add(new Image(App.class.getResourceAsStream("/images/logo.png")));
