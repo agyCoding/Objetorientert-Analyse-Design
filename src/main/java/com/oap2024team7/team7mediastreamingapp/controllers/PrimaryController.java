@@ -246,7 +246,7 @@ public class PrimaryController {
     @FXML
     private void handleMyList() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/mylist.fxml")); // Adjust the path to the FXML file
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/mylist.fxml"));
             Parent root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("My List");
