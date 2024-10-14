@@ -5,6 +5,7 @@ import com.oap2024team7.team7mediastreamingapp.models.Film;
 import java.util.List;
 import java.util.HashSet;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 import com.oap2024team7.team7mediastreamingapp.customcells.CategoryCell;
 import com.oap2024team7.team7mediastreamingapp.customcells.LanguageCell;
@@ -63,9 +64,13 @@ public class AdminFilmManagementController {
     @FXML
     private ListView<String> specialFeaturesLV;
     @FXML
+    private Button deleteSelectedSFButton;
+    @FXML
     private ComboBox<Actor> actorsCB;
     @FXML
     private ListView<Actor> actorsLV;
+    @FXML
+    private Button deleteSelectedActorsButton;
 
     // Rental information from FXML
     @FXML
@@ -83,12 +88,13 @@ public class AdminFilmManagementController {
     private Film selectedFilm;
     private Stage stage;
     private int currentInventorySize;
+    private List<Actor> selectedActors = new ArrayList<>();
+    private List<String> selectedSpecialFeatures = new ArrayList<>();
     private CategoryManager categoryManager = new CategoryManager();
     private ActorManager actorManager = ActorManager.getInstance();
     private InventoryManager inventoryManager = new InventoryManager();
     private FilmManager filmManager = new FilmManager();
         
-
     // Store information about chosen inputs
     private Category selectedCategory;
     private String selectedSpecialFeature;
@@ -266,7 +272,7 @@ public class AdminFilmManagementController {
         if (selectedFilm != null && selectedFilm.getSpecialFeatures() != null) {
 
             // Set the custm cells for displaying special features
-            specialFeaturesLV.setCellFactory(lv -> new AdminSpecialFeaturesCell());
+            specialFeaturesLV.setCellFactory(lv -> new AdminSpecialFeaturesCell(this));
 
             // Add the special features of the selected film to the ListView
             specialFeaturesLV.getItems().addAll(selectedFilm.getSpecialFeatures());
@@ -407,8 +413,16 @@ public class AdminFilmManagementController {
 
         if (filmUpdated && categoryUpdated && actorsUpdated && inventoryUpdated) {
             GeneralUtils.showAlert(AlertType.INFORMATION, "Success!", "Successfully edited selected film", "You've successfully edited selected film item.");
+            refreshFilmData();
         } else {
             GeneralUtils.showAlert(AlertType.ERROR, "Error", "Something went wrong", "Try again.");
+        }
+    }
+
+    private void refreshFilmData() {
+        if (selectedFilm != null) {
+            selectedFilm = filmManager.getFilmById(selectedFilm.getFilmId());
+            updateFilmDetails();
         }
     }
 
@@ -425,8 +439,11 @@ public class AdminFilmManagementController {
 
             if (inventoryAmount > currentInventorySize) {
                 return addInventory(filmId, storeId, inventoryAmount - currentInventorySize);
-            } else {
+            } else if (inventoryAmount < currentInventorySize) {
                 return reduceInventory(filmId, storeId, currentInventorySize - inventoryAmount);
+            } else {
+                // No change in inventory amount
+                return true;
             }
         } catch (NumberFormatException e) {
             GeneralUtils.showAlert(AlertType.WARNING, "Warning", "Invalid Inventory Amount", "Please enter a valid inventory amount (0 or positive number).");
@@ -458,12 +475,11 @@ public class AdminFilmManagementController {
             inventoryManager.deleteAvailableInventory(inventory.getInventoryId())) {
             deletedItems++;
             } else {
-            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Failed to delete inventory item " + inventory.getInventoryId() + ".", "");
-            return false;
+            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Failed to delete inventory item " + inventory.getInventoryId() + ".", "Some inventory items might be currently rented out. Please wait until they are returned.");
             }
         }
 
-        if (deletedItems == amount) {
+        if (deletedItems > 0) {
             GeneralUtils.showAlert(AlertType.INFORMATION, "Success", "Successfully deleted " + deletedItems + " inventory items.", "");
             return true;
         } else {
@@ -496,7 +512,7 @@ public class AdminFilmManagementController {
         // Get the selected actor from the ComboBox
         Actor selectedActor = actorsCB.getValue();
 
-        // Check if an actor is selected and not already in the ListView
+        // Check if an actor is selected and check if the selected actor is not already in the ListView
         if (selectedActor != null && !actorsLV.getItems().contains(selectedActor)) {
             // Add the selected actor to the selectedFilm object
             selectedFilm.getActors().add(selectedActor);
@@ -508,4 +524,55 @@ public class AdminFilmManagementController {
         }
     }
 
+    private void updateDeleteActorsButtonVisibility() {
+        deleteSelectedActorsButton.setVisible(!selectedActors.isEmpty());
+    }
+
+    public void notifyActorSelected(Actor actor) {
+        if (!selectedActors.contains(actor)) {
+            selectedActors.add(actor);
+            updateDeleteActorsButtonVisibility();
+        }
+    }
+
+    public void notifyActorDeselected(Actor actor) {
+        selectedActors.remove(actor);
+        updateDeleteActorsButtonVisibility();
+    }
+
+    @FXML
+    public void tryToDeleteSelectedActors() {
+        for (Actor actor : selectedActors) {
+            selectedFilm.getActors().remove(actor);
+            actorsLV.getItems().remove(actor);
+        }
+        selectedActors.clear();
+        updateDeleteActorsButtonVisibility();
+    }
+
+    private void updateDeleteSpecialFeaturesButtonVisibility() {
+        deleteSelectedSFButton.setVisible(!selectedSpecialFeatures.isEmpty());
+    }
+
+    public void notifySpecialFeatureSelected(String specialFeature) {
+        if (!selectedSpecialFeatures.contains(specialFeature)) {
+            selectedSpecialFeatures.add(specialFeature);
+            updateDeleteSpecialFeaturesButtonVisibility();
+        }
+    }
+
+    public void notifySpecialFeatureDeselected(String specialFeature) {
+        selectedSpecialFeatures.remove(specialFeature);
+        updateDeleteSpecialFeaturesButtonVisibility();
+    }
+
+    @FXML
+    public void tryToDeleteSelectedSpecialFeatures() {
+        for (String specialFeature : selectedSpecialFeatures) {
+            selectedFilm.getSpecialFeatures().remove(specialFeature);
+            specialFeaturesLV.getItems().remove(specialFeature);
+        }
+        selectedSpecialFeatures.clear();
+        updateDeleteSpecialFeaturesButtonVisibility();
+    }
 }

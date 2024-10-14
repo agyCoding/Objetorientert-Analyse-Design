@@ -19,12 +19,6 @@ public class AdminActorCell extends ListCell<Actor> {
         this.controller = controller;
         hbox.getChildren().addAll(checkBox, actorItem);
 
-        // Add listener to checkbox
-        /*
-         * 
-         * 
-         * 
-        
         checkBox.setOnAction(event -> {
             if (checkBox.isSelected()) {
                 // Notify AdminFilmManagementController that this actor is selected
@@ -33,8 +27,7 @@ public class AdminActorCell extends ListCell<Actor> {
                 controller.notifyActorDeselected(actor);
             }
         });
-         * 
-         */
+
     }
 
     @Override
