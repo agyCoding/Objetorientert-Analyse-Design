@@ -410,9 +410,11 @@ public class PrimaryController {
             return;
         } else {
             genreComboBox.getItems().clear();
+            
             // Add a null option for the empty category
             genreComboBox.getItems().add(null);  // Displayed as an empty option
     
+            // OBS! Is it several places in the code? looks like a bug
             // Set custom cells for displaying category names
             genreComboBox.setButtonCell(new CategoryCell());
             genreComboBox.setCellFactory(lv -> new CategoryCell());
