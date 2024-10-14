@@ -359,17 +359,21 @@ public class FilmManager {
                 // Fetch the language object
                 LanguageManager languageManager = new LanguageManager();
                 Language language = languageManager.getLanguageById(conn, rs.getInt("language_id"));
-
+    
                 // Convert special_features from String to Set<String>
                 String specialFeaturesString = rs.getString("special_features");
                 Set<String> specialFeatures = new HashSet<>();
                 if (specialFeaturesString != null && !specialFeaturesString.isEmpty()) {
                     specialFeatures.addAll(Arrays.asList(specialFeaturesString.split(",")));
                 }
-
+    
                 // Fetch the actors for this film
                 List<Actor> actors = ActorManager.getInstance().getActorsForFilm(rs.getInt("film_id"));
-
+    
+                // Debug: Print actors and special features to terminal
+                System.out.println("Special Features: " + specialFeatures);
+                System.out.println("Actors: " + actors);
+    
                 return new Film(
                     rs.getInt("film_id"),
                     rs.getString("title"),
@@ -391,6 +395,7 @@ public class FilmManager {
             return null;
         }
     }
+    
 
     /**
      * Fetches all films from the database that match the search query (based on filters set by the user)

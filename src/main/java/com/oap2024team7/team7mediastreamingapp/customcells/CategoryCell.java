@@ -8,6 +8,10 @@ public class CategoryCell extends ListCell<Category> {
     @Override
     protected void updateItem(Category category, boolean empty) {
         super.updateItem(category, empty);
-        setText(empty || category == null ? "" : category.getCategoryName());
+        if (empty || category == null) {
+            setText("");
+        } else {
+            setText(category.getCategoryName());
+        }
     }
 }

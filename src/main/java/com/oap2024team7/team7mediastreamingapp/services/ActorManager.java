@@ -33,6 +33,30 @@ public class ActorManager {
     }
 
     /**
+     * Get all actors from the database sorted by first name and then last name.
+     * @return List of all actors sorted by first name and then last name
+     */
+    public List<Actor> getAllActors() {
+        List<Actor> actors = new ArrayList<>();
+        String query = "SELECT actor_id, first_name, last_name FROM actor ORDER BY first_name, last_name";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                Actor actor = new Actor(
+                    rs.getInt("actor_id"),
+                    rs.getString("first_name"),
+                    rs.getString("last_name")
+                );
+                actors.add(actor);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return actors;
+    }
+
+    /**
      * Get all actors from the database for a specific film.
      * @param filmId The ID of the film
      * @return List of all actors
@@ -97,4 +121,5 @@ public class ActorManager {
             return false;
         }
     }
+
 }

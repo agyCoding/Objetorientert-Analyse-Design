@@ -93,6 +93,50 @@ public class InventoryManager {
         return availableInventories;
     }
 
+    public boolean deleteAvailableInventory(int inventoryId) {
+        String sql = "DELETE FROM inventory WHERE inventory_id = ?";
+    
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+    
+            stmt.setInt(1, inventoryId);
+            int affectedRows = stmt.executeUpdate();
+    
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean addInventoryForFilm(int filmId, int storeId, int quantity) {
+        String insertQuery = "INSERT INTO inventory (film_id, store_id) VALUES (?, ?)";
+
+        try (Connection connection = DatabaseManager.getConnection();
+            PreparedStatement stmt = connection.prepareStatement(insertQuery, PreparedStatement.RETURN_GENERATED_KEYS)) {
+
+        for (int i = 0; i < quantity; i++) {
+            stmt.setInt(1, filmId);
+            stmt.setInt(2, storeId);
+            int affectedRows = stmt.executeUpdate();
+
+            if (affectedRows == 0) {
+            throw new SQLException("Creating inventory failed, no rows affected.");
+            }
+
+            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+            if (!generatedKeys.next()) {
+                throw new SQLException("Creating inventory failed, no ID obtained.");
+            }
+            }
+        }
+        } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
+        }
+        return true;
+    }
+
     public boolean customerHasActiveRental(int customerId, int filmId, LocalDateTime rentalStartDate, LocalDateTime rentalEndDate) {
         String sql = "SELECT COUNT(*) FROM rental r " +
                      "JOIN inventory i ON r.inventory_id = i.inventory_id " +
@@ -150,15 +194,49 @@ public class InventoryManager {
         }
     }
 
-    public void removeRentalFromDatabase(int rentalId) {
+    public boolean removeRentalFromDatabase(int rentalId) {
         String deleteQuery = "DELETE FROM rental WHERE rental_id = ?";
 
         try (Connection connection = DatabaseManager.getConnection();
                 PreparedStatement stmt = connection.prepareStatement(deleteQuery)) {
             stmt.setInt(1, rentalId);
             stmt.executeUpdate();
+            return true;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean removeRentalForInventory(int inventoryId) {
+        String checkForRentals = "SELECT * FROM rental WHERE inventory_id = ?";
+        String deleteQuery = "DELETE FROM rental WHERE inventory_id = ?";
+
+        // Check if there are any rentals at all, if not, nothing needs to be deleted, so return true
+        try (Connection connection = DatabaseManager.getConnection();
+            PreparedStatement stmt = connection.prepareStatement(checkForRentals)) {
+                stmt.setInt(1, inventoryId);
+
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (!rs.next()) {
+                        return true;
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
+
+        // If there are some rentals, they need to be deleted
+        try (Connection connection = DatabaseManager.getConnection();
+                PreparedStatement stmt = connection.prepareStatement(deleteQuery)) {
+            stmt.setInt(1, inventoryId);
+            int affectedRows = stmt.executeUpdate();
+
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 

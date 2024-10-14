@@ -109,7 +109,7 @@
                   <Font name="System Bold Italic" size="18.0" />
                </font>
             </Label>
-            <Label text="Current inventory:" />
+            <Label fx:id="currentInventoryLabel" text="Current inventory:" />
             <HBox prefHeight="28.0" prefWidth="225.0" spacing="10.0">
                <children>
                   <Label text="Amount: " />
