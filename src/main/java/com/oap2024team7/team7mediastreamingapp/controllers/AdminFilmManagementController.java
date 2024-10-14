@@ -96,7 +96,6 @@ public class AdminFilmManagementController {
 
 
     public void initialize() {     
-
         loadCategories();
         loadRatings();
         loadLanguages();
@@ -128,15 +127,11 @@ public class AdminFilmManagementController {
         // Set the film object to the film object that was clicked
         this.selectedFilm = film;
 
-        // Debugging
-        System.out.println("Selected film: " + selectedFilm.getSpecialFeatures());
-        System.out.println("Selected film: " + selectedFilm.getActors());
+        // Save the selected film to the session data
+        SessionData.getInstance().setSelectedFilm(selectedFilm);
         
         // Now that the film is set, update the labels with the film's details
         updateFilmDetails();
-
-        // Save the selected film to the session data
-        SessionData.getInstance().setSelectedFilm(selectedFilm);
     }
     
     private void updateFilmDetails() {
@@ -268,14 +263,13 @@ public class AdminFilmManagementController {
         // Clear existing items
         specialFeaturesLV.getItems().clear();
 
-        Film film = SessionData.getInstance().getSelectedFilm();
-        if (film != null && film.getSpecialFeatures() != null) {
+        if (selectedFilm != null && selectedFilm.getSpecialFeatures() != null) {
 
             // Set the custm cells for displaying special features
             specialFeaturesLV.setCellFactory(lv -> new AdminSpecialFeaturesCell());
 
             // Add the special features of the selected film to the ListView
-            specialFeaturesLV.getItems().addAll(film.getSpecialFeatures());
+            specialFeaturesLV.getItems().addAll(selectedFilm.getSpecialFeatures());
         }
     }
 
@@ -308,10 +302,9 @@ public class AdminFilmManagementController {
         // Set custom cells for displaying actors
         actorsLV.setCellFactory(lv -> new AdminActorCell(this));
 
-        Film film = SessionData.getInstance().getSelectedFilm();
-        if (film != null && film.getActors() != null) {
+        if (selectedFilm != null && selectedFilm.getActors() != null) {
             // Add the actors of the selected film to the ListView
-            actorsLV.getItems().addAll(film.getActors());
+            actorsLV.getItems().addAll(selectedFilm.getActors());
         }
     }
     
