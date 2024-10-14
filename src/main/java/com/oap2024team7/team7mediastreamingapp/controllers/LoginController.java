@@ -11,6 +11,8 @@ import com.oap2024team7.team7mediastreamingapp.models.Address;
 import com.oap2024team7.team7mediastreamingapp.services.AddressManager;
 import com.oap2024team7.team7mediastreamingapp.models.Profile;
 import com.oap2024team7.team7mediastreamingapp.services.StaffManager;
+import com.oap2024team7.team7mediastreamingapp.services.DatabaseManager;
+import com.oap2024team7.team7mediastreamingapp.models.Film;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -58,7 +60,7 @@ public class LoginController {
         }
     }
 
-    /*
+    /**
      * Method to handle the login process.
      * It checks the username and password entered by the user.
      * If the login is successful, it retrieves the customer information from the database and saves it in the session data.
@@ -128,6 +130,21 @@ public class LoginController {
                             }
                         }
 
+                        // Load the user's saved films into the session
+                        Profile currentProfile = SessionData.getInstance().getCurrentProfile();
+                        if (currentProfile != null) {
+                            List<Film> savedFilms = DatabaseManager.getFilmsFromMyList(currentProfile.getProfileId());
+                            if (savedFilms != null && !savedFilms.isEmpty()) {
+                                System.out.println("Loaded " + savedFilms.size() + " films for profile ID: " + currentProfile.getProfileId());
+                            } else {
+                                System.out.println("No films loaded from the database for profile ID: " + currentProfile.getProfileId());
+                            }
+                            SessionData.getInstance().setSavedFilms(savedFilms);
+                            
+                            System.out.println("Loaded saved films for profile ID: " + currentProfile.getProfileId() + ". Number of films: " + savedFilms.size());
+                        }
+
+
                         // Load primary screen
                         FXMLLoader loader = new FXMLLoader(getClass().getResource("/primary.fxml"));
                         Parent root = loader.load();
@@ -163,7 +180,6 @@ public class LoginController {
         }
     }
 
-
     /**
      * Method to switch to the user registration screen.
      */
@@ -181,7 +197,7 @@ public class LoginController {
         } catch (IOException e) {
             e.printStackTrace();
             // If an error occurs while trying to load the registration screen, show an error alert
-            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the registration screen", "En error occured while trying to load the registration screen");
+            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the registration screen", "An error occurred while trying to load the registration screen");
         }
     }
 }

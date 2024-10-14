@@ -7,7 +7,9 @@ import com.oap2024team7.team7mediastreamingapp.models.Actor;
 import com.oap2024team7.team7mediastreamingapp.models.Customer;
 import com.oap2024team7.team7mediastreamingapp.models.Customer.AccountType;
 import com.oap2024team7.team7mediastreamingapp.models.Film;
+import com.oap2024team7.team7mediastreamingapp.models.Profile;
 import com.oap2024team7.team7mediastreamingapp.services.ActorManager;
+import com.oap2024team7.team7mediastreamingapp.services.DatabaseManager;
 import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 
 import javafx.fxml.FXML;
@@ -54,9 +56,19 @@ public class FilmDetailsController {
     @FXML
     private void handleSaveToList() {
         if (selectedFilm != null) {
+            // Add film to session
             SessionData.getInstance().addFilmToSavedList(selectedFilm);
+            System.out.println("Film added to SessionData saved films.");
+
+            // Add film to the database under the current profile
+            Profile currentProfile = SessionData.getInstance().getCurrentProfile();
+            if (currentProfile != null) {
+                DatabaseManager.addFilmToMyList(currentProfile.getProfileId(), selectedFilm.getFilmId());
+                System.out.println("Film added to My List in the database.");
+            } else {
+                System.out.println("No profile selected, cannot save film to My List in the database.");
+            }
         } else {
-            // Handle the case where selectedFilm is not initialized
             System.out.println("No film selected to save.");
         }
     }

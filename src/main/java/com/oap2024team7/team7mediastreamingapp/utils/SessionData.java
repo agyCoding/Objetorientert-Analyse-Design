@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Class for the SessionData object.
  * This class is responsible for managing the session data of the application.
- * It stores the logged in customer, current profile, customer's address and selected film.
+ * It stores the logged in customer, current profile, customer's address, and selected film.
  * @author Agata (Agy) Olaussen (@agyCoding)
  */
 
@@ -91,28 +91,44 @@ public class SessionData {
     }
     
     /**
-     * Get the list of saved films
-     * @return List of saved films
+     * Get the list of saved films.
+     * This returns a copy of the saved films to ensure external modifications do not affect the session directly.
+     * @return List of saved films.
      */
     public List<Film> getSavedFilms() {
-        return savedFilms;
+        return new ArrayList<>(savedFilms); // Return a copy of the saved films list to prevent external modification
     }
 
     /**
-     * Add a film to the saved list
-     * @param film The film to add
+     * Set the list of saved films.
+     * Creates a copy of the provided list to ensure no external changes affect the internal state.
+     * @param savedFilms List of films to set as the saved films.
+     */
+    public void setSavedFilms(List<Film> savedFilms) {
+        if (savedFilms != null) {
+            this.savedFilms = new ArrayList<>(savedFilms); // Create a copy to avoid external changes affecting the session
+        } else {
+            this.savedFilms = new ArrayList<>();
+        }
+    }
+
+    /**
+     * Add a film to the saved list.
+     * @param film The film to add.
      */
     public void addFilmToSavedList(Film film) {
-        if (!savedFilms.contains(film)) {
+        if (film != null && !savedFilms.contains(film)) {
             savedFilms.add(film);
         }
     }
 
     /**
-     * Remove a film from the saved list
-     * @param film The film to remove
+     * Remove a film from the saved list.
+     * @param film The film to remove.
      */
     public void removeFilmFromSavedList(Film film) {
-        savedFilms.remove(film);
+        if (film != null) {
+            savedFilms.remove(film);
+        }
     }
 }
