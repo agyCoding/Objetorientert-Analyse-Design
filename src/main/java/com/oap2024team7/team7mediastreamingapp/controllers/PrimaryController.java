@@ -243,7 +243,21 @@ public class PrimaryController {
             GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the edit account screen", "An error occurred while trying to load the edit account screen");
         }
     }
-
+    @FXML
+    private void handleMyList() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/mylist.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("My List");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load My List", "An error occurred while trying to load My List.");
+        }
+    }
+    
     // Handles the action when the user clicks the "Edit Profile" menu item.
     private void handleEditProfile() {
         System.out.println("Edit Profile clicked");

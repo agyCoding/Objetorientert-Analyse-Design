@@ -46,7 +46,7 @@
       <HBox prefHeight="100.0" prefWidth="200.0" spacing="30.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="TOP">
          <children>
             <Button fx:id="homeButton" mnemonicParsing="false" text="Home" />
-            <Button fx:id="myListButton" mnemonicParsing="false" text="My list" />
+            <Button fx:id="myListButton" mnemonicParsing="false" text="My list" onAction="#handleMyList"/> <!-- new -->
             <Button fx:id="myRentalsButton" mnemonicParsing="false" text="My rentals" />
          </children>
          <padding>
