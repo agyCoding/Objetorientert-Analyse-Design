@@ -407,8 +407,16 @@ public class AdminFilmManagementController {
 
         if (filmUpdated && categoryUpdated && actorsUpdated && inventoryUpdated) {
             GeneralUtils.showAlert(AlertType.INFORMATION, "Success!", "Successfully edited selected film", "You've successfully edited selected film item.");
+            refreshFilmData();
         } else {
             GeneralUtils.showAlert(AlertType.ERROR, "Error", "Something went wrong", "Try again.");
+        }
+    }
+
+    private void refreshFilmData() {
+        if (selectedFilm != null) {
+            selectedFilm = filmManager.getFilmById(selectedFilm.getFilmId());
+            updateFilmDetails();
         }
     }
 
@@ -425,8 +433,11 @@ public class AdminFilmManagementController {
 
             if (inventoryAmount > currentInventorySize) {
                 return addInventory(filmId, storeId, inventoryAmount - currentInventorySize);
-            } else {
+            } else if (inventoryAmount < currentInventorySize) {
                 return reduceInventory(filmId, storeId, currentInventorySize - inventoryAmount);
+            } else {
+                // No change in inventory amount
+                return true;
             }
         } catch (NumberFormatException e) {
             GeneralUtils.showAlert(AlertType.WARNING, "Warning", "Invalid Inventory Amount", "Please enter a valid inventory amount (0 or positive number).");
@@ -458,12 +469,11 @@ public class AdminFilmManagementController {
             inventoryManager.deleteAvailableInventory(inventory.getInventoryId())) {
             deletedItems++;
             } else {
-            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Failed to delete inventory item " + inventory.getInventoryId() + ".", "");
-            return false;
+            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Failed to delete inventory item " + inventory.getInventoryId() + ".", "Some inventory items might be currently rented out. Please wait until they are returned.");
             }
         }
 
-        if (deletedItems == amount) {
+        if (deletedItems > 0) {
             GeneralUtils.showAlert(AlertType.INFORMATION, "Success", "Successfully deleted " + deletedItems + " inventory items.", "");
             return true;
         } else {
