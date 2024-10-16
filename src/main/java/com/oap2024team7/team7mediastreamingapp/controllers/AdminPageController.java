@@ -121,12 +121,10 @@ public class AdminPageController {
         logoutMenuItem.setOnAction(event -> handleLogout());
 
         /* INITIALIZE FILTERS FOR LV */
-
         loadCategories();
         loadRatings();
 
         /* INITIALIZE FILM LV */
-
         filmManager = new FilmManager();
 
         // Initialize the ToggleGroup in the controller
@@ -136,7 +134,7 @@ public class AdminPageController {
         sortByTitle.setToggleGroup(sortToggleGroup);
         sortByReleaseYear.setToggleGroup(sortToggleGroup);
 
-        // Set default selection if needed
+        // Set default selection
         sortByTitle.setSelected(true);
 
         // Load the first page of films

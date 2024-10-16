@@ -67,6 +67,7 @@
                <children>
                   <ComboBox fx:id="specialfeaturesCB" prefWidth="150.0" />
                   <Button fx:id="addSpecialFeatureButton" mnemonicParsing="false" onAction="#tryToAddSF" text="Add" />
+                  <Button fx:id="deleteSelectedSFButton" style="-fx-background-color: linear-gradient(#ff5400, #be1d00); -fx-text-fill: white;" mnemonicParsing="false" text="Delete" visible="false" onAction="#tryToDeleteSelectedSpecialFeatures"/>
                </children>
             </HBox>
             <ListView fx:id="specialFeaturesLV" prefHeight="124.0" prefWidth="305.0" />
@@ -82,6 +83,7 @@
                <children>
                   <ComboBox fx:id="actorsCB" prefWidth="150.0" />
                   <Button fx:id="addActorButton" mnemonicParsing="false" onAction="#tryToAddActor" text="Add" />
+                  <Button fx:id="deleteSelectedActorsButton" style="-fx-background-color: linear-gradient(#ff5400, #be1d00); -fx-text-fill: white;" mnemonicParsing="false" text="Delete" visible="false" onAction="#tryToDeleteSelectedActors"/>
                </children>
             </HBox>
             <ListView fx:id="actorsLV" prefHeight="160.0" prefWidth="277.0" />

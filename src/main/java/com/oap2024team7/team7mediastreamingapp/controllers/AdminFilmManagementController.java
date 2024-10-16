@@ -5,6 +5,7 @@ import com.oap2024team7.team7mediastreamingapp.models.Film;
 import java.util.List;
 import java.util.HashSet;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 import com.oap2024team7.team7mediastreamingapp.customcells.CategoryCell;
 import com.oap2024team7.team7mediastreamingapp.customcells.LanguageCell;
@@ -63,9 +64,13 @@ public class AdminFilmManagementController {
     @FXML
     private ListView<String> specialFeaturesLV;
     @FXML
+    private Button deleteSelectedSFButton;
+    @FXML
     private ComboBox<Actor> actorsCB;
     @FXML
     private ListView<Actor> actorsLV;
+    @FXML
+    private Button deleteSelectedActorsButton;
 
     // Rental information from FXML
     @FXML
@@ -83,12 +88,13 @@ public class AdminFilmManagementController {
     private Film selectedFilm;
     private Stage stage;
     private int currentInventorySize;
+    private List<Actor> selectedActors = new ArrayList<>();
+    private List<String> selectedSpecialFeatures = new ArrayList<>();
     private CategoryManager categoryManager = new CategoryManager();
     private ActorManager actorManager = ActorManager.getInstance();
     private InventoryManager inventoryManager = new InventoryManager();
     private FilmManager filmManager = new FilmManager();
         
-
     // Store information about chosen inputs
     private Category selectedCategory;
     private String selectedSpecialFeature;
@@ -96,7 +102,6 @@ public class AdminFilmManagementController {
 
 
     public void initialize() {     
-
         loadCategories();
         loadRatings();
         loadLanguages();
@@ -128,15 +133,11 @@ public class AdminFilmManagementController {
         // Set the film object to the film object that was clicked
         this.selectedFilm = film;
 
-        // Debugging
-        System.out.println("Selected film: " + selectedFilm.getSpecialFeatures());
-        System.out.println("Selected film: " + selectedFilm.getActors());
+        // Save the selected film to the session data
+        SessionData.getInstance().setSelectedFilm(selectedFilm);
         
         // Now that the film is set, update the labels with the film's details
         updateFilmDetails();
-
-        // Save the selected film to the session data
-        SessionData.getInstance().setSelectedFilm(selectedFilm);
     }
     
     private void updateFilmDetails() {
@@ -190,6 +191,11 @@ public class AdminFilmManagementController {
         loadCurrentSpecialFeatures();
     }
 
+    /**
+     * Loads all categories possible to choose from (from the database) and populates ComboBox (with category objects).
+     * Display is steered by the Customer Cell factory.
+     * Updated attribute selectedCategory based on the choice made in the ComboBox.
+     */
     private void loadCategories() {
         List<Category> categories = categoryManager.getAllCategories();
         categoryCB.getItems().clear();
@@ -231,6 +237,11 @@ public class AdminFilmManagementController {
         pgRatingCB.getItems().addAll(ratings);
     }
 
+    /**
+     * Loads all possible languages to choose from into the ComboBox and listens to the changes made by the staff member.
+     * Display is steered by the Custom Cell factory.
+     * Updates attribute selectedLanguage to the choice selected in the ComboBox.
+     */
     private void loadLanguages() {
         LanguageManager languageManager = new LanguageManager();
         List<Language> languages = languageManager.getAllLanguages();
@@ -256,6 +267,9 @@ public class AdminFilmManagementController {
         });
     }
     
+    /**
+     * Loads the list of all possibile special features to choose from, into the ComboBox
+     */
     private void loadSpecialFeatures() {
         // Clear existing items
         specialfeaturesCB.getItems().clear();
@@ -264,21 +278,27 @@ public class AdminFilmManagementController {
         specialfeaturesCB.getItems().addAll(Film.getPredefinedSpecialFeatures());
     }    
 
+    /**
+     * Loads current special features for the selected film into the LV
+     */
     private void loadCurrentSpecialFeatures() {
         // Clear existing items
         specialFeaturesLV.getItems().clear();
 
-        Film film = SessionData.getInstance().getSelectedFilm();
-        if (film != null && film.getSpecialFeatures() != null) {
+        if (selectedFilm != null && selectedFilm.getSpecialFeatures() != null) {
 
             // Set the custm cells for displaying special features
-            specialFeaturesLV.setCellFactory(lv -> new AdminSpecialFeaturesCell());
+            specialFeaturesLV.setCellFactory(lv -> new AdminSpecialFeaturesCell(this));
 
             // Add the special features of the selected film to the ListView
-            specialFeaturesLV.getItems().addAll(film.getSpecialFeatures());
+            specialFeaturesLV.getItems().addAll(selectedFilm.getSpecialFeatures());
         }
     }
 
+    /**
+     * Loads into the ComboBox all actors registered in the actor table in the database
+     * The staff member can then choose an actor from this CB to be added to the selected film
+     */
     private void loadActors() {
         // Clear existing items
         actorsCB.getItems().clear();
@@ -301,6 +321,9 @@ public class AdminFilmManagementController {
         actorsCB.setButtonCell(new ActorComboBoxCell());
     }    
 
+    /**
+     * Loads into the LV the set of current actors for the selected film
+     */
     private void loadCurrentActors() {
         // Clear existing items
         actorsLV.getItems().clear();
@@ -308,13 +331,15 @@ public class AdminFilmManagementController {
         // Set custom cells for displaying actors
         actorsLV.setCellFactory(lv -> new AdminActorCell(this));
 
-        Film film = SessionData.getInstance().getSelectedFilm();
-        if (film != null && film.getActors() != null) {
+        if (selectedFilm != null && selectedFilm.getActors() != null) {
             // Add the actors of the selected film to the ListView
-            actorsLV.getItems().addAll(film.getActors());
+            actorsLV.getItems().addAll(selectedFilm.getActors());
         }
     }
     
+    /**
+     * Method to update the film, actors and inventory. Called when the staff member clicks on the "Update" button
+     */
     @FXML
     public void tryToUpdateFilm() {
         System.out.println("Trying to update film...");
@@ -412,13 +437,32 @@ public class AdminFilmManagementController {
         // Inventory handling
         boolean inventoryUpdated = handleInventory();
 
+        // Get feedback from all the updates that need to happen and display appropriate message to the user
         if (filmUpdated && categoryUpdated && actorsUpdated && inventoryUpdated) {
             GeneralUtils.showAlert(AlertType.INFORMATION, "Success!", "Successfully edited selected film", "You've successfully edited selected film item.");
+            refreshFilmData();
         } else {
             GeneralUtils.showAlert(AlertType.ERROR, "Error", "Something went wrong", "Try again.");
         }
     }
 
+    /**
+     * Method for refreshing film data (querrying the database).
+     * Used after the staff member have updated film information
+     * (since the window doesn't close after update, it should show current information).
+     */
+    private void refreshFilmData() {
+        if (selectedFilm != null) {
+            selectedFilm = filmManager.getFilmById(selectedFilm.getFilmId());
+            updateFilmDetails();
+        }
+    }
+
+    /**
+     * Method for handling inventory changes. It validates user input first (if it's the correct format and above 0),
+     * then establishes if the user is trying to increase, decrease or not change the inventory and calls the correct method.
+     * @return true if successful (in either of the 3 options) and false otherwise
+     */
     private boolean handleInventory() {
         try {
             int inventoryAmount = Integer.parseInt(inventoryAmountTF.getText());
@@ -432,8 +476,11 @@ public class AdminFilmManagementController {
 
             if (inventoryAmount > currentInventorySize) {
                 return addInventory(filmId, storeId, inventoryAmount - currentInventorySize);
-            } else {
+            } else if (inventoryAmount < currentInventorySize) {
                 return reduceInventory(filmId, storeId, currentInventorySize - inventoryAmount);
+            } else {
+                // No change in inventory amount
+                return true;
             }
         } catch (NumberFormatException e) {
             GeneralUtils.showAlert(AlertType.WARNING, "Warning", "Invalid Inventory Amount", "Please enter a valid inventory amount (0 or positive number).");
@@ -441,11 +488,29 @@ public class AdminFilmManagementController {
         }
     }
 
+    /**
+     * Method for adding new inventory items. Always allowed, no constraints.
+     * @param filmId
+     * @param storeId
+     * @param amount
+     * @return true if the inventory was successfully added, false otherwise
+     */
     private boolean addInventory(int filmId, int storeId, int amount) {
         System.out.println("Adding inventory...");
         return inventoryManager.addInventoryForFilm(filmId, storeId, amount);
     }
 
+    /**
+     * Method for reducing the amount of inventory items for the selected film.
+     * If the desired amount is not available, an alert will be shown.
+     * The method will check if the inventory items are currently rented out and not allow the reduction in that case.
+     * Staff gets feedback about the amount of successfully deleted inventory items (f. ex. if 2 out of desired 3 were deleted,
+     * the staff will be informed).
+     * @param filmId
+     * @param storeId
+     * @param amount
+     * @return true if the inventory was successfully reduced, false otherwise
+     */
     private boolean reduceInventory(int filmId, int storeId, int amount) {
         System.out.println("Decreasing inventory...");
         LocalDateTime now = LocalDateTime.now();
@@ -465,12 +530,11 @@ public class AdminFilmManagementController {
             inventoryManager.deleteAvailableInventory(inventory.getInventoryId())) {
             deletedItems++;
             } else {
-            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Failed to delete inventory item " + inventory.getInventoryId() + ".", "");
-            return false;
+            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Failed to delete inventory item " + inventory.getInventoryId() + ".", "Some inventory items might be currently rented out. Please wait until they are returned.");
             }
         }
 
-        if (deletedItems == amount) {
+        if (deletedItems > 0) {
             GeneralUtils.showAlert(AlertType.INFORMATION, "Success", "Successfully deleted " + deletedItems + " inventory items.", "");
             return true;
         } else {
@@ -479,6 +543,10 @@ public class AdminFilmManagementController {
         }
     }
 
+    /**
+     * Method for adding a new special feature to the list of special features connected to the selected film.
+     * If the special feature is already in the list, an alert will be shown.
+     */
     @FXML
     public void tryToAddSF() {
         System.out.println("Trying to add special feature...");
@@ -497,13 +565,18 @@ public class AdminFilmManagementController {
         }
     }
 
+    /**
+     * Method for adding a new actor to the list of actors connected to the
+     * selected film.
+     * If the actor is already in the list, an alert will be shown.
+     */
     @FXML
     public void tryToAddActor() {
         System.out.println("Trying to add actor...");
         // Get the selected actor from the ComboBox
         Actor selectedActor = actorsCB.getValue();
 
-        // Check if an actor is selected and not already in the ListView
+        // Check if an actor is selected and check if the selected actor is not already in the ListView
         if (selectedActor != null && !actorsLV.getItems().contains(selectedActor)) {
             // Add the selected actor to the selectedFilm object
             selectedFilm.getActors().add(selectedActor);
@@ -515,4 +588,86 @@ public class AdminFilmManagementController {
         }
     }
 
+    /**
+     * Method for updating the visibility of the button that allows the staff
+     * to delete selected actors from the selected film.
+     * If no actor is selected via checkboxes, the button should be invisible.
+     */
+    private void updateDeleteActorsButtonVisibility() {
+        deleteSelectedActorsButton.setVisible(!selectedActors.isEmpty());
+    }
+
+    /**
+     * Method for updating (adding to) the list of selected actors and the visibility of the delete button.
+     * @param actor
+     */
+    public void notifyActorSelected(Actor actor) {
+        if (!selectedActors.contains(actor)) {
+            selectedActors.add(actor);
+            updateDeleteActorsButtonVisibility();
+        }
+    }
+
+    /**
+     * Method for updating (removing from) the list of selected actors and the visibility of the delete button.
+     * @param actor
+     */
+    public void notifyActorDeselected(Actor actor) {
+        selectedActors.remove(actor);
+        updateDeleteActorsButtonVisibility();
+    }
+
+    /**
+     * Method for deleting the selected actors from the selected film.
+     */
+    @FXML
+    public void tryToDeleteSelectedActors() {
+        for (Actor actor : selectedActors) {
+            selectedFilm.getActors().remove(actor);
+            actorsLV.getItems().remove(actor);
+        }
+        selectedActors.clear();
+        updateDeleteActorsButtonVisibility();
+    }
+
+    /**
+     * Method for updating the visibility of the button that allows the staff
+     * to delete selected special features from the selected film.
+     */
+    private void updateDeleteSpecialFeaturesButtonVisibility() {
+        deleteSelectedSFButton.setVisible(!selectedSpecialFeatures.isEmpty());
+    }
+
+    /**
+     * Method for updating (adding to) the list of selected special features and the visibility of the delete button.
+     * @param specialFeature
+     */
+    public void notifySpecialFeatureSelected(String specialFeature) {
+        if (!selectedSpecialFeatures.contains(specialFeature)) {
+            selectedSpecialFeatures.add(specialFeature);
+            updateDeleteSpecialFeaturesButtonVisibility();
+        }
+    }
+
+    /**
+     * Method for updating (removing from) the list of selected special features and the visibility of the delete button.
+     * @param specialFeature
+     */
+    public void notifySpecialFeatureDeselected(String specialFeature) {
+        selectedSpecialFeatures.remove(specialFeature);
+        updateDeleteSpecialFeaturesButtonVisibility();
+    }
+
+    /**
+     * Method for deleting the selected special features from the selected film.
+     */
+    @FXML
+    public void tryToDeleteSelectedSpecialFeatures() {
+        for (String specialFeature : selectedSpecialFeatures) {
+            selectedFilm.getSpecialFeatures().remove(specialFeature);
+            specialFeaturesLV.getItems().remove(specialFeature);
+        }
+        selectedSpecialFeatures.clear();
+        updateDeleteSpecialFeaturesButtonVisibility();
+    }
 }
