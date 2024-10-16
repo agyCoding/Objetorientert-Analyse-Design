@@ -81,7 +81,7 @@
                         <Insets bottom="10.0" />
                      </VBox.margin>
                   </Button>
-                  <Button fx:id="deleteButton" mnemonicParsing="false" text="Delete Selected" onAction="#deleteSelectedFilms" visible="false" />
+                  <Button fx:id="deleteButton" mnemonicParsing="false" text="Delete Selected" style="-fx-background-color: linear-gradient(#ff5400, #be1d00); -fx-text-fill: white;" onAction="#deleteSelectedFilms" visible="false" />
             </HBox>
             <!-- Sorting Options -->
             <HBox alignment="CENTER" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
