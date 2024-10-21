@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="206.0" prefWidth="256.0" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oap2024team7.team7mediastreamingapp.controllers.LoginController">
+    <children>
+        <Label alignment="TOP_LEFT" contentDisplay="CENTER" text="Welcome!" textAlignment="CENTER">
+            <font>
+                <Font name="Candara Bold Italic" size="18.0" />
+            </font>
+        </Label>
+        <Label text="Please login or sign up" />
+        <TextField fx:id="usernameField" promptText="username" />
+        <PasswordField fx:id="passwordField" promptText="password" />
+        <Hyperlink onAction="#switchToUserRegistration" text="New user?" />
+        <Button fx:id="loginButton" defaultButton="true" mnemonicParsing="false" onAction="#tryToLogin" text="Login" />
+    </children>
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+</VBox>
