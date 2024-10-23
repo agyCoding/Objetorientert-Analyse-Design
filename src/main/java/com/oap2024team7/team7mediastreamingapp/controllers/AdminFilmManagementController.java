@@ -1,33 +1,33 @@
 package com.oap2024team7.team7mediastreamingapp.controllers;
 
-import com.oap2024team7.team7mediastreamingapp.models.Film;
-
-import java.util.List;
-import java.util.HashSet;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
-import com.oap2024team7.team7mediastreamingapp.customcells.CategoryCell;
-import com.oap2024team7.team7mediastreamingapp.customcells.LanguageCell;
-import com.oap2024team7.team7mediastreamingapp.models.Category;
-import com.oap2024team7.team7mediastreamingapp.models.Language;
-import com.oap2024team7.team7mediastreamingapp.customcells.RatingCell;
-import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
-import com.oap2024team7.team7mediastreamingapp.services.CategoryManager;
-import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
-import com.oap2024team7.team7mediastreamingapp.services.LanguageManager;
-import com.oap2024team7.team7mediastreamingapp.models.Actor;
-import com.oap2024team7.team7mediastreamingapp.models.Staff;
-import com.oap2024team7.team7mediastreamingapp.services.InventoryManager;
-import com.oap2024team7.team7mediastreamingapp.models.Inventory;
+import com.oap2024team7.team7mediastreamingapp.customcells.ActorComboBoxCell;
 import com.oap2024team7.team7mediastreamingapp.customcells.AdminActorCell;
 import com.oap2024team7.team7mediastreamingapp.customcells.AdminSpecialFeaturesCell;
+import com.oap2024team7.team7mediastreamingapp.customcells.CategoryCell;
+import com.oap2024team7.team7mediastreamingapp.customcells.LanguageCell;
+import com.oap2024team7.team7mediastreamingapp.customcells.RatingCell;
+import com.oap2024team7.team7mediastreamingapp.models.Actor;
+import com.oap2024team7.team7mediastreamingapp.models.Category;
+import com.oap2024team7.team7mediastreamingapp.models.Film;
+import com.oap2024team7.team7mediastreamingapp.models.Inventory;
+import com.oap2024team7.team7mediastreamingapp.models.Language;
+import com.oap2024team7.team7mediastreamingapp.models.Staff;
 import com.oap2024team7.team7mediastreamingapp.services.ActorManager;
-import com.oap2024team7.team7mediastreamingapp.customcells.ActorComboBoxCell;
+import com.oap2024team7.team7mediastreamingapp.services.CategoryManager;
 import com.oap2024team7.team7mediastreamingapp.services.FilmManager;
+import com.oap2024team7.team7mediastreamingapp.services.InventoryManager;
+import com.oap2024team7.team7mediastreamingapp.services.LanguageManager;
+import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
+import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -36,7 +36,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import javafx.scene.control.Alert.AlertType;
 
 public class AdminFilmManagementController {
     @FXML
@@ -120,7 +119,7 @@ public class AdminFilmManagementController {
             @Override
             public void handle(WindowEvent event) {
                 // Clear the selected film from SessionData
-                SessionData.getInstance().setSelectedFilm(null);
+                SessionData.getInstance().setSelectedFilm(null); //hei
             }
         });
     }
