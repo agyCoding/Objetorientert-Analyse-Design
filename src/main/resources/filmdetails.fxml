@@ -35,8 +35,11 @@
     <Button fx:id="rentButton" mnemonicParsing="false" onAction="#showRentWindow" text="Rent" GridPane.columnIndex="2" GridPane.rowIndex="4" />
     <Button fx:id="streamButton" mnemonicParsing="false" onAction="#tryToStream" text="Stream" GridPane.columnIndex="1" GridPane.rowIndex="4" />
     
-    <!-- New Save to List button -->
-    <Button fx:id="saveToListButton" mnemonicParsing="false" onAction="#handleSaveToList" text="Save to List" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+    <!-- Save to List button -->
+    <Button fx:id="saveToListButton" mnemonicParsing="false" onAction="#handleSaveToList" text="Save to My List" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+
+    <!-- New Label to show the status of the "Save to List" action -->
+    <Label fx:id="statusLabel" text="" GridPane.columnIndex="3" GridPane.rowIndex="5" style="-fx-font-size: 14px; -fx-text-fill: green;" wrapText="true"/>
   </children>
   <padding>
     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

@@ -50,11 +50,8 @@ public class MyListController {
         releaseYearColumn.setCellValueFactory(new PropertyValueFactory<>("releaseYear"));
         ratingColumn.setCellValueFactory(new PropertyValueFactory<>("rating"));
 
-        // Uncomment the following line to load films from the session data.
+        // Load films from the session data initially
         loadFilmsFromSession();
-
-        // Uncomment the following line to load films from the database instead.
-        // loadFilmsFromDatabase();
 
         // Refresh table to ensure data is displayed correctly
         myListTable.refresh();
@@ -134,13 +131,9 @@ public class MyListController {
         if (currentProfile != null && !filmList.contains(film)) {
             System.out.println("Adding film: " + film.getTitle() + " to profile ID: " + currentProfile.getProfileId());
             DatabaseManager.addFilmToMyList(currentProfile.getProfileId(), film.getFilmId());
-            if (true) { // Assuming the method always succeeds
-                SessionData.getInstance().addFilmToSavedList(film);
-                filmList.add(film); // Update the TableView
-                myListTable.refresh(); // Refresh table after adding a film
-            } else {
-                System.out.println("Error: Could not add film to the database.");
-            }
+            SessionData.getInstance().addFilmToSavedList(film);
+            filmList.add(film); // Update the TableView
+            myListTable.refresh(); // Refresh table after adding a film
         } else {
             System.out.println("Film is already in the list or no profile found.");
         }
@@ -150,9 +143,11 @@ public class MyListController {
     @FXML
     private void handleSortByTitle() {
         System.out.println("Sorting films by title...");
-        filmList.sort(Comparator.comparing(Film::getTitle));
-        myListTable.refresh(); // Refresh table to reflect sorted data
+        filmList.sort((f1, f2) -> f1.getTitle().compareToIgnoreCase(f2.getTitle()));
+        myListTable.refresh();
     }
+    
+    
 
     // Handle sorting by release year
     @FXML
@@ -194,5 +189,13 @@ public class MyListController {
             e.printStackTrace();
             System.out.println("Error loading film details view.");
         }
+    }
+
+    // Handle refreshing the list
+    @FXML
+    private void handleRefresh() {
+        System.out.println("Refreshing the My Saved Films list...");
+        loadFilmsFromSession();
+        myListTable.refresh(); // Refresh the TableView after reloading the data
     }
 }
