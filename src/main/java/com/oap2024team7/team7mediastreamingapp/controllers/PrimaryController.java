@@ -226,7 +226,7 @@ public class PrimaryController {
 
             // Create a new stage for the pop-up window
             Stage popupStage = new Stage();
-            popupStage.setTitle("Media Streaming and Rental - Edit Account");
+            popupStage.setTitle("Streamify - Edit Account");
 
             // Set the scene for the pop-up stage
             popupStage.setScene(new Scene(root));
@@ -383,7 +383,7 @@ public class PrimaryController {
 
             // Create a new stage for the pop-up window
             Stage popupStage = new Stage();
-            popupStage.setTitle("Media Streaming and Rental - Film Details");
+            popupStage.setTitle("Streamify - Film Details");
 
             // Set the scene for the pop-up stage
             popupStage.setScene(new Scene(root));
@@ -401,7 +401,9 @@ public class PrimaryController {
         System.out.println("Film details: " + film.getTitle() + " (" + film.getReleaseYear() + ")");
     }
 
-    // Load all categories and add them to the ComboBox
+    /**
+     * Load all categories and add them to the ComboBox.
+     */
     private void loadCategories() {
         List<Category> categories = categoryManager.getAllCategories();
     
@@ -435,7 +437,9 @@ public class PrimaryController {
     }
     
     
-    // Load all ratings and add them to the ComboBox
+    /**
+     * Load all ratings and add them to the ComboBox.
+     */
     private void loadRatings() {
         // Get all the enum values
         Film.Rating[] ratings = Film.Rating.values();
@@ -453,7 +457,9 @@ public class PrimaryController {
         ratingComboBox.getItems().addAll(ratings);
     }
 
-    // Apply filters to the films list view
+    /**
+     * Apply the filters selected by the user and load the films.
+     */
     @FXML
     private void applyFilters() {
         // Store the filters globally
@@ -473,7 +479,9 @@ public class PrimaryController {
         updateCurrentPageLabel();
     }
     
-    //Clear all filters and reload the films
+    /**
+     * Clear all filters and load all films.
+     */
     @FXML
     private void clearFilters() {
         genreComboBox.getSelectionModel().clearSelection();
@@ -495,7 +503,9 @@ public class PrimaryController {
         updateCurrentPageLabel();
     }
 
-    // Redirect to the login screen
+    /**
+     * Switch to the login screen.
+     */
     @FXML
     private void switchToLogin() {
         try {
@@ -504,7 +514,7 @@ public class PrimaryController {
 
             // Get the current stage (window) and set the new scene
             Stage stage = (Stage) loggedInUserLabel.getScene().getWindow();
-            stage.setTitle("Media Streaming and Rental - Login");
+            stage.setTitle("Streamify - Login");
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
