@@ -227,6 +227,12 @@ public class ProfileManager {
         return false; // Return false if there is no existing profile with that name
     }
     
+    /**
+     * Check if a profile user can watch a specific film based on the film rating and the user's birth date
+     * @param film
+     * @param profile
+     * @return
+     */
     public static boolean canWatchFilm(Film film, Profile profile) {
         LocalDate usersBirthDate = profile.getBirthDate();
         Film.Rating rating = film.getRating();
