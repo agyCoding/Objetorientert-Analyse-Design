@@ -60,7 +60,7 @@ public class CustomerManager {
     /**
      * Create Customer object from the databased, based on email=username
      * @param username
-     * @return
+     * @return Customer object
      */
     public static Customer getCustomerByUsername(String username) {
         String selectQuery = "SELECT * FROM customer WHERE email = ?";
@@ -124,6 +124,13 @@ public class CustomerManager {
         }
     }
 
+    /**
+     * Get all customers from the database
+     * @param offset
+     * @param limit
+     * @param storeId
+     * @return List of all customers
+     */
     public List<Customer> getAllCustomers(int offset, int limit, int storeId) {
         String selectQuery = "SELECT * FROM customer WHERE store_id = ? ORDER BY last_name LIMIT ? OFFSET ?";
         List<Customer> customers = new ArrayList<>();
@@ -154,6 +161,16 @@ public class CustomerManager {
         }
     }
 
+    /**
+     * Filter customers based on isActive, subType, name, offset, limit and storeId
+     * @param isActive
+     * @param subType
+     * @param name
+     * @param offset
+     * @param limit
+     * @param storeId
+     * @return Filtered list of customers
+     */
     public List<Customer> filterCustomers(int isActive, String subType, String name, int offset, int limit, int storeId) {
         String selectQuery;
         if ("ALL".equalsIgnoreCase(subType)) {
