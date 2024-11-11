@@ -1,6 +1,6 @@
 package com.oap2024team7.team7mediastreamingapp.customcells;
 
-import com.oap2024team7.team7mediastreamingapp.controllers.AdminPageController;
+import com.oap2024team7.team7mediastreamingapp.controllers.admin.AdminPageController;
 import com.oap2024team7.team7mediastreamingapp.models.Film;
 
 import javafx.scene.control.CheckBox;

@@ -74,16 +74,20 @@ public class Film {
         this.rentalRate = rentalRate;
     }
 
-        // Constructor for creating a new film to be added to the database
-        public Film(String title, String description, int releaseYear, Language language, int rentalDuration, int length, Rating rating) {
-            this.title = title;
-            this.description = description;
-            this.releaseYear = releaseYear;
-            this.language = language;
-            this.rentalDuration = rentalDuration;
-            this.length = length;
-            this.rating = rating;
-        }
+    // Constructor for creating a new film to be added to the database
+    public Film(String title, String description, int releaseYear, Language language, int rentalDuration, int length, Rating rating) {
+        this.title = title;
+        this.description = description;
+        this.releaseYear = releaseYear;
+        this.language = language;
+        this.rentalDuration = rentalDuration;
+        this.length = length;
+        this.rating = rating;
+    }
+
+    // Default constructor
+    public Film() {
+    }
 
     public int getFilmId() {
         return filmId;

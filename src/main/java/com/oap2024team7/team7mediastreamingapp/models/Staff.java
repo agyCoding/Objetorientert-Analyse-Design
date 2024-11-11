@@ -13,6 +13,7 @@ public class Staff {
     private int addressId;
     private String email;
     private int storeId; // NN in the database so we will hardcode it to 1 in case of staff creation
+    @SuppressWarnings("unused")
     private int active; // this maps to TINYINT in the database with 1 for active and 0 for inactive
     private String username;
     private String password; // hashed password

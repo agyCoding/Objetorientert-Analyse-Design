@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<GridPane prefHeight="654.0" prefWidth="896.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oap2024team7.team7mediastreamingapp.controllers.AdminPageController">
+<GridPane prefHeight="654.0" prefWidth="896.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oap2024team7.team7mediastreamingapp.controllers.admin.AdminPageController">
    <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" maxWidth="795.0" minWidth="10.0" prefWidth="218.0" />
       <ColumnConstraints hgrow="SOMETIMES" maxWidth="754.0" minWidth="10.0" prefWidth="428.0" />
@@ -45,8 +45,8 @@
       <!-- Navigation Menu -->
       <HBox prefHeight="100.0" prefWidth="200.0" spacing="30.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="TOP">
          <children>
-            <Button fx:id="manageMoviesButton" mnemonicParsing="false" text="Manage movies" />
-            <Button fx:id="manageUsersButton" mnemonicParsing="false" text="Manage users" />
+            <Button fx:id="manageMoviesButton" mnemonicParsing="false" text="Manage movies" onAction="#changeToManageMovies" />
+            <Button fx:id="manageUsersButton" mnemonicParsing="false" text="Manage users" onAction="#changeToManageUsers" />
          </children>
          <padding>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
@@ -76,7 +76,7 @@
       <VBox spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
          <children>
             <HBox spacing="10.0">
-                  <Button fx:id="addMovieButton" mnemonicParsing="false" text="Add a movie">
+                  <Button fx:id="addMovieButton" mnemonicParsing="false" text="Add a movie" onAction="#tryToAddMovie">
                      <VBox.margin>
                         <Insets bottom="10.0" />
                      </VBox.margin>

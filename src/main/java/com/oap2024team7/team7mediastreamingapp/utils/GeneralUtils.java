@@ -66,7 +66,7 @@ public class GeneralUtils {
     /**
      * Method to convert a string of special features to a set.
      * @param specialFeaturesString
-     * @return
+     * @return set of special features
      */
     public Set<String> convertToSet(String specialFeaturesString) {
         Set<String> specialFeatures = new HashSet<>();
@@ -74,6 +74,15 @@ public class GeneralUtils {
             specialFeatures.addAll(Arrays.asList(specialFeaturesString.split(",")));
         }
         return specialFeatures;
+    }
+
+    /**
+     * Method to check if a string is a number (integer or double)
+     * @param str
+     * @return true if the string is a number, false otherwise
+     */
+    public static boolean isNumeric(String str) {
+        return str.matches("-?\\d+(\\.\\d+)?");
     }
     
 }
