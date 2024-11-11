@@ -47,7 +47,7 @@
          <children>
             <Button fx:id="homeButton" mnemonicParsing="false" text="Home" />
             <Button fx:id="myListButton" mnemonicParsing="false" text="My list" onAction="#handleMyList"/> <!-- new -->
-            <Button fx:id="myRentalsButton" mnemonicParsing="false" text="My rentals" />
+            <Button fx:id="myRentalsButton" mnemonicParsing="false" text="My rentals" onAction="#handleMyRentalsButtonAction"/>
          </children>
          <padding>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
