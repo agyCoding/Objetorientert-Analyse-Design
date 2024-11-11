@@ -1,5 +1,5 @@
-// Last Modified: 07.10.2024
-package com.oap2024team7.team7mediastreamingapp.controllers;
+// Last Modified: 11.11.2024
+package com.oap2024team7.team7mediastreamingapp.controllers.admin;
 
 import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
 import com.oap2024team7.team7mediastreamingapp.models.Film;
@@ -194,7 +194,6 @@ public class AdminPageController {
         }
     }
 
-   
     // Handles the action when the user clicks the "Logout" menu item.
     private void handleLogout() {
         // Logic to log out the user
@@ -278,7 +277,7 @@ public class AdminPageController {
     private void showFilmDetails(Film film) {
         // Load the edit account screen
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/adminfilmmanagement.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/admin/adminfilmmanagement.fxml"));
             Parent root = loader.load();
 
             // Get the controller of the next scene
@@ -351,7 +350,6 @@ public class AdminPageController {
             });
         }
     }
-    
     
     // Load all ratings and add them to the ComboBox
     private void loadRatings() {
@@ -478,6 +476,75 @@ public class AdminPageController {
         updateDeleteButtonVisibility(); // Update delete button visibility
     }
 
+    /**
+     * Method to change to the manage movies screen.
+     * Reloads the current stage.
+     */
+    @FXML
+    private void changeToManageMovies() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/admin/adminpage.fxml"));
+            Parent root = loader.load();
+
+            // Get the current stage (window) and set the new scene
+            Stage stage = (Stage) loggedInUserLabel.getScene().getWindow();
+            stage.setTitle("Streamify - Manage Movies");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the admin screen", "An error occurred while trying to load the admin screen.");
+        }
+    }
+
+    /**
+     * Method to change to the manage users screen.
+     */
+    @FXML
+    private void changeToManageUsers() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/admin/adminusermanagement.fxml"));
+            Parent root = loader.load();
+
+            // Get the current stage (window) and set the new scene
+            Stage stage = (Stage) loggedInUserLabel.getScene().getWindow();
+            stage.setTitle("Streamify - Manage Users");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the user management screen", "An error occurred while trying to load the user management screen.");
+        }
+    }
+
+    /**
+     * Method to display a pop-up window for adding a new movie
+     */
+    @FXML
+    private void tryToAddMovie() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/admin/adminaddfilm.fxml"));
+            Parent root = loader.load();
+
+            // Create a new stage for the pop-up window
+            Stage popupStage = new Stage();
+            popupStage.setTitle("Streamify - Add New Film");
+
+            // Set the scene for the pop-up stage
+            popupStage.setScene(new Scene(root));
+
+            // Make the pop-up window modal (blocks interaction with other windows until closed)
+            popupStage.initModality(Modality.WINDOW_MODAL);
+            popupStage.initOwner(loggedInUserLabel.getScene().getWindow());
+
+            // Show the pop-up window
+            popupStage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the add film screen", "An error occurred while trying to load the add film screen.");
+        }
+    }
+
     // Redirect to the login screen
     @FXML
     private void switchToLogin() {
@@ -487,7 +554,7 @@ public class AdminPageController {
 
             // Get the current stage (window) and set the new scene
             Stage stage = (Stage) loggedInUserLabel.getScene().getWindow();
-            stage.setTitle("Media Streaming and Rental - Login");
+            stage.setTitle("Streamify - Login");
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {

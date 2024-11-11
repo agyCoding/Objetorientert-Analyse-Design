@@ -146,7 +146,7 @@ public class LoginController {
                 try {
                     SessionData.getInstance().setLoggedInStaff(StaffManager.getStaffByUsername(usernameText));
 
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/adminpage.fxml"));
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/admin/adminpage.fxml"));
                     Parent root = loader.load();
                     Stage stage = (Stage) usernameField.getScene().getWindow();
                     stage.setTitle("Admin Dashboard");

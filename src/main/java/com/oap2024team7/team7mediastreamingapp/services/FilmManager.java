@@ -51,6 +51,66 @@ public class FilmManager {
     }
 
     /**
+     * Inserts a new film into the database (film table and film_actor table).
+     * @param film The film to insert
+     * @return The ID of the newly inserted film, or -1 if insertion failed
+     */
+    public int addFilm(Film film) {
+        String insertFilmQuery = "INSERT INTO film (title, description, release_year, language_id, rental_duration, rental_rate, length, rating, special_features) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String insertFilmActorQuery = "INSERT INTO film_actor (film_id, actor_id) VALUES (?, ?)";
+
+        try (Connection conn = DatabaseManager.getConnection()) {
+            conn.setAutoCommit(false); // Start transaction
+            
+            try (PreparedStatement filmStmt = conn.prepareStatement(insertFilmQuery, PreparedStatement.RETURN_GENERATED_KEYS)) {
+                // Insert into film table
+                filmStmt.setString(1, film.getTitle());
+                filmStmt.setString(2, film.getDescription());
+                filmStmt.setInt(3, film.getReleaseYear());
+                filmStmt.setInt(4, film.getLanguage().getLanguageId());
+                filmStmt.setInt(5, film.getRentalDuration());
+                filmStmt.setDouble(6, film.getRentalRate());
+                filmStmt.setInt(7, film.getLength());
+                filmStmt.setString(8, mapRating(film.getRating()));
+                filmStmt.setString(9, String.join(",", film.getSpecialFeatures()));
+                
+                int rowsAffected = filmStmt.executeUpdate();
+                
+                if (rowsAffected > 0) {
+                    // Get the generated film_id
+                    ResultSet rs = filmStmt.getGeneratedKeys();
+                    if (rs.next()) {
+                        int filmId = rs.getInt(1);
+                        
+                        // Only try to insert actors if the list is not null and not empty
+                        List<Actor> actors = film.getActors();
+                        if (actors != null && !actors.isEmpty()) {
+                            try (PreparedStatement actorStmt = conn.prepareStatement(insertFilmActorQuery)) {
+                                for (Actor actor : actors) {
+                                    actorStmt.setInt(1, filmId);
+                                    actorStmt.setInt(2, actor.getActorId());
+                                    actorStmt.executeUpdate();
+                                }
+                            }
+                        }
+                        conn.commit();
+                        return filmId;
+                    }
+                }
+                conn.rollback();
+                return -1; 
+            } catch (SQLException e) {
+                conn.rollback();
+                e.printStackTrace();
+                return -1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    /**
      * Updates a film in the database.
      * @param film The film object containing updated information.
      * @return boolean indicating if the film was updated successfully.

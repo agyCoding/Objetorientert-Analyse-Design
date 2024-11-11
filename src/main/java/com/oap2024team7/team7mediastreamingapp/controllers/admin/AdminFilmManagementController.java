@@ -1,4 +1,5 @@
-package com.oap2024team7.team7mediastreamingapp.controllers;
+// Last Modified: 11.11.2024
+package com.oap2024team7.team7mediastreamingapp.controllers.admin;
 
 import com.oap2024team7.team7mediastreamingapp.models.Film;
 
@@ -6,6 +7,8 @@ import java.util.List;
 import java.util.HashSet;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.sql.SQLException;
+import java.sql.Connection;
 
 import com.oap2024team7.team7mediastreamingapp.customcells.CategoryCell;
 import com.oap2024team7.team7mediastreamingapp.customcells.LanguageCell;
@@ -25,6 +28,7 @@ import com.oap2024team7.team7mediastreamingapp.customcells.AdminSpecialFeaturesC
 import com.oap2024team7.team7mediastreamingapp.services.ActorManager;
 import com.oap2024team7.team7mediastreamingapp.customcells.ActorComboBoxCell;
 import com.oap2024team7.team7mediastreamingapp.services.FilmManager;
+import com.oap2024team7.team7mediastreamingapp.services.DatabaseManager;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -38,6 +42,11 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.scene.control.Alert.AlertType;
 
+/**
+ * Controller class for the Film Management window in the admin screen.
+ * This class is responsible for handling the user interactions and updating the UI for the page that allows an admin to edit information about an existing movie.
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
 public class AdminFilmManagementController {
     @FXML
     private Button updateButton;
@@ -139,6 +148,11 @@ public class AdminFilmManagementController {
         // Now that the film is set, update the labels with the film's details
         updateFilmDetails();
     }
+
+    /**
+     * Method to update the film details in the admin screen.
+     * It sets the text fields and ComboBoxes to the values of the selected film.
+     */
     
     private void updateFilmDetails() {
         filmTitleTF.setText(selectedFilm.getTitle());
@@ -353,7 +367,6 @@ public class AdminFilmManagementController {
         List<Actor> actors = actorsLV.getItems();
 
         Category category = categoryCB.getValue();
-        System.out.println("Selected category: " + category.getCategoryId());
 
         // int inventoryAmount = Integer.parseInt(inventoryAmountTF.getText());
         // int inventoryStore = inventoryStoreCB.getValue();
@@ -425,25 +438,79 @@ public class AdminFilmManagementController {
             return;
         }
 
-        // Try to update the film in the database
-        boolean filmUpdated = filmManager.updateFilm(selectedFilm);
+        boolean filmDetailsUpdated = updateFilmDetails(selectedFilm, category, actors);
 
-        // Try to update category in the database
-        boolean categoryUpdated = categoryManager.updateCategoryForFilm(selectedFilm, category);
-
-        // Try to update actors in the database
-        boolean actorsUpdated = actorManager.setActorsForFilm(actors, selectedFilm.getFilmId());
-    
-        // Inventory handling
-        boolean inventoryUpdated = handleInventory();
-
-        // Get feedback from all the updates that need to happen and display appropriate message to the user
-        if (filmUpdated && categoryUpdated && actorsUpdated && inventoryUpdated) {
+        // Get feedback from the updates that need to happen and display appropriate message to the user
+        if (filmDetailsUpdated) {
             GeneralUtils.showAlert(AlertType.INFORMATION, "Success!", "Successfully edited selected film", "You've successfully edited selected film item.");
             refreshFilmData();
         } else {
             GeneralUtils.showAlert(AlertType.ERROR, "Error", "Something went wrong", "Try again.");
         }
+    }
+
+    /**
+     * Method for updating the film details in the database, in a transaction.
+     * @param selectedFilm
+     * @param category
+     * @param actors
+     * @return true if the update was successful, false otherwise
+     */
+    public boolean updateFilmDetails(Film selectedFilm, Category category, List<Actor> actors) {
+        Connection connection = null;
+        boolean success = false;
+    
+        try {
+            // Obtain the database connection (assuming DatabaseManager handles this)
+            connection = DatabaseManager.getConnection();
+            connection.setAutoCommit(false); // Start transaction
+    
+            // Try to update the film in the database
+            boolean filmUpdated = filmManager.updateFilm(selectedFilm);
+            if (!filmUpdated) {
+                throw new SQLException("Failed to update film");
+            }
+    
+            // Try to update category in the database
+            boolean categoryUpdated = categoryManager.updateCategoryForFilm(selectedFilm, category);
+            if (!categoryUpdated) {
+                throw new SQLException("Failed to update category for film");
+            }
+    
+            // Try to update actors in the database
+            boolean actorsUpdated = actorManager.setActorsForFilm(actors, selectedFilm.getFilmId());
+            if (!actorsUpdated) {
+                throw new SQLException("Failed to update actors for film");
+            }
+    
+            // Inventory handling
+            boolean inventoryUpdated = handleInventory();
+            if (!inventoryUpdated) {
+                throw new SQLException("Failed to update inventory");
+            }
+    
+            connection.commit(); // Commit transaction if all operations succeed
+            success = true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            if (connection != null) {
+                try {
+                    connection.rollback(); // Roll back transaction if any operation fails
+                } catch (SQLException rollbackEx) {
+                    rollbackEx.printStackTrace();
+                }
+            }
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.setAutoCommit(true); // Reset to default auto-commit mode
+                    connection.close();
+                } catch (SQLException closeEx) {
+                    closeEx.printStackTrace();
+                }
+            }
+        }
+        return success;
     }
 
     /**
