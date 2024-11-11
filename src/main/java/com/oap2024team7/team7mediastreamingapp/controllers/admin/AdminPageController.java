@@ -125,6 +125,7 @@ public class AdminPageController {
         loadRatings();
 
         /* INITIALIZE FILM LV */
+        
         filmManager = new FilmManager();
 
         // Initialize the ToggleGroup in the controller
@@ -503,7 +504,7 @@ public class AdminPageController {
     @FXML
     private void changeToManageUsers() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/admin/adminusermanagement.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/admin/adminusermanagment.fxml"));
             Parent root = loader.load();
 
             // Get the current stage (window) and set the new scene
