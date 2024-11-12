@@ -1,4 +1,4 @@
-package com.oap2024team7.team7mediastreamingapp.controllers;
+package com.oap2024team7.team7mediastreamingapp.controllers.customer.accountmanagement;
 
 import java.time.LocalDate;
 
@@ -91,7 +91,7 @@ public class CreateProfileController {
         if (ProfileManager.registerNewProfile(newProfile) != -1) {
             GeneralUtils.showAlert(AlertType.INFORMATION, "Profile Created", "Profile created successfully", "The new profile has been created.");
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/primary.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/contentmanagement/primary.fxml"));
                 Parent root = loader.load();
 
                 // Get the current stage (window) and set the new scene

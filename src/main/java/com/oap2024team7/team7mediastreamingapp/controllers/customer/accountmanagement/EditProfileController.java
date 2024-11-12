@@ -1,5 +1,6 @@
-package com.oap2024team7.team7mediastreamingapp.controllers;
+package com.oap2024team7.team7mediastreamingapp.controllers.customer.accountmanagement;
 
+import com.oap2024team7.team7mediastreamingapp.controllers.customer.contentmanagement.PrimaryController;
 import com.oap2024team7.team7mediastreamingapp.models.Profile;
 import com.oap2024team7.team7mediastreamingapp.services.ProfileManager;
 import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
@@ -138,7 +139,7 @@ public class EditProfileController {
 
             // Change the scene to manageprofiles.fxml
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/manageprofiles.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/accountmanagement/manageprofiles.fxml"));
                 Parent root = loader.load();
 
                 // Get the current stage (window) and set the new scene

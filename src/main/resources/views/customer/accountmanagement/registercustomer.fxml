@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 
 
-<ScrollPane fitToHeight="true" fitToWidth="true" prefViewportHeight="804.0" prefViewportWidth="423.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oap2024team7.team7mediastreamingapp.controllers.RegisterCustomerController">
+<ScrollPane fitToHeight="true" fitToWidth="true" prefViewportHeight="804.0" prefViewportWidth="423.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oap2024team7.team7mediastreamingapp.controllers.customer.accountmanagement.RegisterCustomerController">
    <content>
       <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="804.0" prefWidth="423.0" spacing="10.0">
          <children>

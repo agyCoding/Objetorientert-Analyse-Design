@@ -1,5 +1,5 @@
 // Last Modified: 30.09.2024
-package com.oap2024team7.team7mediastreamingapp.controllers;
+package com.oap2024team7.team7mediastreamingapp.controllers.customer.contentmanagement;
 
 import com.oap2024team7.team7mediastreamingapp.models.Film;
 import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;

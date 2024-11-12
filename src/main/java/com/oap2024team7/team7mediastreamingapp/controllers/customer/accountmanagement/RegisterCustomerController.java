@@ -1,5 +1,5 @@
 // Last Modified: 30.09.2024
-package com.oap2024team7.team7mediastreamingapp.controllers;
+package com.oap2024team7.team7mediastreamingapp.controllers.customer.accountmanagement;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -178,7 +178,7 @@ public class RegisterCustomerController {
     @FXML
     private void switchToLogin() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/contentmanagement/login.fxml"));
             Parent root = loader.load();
 
             // Get the current stage (window) and set the new scene

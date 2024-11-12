@@ -1,4 +1,4 @@
-package com.oap2024team7.team7mediastreamingapp.controllers;
+package com.oap2024team7.team7mediastreamingapp.controllers.customer.contentmanagement;
 
 import com.oap2024team7.team7mediastreamingapp.models.Film;
 import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
@@ -81,7 +81,7 @@ public class MyListController {
     private void showFilmDetails(Film film) {
         try {
             // Load the film details FXML file
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/filmdetails.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/contentmanagement/filmdetails.fxml"));
             Parent root = loader.load();
 
             // Get the FilmDetailsController and set the selected film
