@@ -4,6 +4,7 @@ import com.oap2024team7.team7mediastreamingapp.models.Film;
 import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 import com.oap2024team7.team7mediastreamingapp.services.DatabaseManager;
 import com.oap2024team7.team7mediastreamingapp.models.Profile;
+import com.oap2024team7.team7mediastreamingapp.services.FilmManager;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -114,7 +115,7 @@ public class MyListController {
             Profile currentProfile = SessionData.getInstance().getCurrentProfile();
             if (currentProfile != null) {
                 System.out.println("Removing film: " + selectedFilm.getTitle() + " for profile ID: " + currentProfile.getProfileId());
-                DatabaseManager.removeFilmFromMyList(currentProfile.getProfileId(), selectedFilm.getFilmId());
+                FilmManager.removeFilmFromMyList(currentProfile.getProfileId(), selectedFilm.getFilmId());
                 SessionData.getInstance().removeFilmFromSavedList(selectedFilm);
                 filmList.remove(selectedFilm); // Update the TableView
                 myListTable.refresh(); // Refresh table after removal
@@ -130,7 +131,7 @@ public class MyListController {
         Profile currentProfile = SessionData.getInstance().getCurrentProfile();
         if (currentProfile != null && !filmList.contains(film)) {
             System.out.println("Adding film: " + film.getTitle() + " to profile ID: " + currentProfile.getProfileId());
-            DatabaseManager.addFilmToMyList(currentProfile.getProfileId(), film.getFilmId());
+            FilmManager.addFilmToMyList(currentProfile.getProfileId(), film.getFilmId());
             SessionData.getInstance().addFilmToSavedList(film);
             filmList.add(film); // Update the TableView
             myListTable.refresh(); // Refresh table after adding a film

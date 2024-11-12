@@ -11,7 +11,7 @@ import com.oap2024team7.team7mediastreamingapp.models.Address;
 import com.oap2024team7.team7mediastreamingapp.services.AddressManager;
 import com.oap2024team7.team7mediastreamingapp.models.Profile;
 import com.oap2024team7.team7mediastreamingapp.services.StaffManager;
-import com.oap2024team7.team7mediastreamingapp.services.DatabaseManager;
+import com.oap2024team7.team7mediastreamingapp.services.FilmManager;
 import com.oap2024team7.team7mediastreamingapp.models.Film;
 
 import javafx.fxml.FXML;
@@ -133,7 +133,7 @@ public class LoginController {
                         // Load the user's saved films into the session
                         Profile currentProfile = SessionData.getInstance().getCurrentProfile();
                         if (currentProfile != null) {
-                            List<Film> savedFilms = DatabaseManager.getFilmsFromMyList(currentProfile.getProfileId());
+                            List<Film> savedFilms = FilmManager.getFilmsFromMyList(currentProfile.getProfileId());
                             if (savedFilms != null && !savedFilms.isEmpty()) {
                                 System.out.println("Loaded " + savedFilms.size() + " films for profile ID: " + currentProfile.getProfileId());
                             } else {
