@@ -14,7 +14,7 @@ import java.sql.Statement;
 
 public class DatabaseManager {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/sakila";
-    private static final String DB_USERNAME = "student";            
+    private static final String DB_USERNAME = "student";
     private static final String DB_PASSWORD = "student";
 
     /**
@@ -29,7 +29,7 @@ public class DatabaseManager {
             e.printStackTrace();
             throw new SQLException("MySQL JDBC driver not found", e);
         }
-    
+
         try {
             Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
             return connection;
@@ -40,46 +40,59 @@ public class DatabaseManager {
             throw e;
         }
     }
-    
-/**
- * Updates the database schema by adding a new column 'account_type' to the 'customer' table
- * and creating a new 'profile' table.
- */
-public static void updateDatabaseSchema() {
-    String checkColumnQuery = "SELECT column_name FROM information_schema.columns WHERE table_name = 'customer' AND column_name = 'account_type'";
-    String alterCustomerTable = "ALTER TABLE customer ADD account_type ENUM('FREE', 'PREMIUM') DEFAULT 'FREE';";
 
-    // Create the Profile table
-    String createProfileTable = "CREATE TABLE IF NOT EXISTS profile (" +
-        "profile_id INT AUTO_INCREMENT PRIMARY KEY, " +
-        "customer_id SMALLINT UNSIGNED NOT NULL, " +
-        "main_profile BOOLEAN DEFAULT FALSE, " +
-        "profile_name VARCHAR(255) NOT NULL, " +
-        "birth_date DATE, " +
-        "hashed_password VARCHAR(255)," +
-        "FOREIGN KEY (customer_id) REFERENCES customer(customer_id) ON DELETE CASCADE" +
-        ");";
+    /**
+     * Updates the database schema by adding a new column 'account_type' to the 'customer' table
+     * and creating a new 'profile' table.
+     */
+    public static void updateDatabaseSchema() {
+        String checkColumnQuery = "SELECT column_name FROM information_schema.columns WHERE table_name = 'customer' AND column_name = 'account_type'";
+        String alterCustomerTable = "ALTER TABLE customer ADD account_type ENUM('FREE', 'PREMIUM') DEFAULT 'FREE';";
 
-    try (Connection conn = DatabaseManager.getConnection();
-         Statement stmt = conn.createStatement()) {
+        // Create the Profile table
+        String createProfileTable = "CREATE TABLE IF NOT EXISTS profile (" +
+            "profile_id INT AUTO_INCREMENT PRIMARY KEY, " +
+            "customer_id SMALLINT UNSIGNED NOT NULL, " +
+            "main_profile BOOLEAN DEFAULT FALSE, " +
+            "profile_name VARCHAR(255) NOT NULL, " +
+            "birth_date DATE, " +
+            "hashed_password VARCHAR(255)," +
+            "FOREIGN KEY (customer_id) REFERENCES customer(customer_id) ON DELETE CASCADE" +
+            ");";
 
-        // Check if the account_type column exists in the customer table
-        ResultSet rs = stmt.executeQuery(checkColumnQuery);
+        // Create My List table to store user's saved films
+        String createMyListTable = "CREATE TABLE IF NOT EXISTS my_list (" +
+            "list_id INT AUTO_INCREMENT PRIMARY KEY, " +
+            "profile_id INT NOT NULL, " +
+            "film_id SMALLINT UNSIGNED NOT NULL, " +
+            "FOREIGN KEY (profile_id) REFERENCES profile(profile_id) ON DELETE CASCADE, " +
+            "FOREIGN KEY (film_id) REFERENCES film(film_id) ON DELETE CASCADE " +
+            ");";
 
-        if (!rs.next()) { // Column doesn't exist
-            stmt.executeUpdate(alterCustomerTable);
-            System.out.println("Column 'account_type' added to customer table.");
-        } else {
-            System.out.println("Column 'account_type' already exists in customer table.");
+        try (Connection conn = DatabaseManager.getConnection();
+             Statement stmt = conn.createStatement()) {
+
+            // Check if the account_type column exists in the customer table
+            ResultSet rs = stmt.executeQuery(checkColumnQuery);
+
+            if (!rs.next()) { // Column doesn't exist
+                stmt.executeUpdate(alterCustomerTable);
+                System.out.println("Column 'account_type' added to customer table.");
+            } else {
+                System.out.println("Column 'account_type' already exists in customer table.");
+            }
+
+            // Create the Profile table if it doesn't exist
+            stmt.executeUpdate(createProfileTable);
+            System.out.println("Table 'profile' created (if it didn't already exist).");
+
+            // Create My List table if it doesn't exist
+            stmt.executeUpdate(createMyListTable);
+            System.out.println("Table 'my_list' created (if it didn't already exist).");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-
-        // Create the Profile table if it doesn't exist
-        stmt.executeUpdate(createProfileTable);
-        System.out.println("Table 'profile' created (if it didn't already exist).");
-
-    } catch (SQLException e) {
-        e.printStackTrace();
     }
-}
 
 }

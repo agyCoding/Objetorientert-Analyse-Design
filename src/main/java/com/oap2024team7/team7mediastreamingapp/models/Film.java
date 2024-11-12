@@ -85,6 +85,15 @@ public class Film {
         this.rating = rating;
     }
 
+    // New Constructor for simpler instantiation
+    public Film(int filmId, String title, String description, int releaseYear, Rating rating) {
+        this.filmId = filmId;
+        this.title = title;
+        this.description = description;
+        this.releaseYear = releaseYear;
+        this.rating = rating;
+    }
+
     // Default constructor
     public Film() {
     }

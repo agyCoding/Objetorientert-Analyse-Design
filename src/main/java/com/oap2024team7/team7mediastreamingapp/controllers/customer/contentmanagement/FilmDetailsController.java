@@ -7,7 +7,9 @@ import com.oap2024team7.team7mediastreamingapp.models.Actor;
 import com.oap2024team7.team7mediastreamingapp.models.Customer;
 import com.oap2024team7.team7mediastreamingapp.models.Customer.AccountType;
 import com.oap2024team7.team7mediastreamingapp.models.Film;
+import com.oap2024team7.team7mediastreamingapp.models.Profile;
 import com.oap2024team7.team7mediastreamingapp.services.ActorManager;
+import com.oap2024team7.team7mediastreamingapp.services.FilmManager;
 import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 
 import javafx.fxml.FXML;
@@ -47,19 +49,49 @@ public class FilmDetailsController {
     private Button rentButton;
     @FXML
     private Button streamButton;
+    @FXML
+    private Button saveToListButton;
+    @FXML
+    private Label statusLabel;
 
     private Film selectedFilm;
     private Stage stage;
 
+
+
     @FXML
     private void handleSaveToList() {
         if (selectedFilm != null) {
-            SessionData.getInstance().addFilmToSavedList(selectedFilm);
+            Profile currentProfile = SessionData.getInstance().getCurrentProfile();
+            if (currentProfile != null) {
+                // Check if the film is already in the saved list
+                if (!SessionData.getInstance().getSavedFilms().contains(selectedFilm)) {
+                    // Add film to session
+                    SessionData.getInstance().addFilmToSavedList(selectedFilm);
+                    System.out.println("Film added to SessionData saved films.");
+    
+                    // Add film to the database under the current profile
+                    FilmManager.addFilmToMyList(currentProfile.getProfileId(), selectedFilm.getFilmId());
+                    System.out.println("Film added to My List in the database.");
+    
+                    // Update status label and disable the save button
+                    statusLabel.setText("Film added to your list.");
+                    saveToListButton.setDisable(true);
+                } else {
+                    // Film is already in the list, hide or disable the button
+                    statusLabel.setText("Film is already in your list.");
+                    saveToListButton.setDisable(true);
+                }
+            } else {
+                System.out.println("No profile selected, cannot save film to My List in the database.");
+                statusLabel.setText("No profile selected.");
+            }
         } else {
-            // Handle the case where selectedFilm is not initialized
             System.out.println("No film selected to save.");
+            statusLabel.setText("No film selected to save.");
         }
     }
+    
 
     /**
      * The stage for the Film Details window.
@@ -94,6 +126,13 @@ public class FilmDetailsController {
 
         // Save the selected film to the session data
         SessionData.getInstance().setSelectedFilm(selectedFilm);
+
+        // Update the status label based on whether the film is already in the list
+        if (SessionData.getInstance().getSavedFilms().contains(selectedFilm)) {
+            statusLabel.setText("Film is already in your list.");
+        } else {
+            statusLabel.setText("");
+        }
     }
 
     // This method updates the labels with the details of the selected film.
