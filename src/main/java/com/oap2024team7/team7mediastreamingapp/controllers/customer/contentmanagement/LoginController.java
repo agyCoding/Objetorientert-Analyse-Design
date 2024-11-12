@@ -1,5 +1,5 @@
 // Last Modified: 30.09.2024
-package com.oap2024team7.team7mediastreamingapp.controllers;
+package com.oap2024team7.team7mediastreamingapp.controllers.customer.contentmanagement;
 
 import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
 import com.oap2024team7.team7mediastreamingapp.services.UserManager;
@@ -129,7 +129,7 @@ public class LoginController {
                         }
 
                         // Load primary screen
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/primary.fxml"));
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/contentmanagement/primary.fxml"));
                         Parent root = loader.load();
                         Stage stage = (Stage) usernameField.getScene().getWindow();
                         stage.setTitle("Media Streaming and Rental - Content Viewer");
@@ -170,12 +170,12 @@ public class LoginController {
     @FXML
     private void switchToUserRegistration() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/registerCustomer.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("//views/customer/accountmanagement/registerCustomer.fxml"));
             Parent root = loader.load();
 
             // Get the current stage (window) and set the new scene
             Stage stage = (Stage) usernameField.getScene().getWindow();
-            stage.setTitle("Media Streaming and Rental - Register New Customer");
+            stage.setTitle("Streamify - Register New Customer");
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {

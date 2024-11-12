@@ -1,5 +1,5 @@
 // Last Modified: 30.09.2024
-package com.oap2024team7.team7mediastreamingapp.controllers;
+package com.oap2024team7.team7mediastreamingapp.controllers.customer.contentmanagement;
 
 import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
 import com.oap2024team7.team7mediastreamingapp.models.Film;
@@ -12,6 +12,7 @@ import com.oap2024team7.team7mediastreamingapp.models.Profile;
 import com.oap2024team7.team7mediastreamingapp.customcells.CategoryCell;
 import com.oap2024team7.team7mediastreamingapp.customcells.CustomerFilmCell;
 import com.oap2024team7.team7mediastreamingapp.customcells.RatingCell;
+import com.oap2024team7.team7mediastreamingapp.controllers.customer.accountmanagement.EditProfileController;
 
 import java.io.IOException;
 import java.util.List;
@@ -199,7 +200,7 @@ public class PrimaryController {
     private void handleManageProfiles() {
         System.out.println("Manage Profiles clicked");
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/manageprofiles.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/accountmanagement/manageprofiles.fxml"));
             Parent root = loader.load();
 
             // Get the current stage from the loggedInUserLabel
@@ -220,7 +221,7 @@ public class PrimaryController {
     private void handleEditAccount() {
         // Load the edit account screen
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/editaccount.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/accountmanagement/editaccount.fxml"));
             Parent root = loader.load();
 
             // Create a new stage for the pop-up window
@@ -261,7 +262,7 @@ public class PrimaryController {
     private void handleEditProfile() {
         System.out.println("Edit Profile clicked");
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/editprofile.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/accountmanagement/editprofile.fxml"));
             Parent root = loader.load();
 
             EditProfileController editProfileController = loader.getController();
@@ -371,7 +372,7 @@ public class PrimaryController {
     private void showFilmDetails(Film film) {
         // Load the edit account screen
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/filmdetails.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/contentmanagement/filmdetails.fxml"));
             Parent root = loader.load();
 
             // Get the controller of the next scene
@@ -508,7 +509,7 @@ public class PrimaryController {
     @FXML
     private void switchToLogin() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/contentmanagement/login.fxml"));
             Parent root = loader.load();
 
             // Get the current stage (window) and set the new scene

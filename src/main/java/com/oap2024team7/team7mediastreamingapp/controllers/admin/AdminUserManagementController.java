@@ -112,7 +112,7 @@ public class AdminUserManagementController {
     private void handleEditAccount() {
         // Load the edit account screen
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/editaccount.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/accountmanagement/editaccount.fxml"));
             Parent root = loader.load();
 
             // Create a new stage for the pop-up window
@@ -320,7 +320,7 @@ public class AdminUserManagementController {
     @FXML
     private void switchToLogin() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/contentmanagement/login.fxml"));
             Parent root = loader.load();
 
             // Get the current stage (window) and set the new scene

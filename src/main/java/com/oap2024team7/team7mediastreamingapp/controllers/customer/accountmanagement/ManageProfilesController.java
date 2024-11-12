@@ -1,5 +1,5 @@
 // Last Modified: 04.10.2024
-package com.oap2024team7.team7mediastreamingapp.controllers;
+package com.oap2024team7.team7mediastreamingapp.controllers.customer.accountmanagement;
 
 import com.oap2024team7.team7mediastreamingapp.models.Profile;
 import com.oap2024team7.team7mediastreamingapp.services.ProfileManager;
@@ -115,7 +115,7 @@ public class ManageProfilesController {
 
         try {
             // Load the FXML file for the create profile scene
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/createprofile.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/accountmanagement/createprofile.fxml"));
             Parent root = loader.load();
 
             // Get the current stage (window) and set the new scene
@@ -144,7 +144,7 @@ public class ManageProfilesController {
         sessionData.setCurrentProfile(profile);
         showAlert("Profile switched to: " + profile.getProfileName());
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/primary.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/contentmanagement/primary.fxml"));
             Parent root = loader.load();
             Scene scene = new Scene(root);
             Stage stage = (Stage) profileContainer.getScene().getWindow();

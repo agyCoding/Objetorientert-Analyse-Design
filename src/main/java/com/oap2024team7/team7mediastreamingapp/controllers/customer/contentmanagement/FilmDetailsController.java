@@ -1,5 +1,5 @@
 // Last Modified: 30.09.2024
-package com.oap2024team7.team7mediastreamingapp.controllers;
+package com.oap2024team7.team7mediastreamingapp.controllers.customer.contentmanagement;
 
 import java.util.List;
 
@@ -152,7 +152,7 @@ public class FilmDetailsController {
     private void showRentWindow() {
         // Show rent window for the selected film
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/rentfilm.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/customer/contentmanagement/rentfilm.fxml"));
             Parent root = fxmlLoader.load();
 
             Stage rentStage = new Stage();
