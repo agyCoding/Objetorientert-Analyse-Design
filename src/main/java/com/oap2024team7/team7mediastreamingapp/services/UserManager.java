@@ -17,6 +17,11 @@ import java.sql.SQLException;
 
 public class UserManager {
 
+    /**
+     * Class for the Login Result.
+     * This class is responsible for managing the result of a login attempt.
+     * It contains a boolean to indicate if the login was successful and a string to indicate the user type.
+     */
     public class LoginResult {
         private boolean success;
         private String userType; // "customer" or "staff"
@@ -35,6 +40,12 @@ public class UserManager {
         }
     }
     
+    /**
+     * Checks if a user can login with the provided username and password.
+     * @param userName
+     * @param password
+     * @return LoginResult object
+     */
     public LoginResult canLogin(String userName, String password) {
         boolean passwordIsNull = password == null || password.isEmpty();
         String hashedPassword = null;

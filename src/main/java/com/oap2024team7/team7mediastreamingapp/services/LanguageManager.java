@@ -10,6 +10,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Class for the Language Manager.
+ * This class is responsible for managing Language objects.
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
 public class LanguageManager {
 
     /**

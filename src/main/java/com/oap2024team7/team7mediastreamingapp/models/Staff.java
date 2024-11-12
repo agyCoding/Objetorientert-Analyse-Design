@@ -13,6 +13,7 @@ public class Staff {
     private int addressId;
     private String email;
     private int storeId; // NN in the database so we will hardcode it to 1 in case of staff creation
+    @SuppressWarnings("unused")
     private int active; // this maps to TINYINT in the database with 1 for active and 0 for inactive
     private String username;
     private String password; // hashed password
@@ -34,7 +35,7 @@ public class Staff {
     public Staff(String firstName, String lastName, int addressId, String email, String username, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.addressId = addressId; // Have to add handling of the addressId based on "regular" address information
+        this.addressId = addressId;
         this.email = email;
         this.storeId = 1; // Hardcoded to 1
         this.active = 1; // Hardcoded to 1

@@ -23,7 +23,7 @@ public class Film {
     private Set<String> specialFeatures; // Set of special features that come with the film
     private List<Actor> actors; // List of actors in the film
 
-    // Define enum properly at the class level
+    // Define enum at the class level
     public enum Rating { G, PG, PG13, R, NC17 }
 
     private Rating rating;
@@ -92,6 +92,10 @@ public class Film {
         this.description = description;
         this.releaseYear = releaseYear;
         this.rating = rating;
+    }
+
+    // Default constructor
+    public Film() {
     }
 
     public int getFilmId() {

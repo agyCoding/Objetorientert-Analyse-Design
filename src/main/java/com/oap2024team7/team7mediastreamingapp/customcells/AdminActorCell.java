@@ -1,6 +1,7 @@
 package com.oap2024team7.team7mediastreamingapp.customcells;
 
-import com.oap2024team7.team7mediastreamingapp.controllers.AdminFilmManagementController;
+import com.oap2024team7.team7mediastreamingapp.controllers.admin.AdminFilmManagementController;
+import com.oap2024team7.team7mediastreamingapp.controllers.admin.AdminAddFilmController;
 import com.oap2024team7.team7mediastreamingapp.models.Actor;
 
 import javafx.scene.control.CheckBox;
@@ -13,28 +14,27 @@ public class AdminActorCell extends ListCell<Actor> {
     private CheckBox checkBox = new CheckBox();
     private Text actorItem = new Text();
     private Actor actor;
-    private AdminFilmManagementController controller;
+    private Object controller;
 
-    public AdminActorCell(AdminFilmManagementController controller) {
+    public AdminActorCell(Object controller) {
         this.controller = controller;
         hbox.getChildren().addAll(checkBox, actorItem);
 
-        // Add listener to checkbox
-        /*
-         * 
-         * 
-         * 
-        
         checkBox.setOnAction(event -> {
             if (checkBox.isSelected()) {
-                // Notify AdminFilmManagementController that this actor is selected
-                controller.notifyActorSelected(actor);
+                if (controller instanceof AdminFilmManagementController) {
+                    ((AdminFilmManagementController) controller).notifyActorSelected(actor);
+                } else if (controller instanceof AdminAddFilmController) {
+                    ((AdminAddFilmController) controller).notifyActorSelected(actor);
+                }
             } else {
-                controller.notifyActorDeselected(actor);
+                if (controller instanceof AdminFilmManagementController) {
+                    ((AdminFilmManagementController) controller).notifyActorDeselected(actor);
+                } else if (controller instanceof AdminAddFilmController) {
+                    ((AdminAddFilmController) controller).notifyActorDeselected(actor);
+                }
             }
         });
-         * 
-         */
     }
 
     @Override

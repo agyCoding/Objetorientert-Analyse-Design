@@ -1,19 +1,37 @@
 package com.oap2024team7.team7mediastreamingapp.customcells;
 
-import com.oap2024team7.team7mediastreamingapp.models.Film;
-
+import com.oap2024team7.team7mediastreamingapp.controllers.admin.AdminFilmManagementController;
+import com.oap2024team7.team7mediastreamingapp.controllers.admin.AdminAddFilmController;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 
-public class AdminSpecialFeaturesCell extends ListCell<String>{
+public class AdminSpecialFeaturesCell extends ListCell<String> {
     private HBox hbox = new HBox();
     private CheckBox checkBox = new CheckBox();
     private Text featureItem = new Text();
+    private Object controller;
 
-    public AdminSpecialFeaturesCell() {
+    public AdminSpecialFeaturesCell(Object controller) {
+        this.controller = controller;
         hbox.getChildren().addAll(checkBox, featureItem);
+
+        checkBox.setOnAction(event -> {
+            if (checkBox.isSelected()) {
+                if (controller instanceof AdminFilmManagementController) {
+                    ((AdminFilmManagementController) controller).notifySpecialFeatureSelected(getItem());
+                } else if (controller instanceof AdminAddFilmController) {
+                    ((AdminAddFilmController) controller).notifySpecialFeatureSelected(getItem());
+                }
+            } else {
+                if (controller instanceof AdminFilmManagementController) {
+                    ((AdminFilmManagementController) controller).notifySpecialFeatureDeselected(getItem());
+                } else if (controller instanceof AdminAddFilmController) {
+                    ((AdminAddFilmController) controller).notifySpecialFeatureDeselected(getItem());
+                }
+            }
+        });
     }
 
     @Override
@@ -22,6 +40,7 @@ public class AdminSpecialFeaturesCell extends ListCell<String>{
         if (empty || feature == null) {
             setText(null);
             setGraphic(null);
+            checkBox.setSelected(false);
         } else {
             featureItem.setText(feature);
             setGraphic(hbox);
