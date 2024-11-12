@@ -2,14 +2,9 @@ package com.oap2024team7.team7mediastreamingapp.services;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.oap2024team7.team7mediastreamingapp.models.Film;
 
 /**
  * Class for the Database Manager.
@@ -100,108 +95,4 @@ public class DatabaseManager {
         }
     }
 
-    /**
-     * Adds a film to the My List table for a given profile.
-     * @param profileId The ID of the profile.
-     * @param filmId The ID of the film to add.
-     */
-    public static void addFilmToMyList(int profileId, int filmId) {
-        String insertQuery = "INSERT IGNORE INTO my_list (profile_id, film_id) VALUES (?, ?)";
-    
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(insertQuery)) {
-            conn.setAutoCommit(false); // Start a transaction
-    
-            stmt.setInt(1, profileId);
-            stmt.setInt(2, filmId);
-            stmt.executeUpdate();
-    
-            conn.commit(); // Commit the transaction
-    
-            System.out.println("Film added to My List.");
-        } catch (SQLException e) {
-            e.printStackTrace();
-            try {
-                Connection conn = getConnection();
-                if (conn != null) {
-                    conn.rollback(); // Rollback if there's an issue
-                    System.err.println("Transaction rolled back due to an error.");
-                }
-            } catch (SQLException rollbackEx) {
-                rollbackEx.printStackTrace();
-            }
-        }
-    }
-    
-
-    /**
-     * Removes a film from the My List table for a given profile.
-     * @param profileId The ID of the profile.
-     * @param filmId The ID of the film to remove.
-     */
-    public static void removeFilmFromMyList(int profileId, int filmId) {
-        String deleteQuery = "DELETE FROM my_list WHERE profile_id = ? AND film_id = ?";
-
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(deleteQuery)) {
-            conn.setAutoCommit(false); // Start a transaction
-
-            stmt.setInt(1, profileId);
-            stmt.setInt(2, filmId);
-            stmt.executeUpdate();
-
-            conn.commit(); // Commit the transaction
-
-            System.out.println("Film removed from My List.");
-        } catch (SQLException e) {
-            e.printStackTrace();
-            try {
-                Connection conn = getConnection();
-                if (conn != null) {
-                    conn.rollback(); // Rollback if there's an issue
-                    System.err.println("Transaction rolled back due to an error.");
-                }
-            } catch (SQLException rollbackEx) {
-                rollbackEx.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * Retrieves the list of films from the My List table for a given profile.
-     * @param profileId The ID of the profile.
-     * @return A list of films that are in the profile's My List.
-     */
-    public static List<Film> getFilmsFromMyList(int profileId) {
-        List<Film> films = new ArrayList<>();
-        String selectQuery = "SELECT f.film_id, f.title, f.release_year, f.rating, f.description " +
-                "FROM my_list ml " +
-                "LEFT JOIN film f ON ml.film_id = f.film_id " +
-                "WHERE ml.profile_id = ?";
-
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(selectQuery)) {
-            stmt.setInt(1, profileId);
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                // Creating a Film object using the new constructor
-                Film film = new Film(
-                    rs.getInt("film_id"),                // int filmId
-                    rs.getString("title"),               // String title
-                    rs.getString("description"),         // String description (if available, otherwise handle null)
-                    rs.getInt("release_year"),           // int releaseYear
-                    Film.Rating.valueOf(rs.getString("rating")) // Film.Rating rating (make sure to handle invalid cases)
-                );
-                films.add(film);
-            }
-            System.out.println("Number of films retrieved for profile ID " + profileId + ": " + films.size());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            System.err.println("Invalid rating value encountered.");
-            e.printStackTrace();
-        }
-        return films;
-    }
 }

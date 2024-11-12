@@ -109,6 +109,13 @@ public class InventoryManager {
         }
     }
 
+    /**
+     * Adds inventory for a film to the database.
+     * @param filmId The ID of the film to add inventory for
+     * @param storeId The ID of the store to add inventory for
+     * @param quantity The quantity of inventory to add
+     * @return true if the inventory was added successfully, false otherwise
+     */
     public boolean addInventoryForFilm(int filmId, int storeId, int quantity) {
         String insertQuery = "INSERT INTO inventory (film_id, store_id) VALUES (?, ?)";
 
@@ -137,6 +144,14 @@ public class InventoryManager {
         return true;
     }
 
+    /**
+     * Checks if a customer has an active rental for a given film and date range.
+     * @param customerId The ID of the customer to check rentals for
+     * @param filmId The ID of the film to check rentals for
+     * @param rentalStartDate The start date of the rental period
+     * @param rentalEndDate The end date of the rental period
+     * @return true if the customer has an active rental, false otherwise
+     */
     public boolean customerHasActiveRental(int customerId, int filmId, LocalDateTime rentalStartDate, LocalDateTime rentalEndDate) {
         String sql = "SELECT COUNT(*) FROM rental r " +
                      "JOIN inventory i ON r.inventory_id = i.inventory_id " +
@@ -163,6 +178,14 @@ public class InventoryManager {
         return false;
     } 
 
+    /**
+     * Adds a rental to the database.
+     * @param inventoryId The ID of the inventory to add a rental for
+     * @param customer The customer to add the rental for
+     * @param startDate The start date of the rental period
+     * @param endDate The end date of the rental period
+     * @return The ID of the rental that was added, or -1 if the rental could not be added
+     */
     public int addRentalToDatabase(int inventoryId, Customer customer, LocalDateTime startDate, LocalDateTime endDate) {
         int customerId = customer.getCustomerId();
         int staffId = customer.getStoreId(); // Hardcoded staff ID = store ID for now
@@ -194,6 +217,11 @@ public class InventoryManager {
         }
     }
 
+    /**
+     * Removes a rental from the database.
+     * @param rentalId The ID of the rental to remove
+     * @return true if the rental was removed successfully, false otherwise
+     */
     public boolean removeRentalFromDatabase(int rentalId) {
         String deleteQuery = "DELETE FROM rental WHERE rental_id = ?";
 
@@ -208,6 +236,11 @@ public class InventoryManager {
         }
     }
 
+    /**
+     * Removes all rentals for a given inventory from the database.
+     * @param inventoryId The ID of the inventory to remove rentals for
+     * @return true if the rentals were removed successfully, false otherwise
+     */
     public boolean removeRentalForInventory(int inventoryId) {
         String checkForRentals = "SELECT * FROM rental WHERE inventory_id = ?";
         String deleteQuery = "DELETE FROM rental WHERE inventory_id = ?";
@@ -240,6 +273,14 @@ public class InventoryManager {
         }
     }
 
+    /**
+     * Adds a payment to the database.
+     * @param customer The customer to add the payment for
+     * @param rentalId The ID of the rental to add the payment for
+     * @param amount The amount of the payment
+     * @param paymentDate The date of the payment
+     * @return The ID of the payment that was added, or -1 if the payment could not be added
+     */
     public int addPaymentToDatabase(Customer customer, int rentalId, double amount, LocalDateTime paymentDate) {
         int customerId = customer.getCustomerId();
         int staffId = customer.getStoreId(); // Hardcoded staff ID = store ID for now

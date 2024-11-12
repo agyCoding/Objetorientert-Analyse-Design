@@ -1,15 +1,10 @@
 package com.oap2024team7.team7mediastreamingapp.services;
 
-import com.oap2024team7.team7mediastreamingapp.models.Actor;
 import com.oap2024team7.team7mediastreamingapp.models.Category;
 import com.oap2024team7.team7mediastreamingapp.models.Film;
-import com.oap2024team7.team7mediastreamingapp.models.Language;
 
 import java.util.List;
-import java.util.Set;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

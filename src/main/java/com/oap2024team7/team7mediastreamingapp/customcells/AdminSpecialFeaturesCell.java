@@ -1,6 +1,7 @@
 package com.oap2024team7.team7mediastreamingapp.customcells;
 
-import com.oap2024team7.team7mediastreamingapp.controllers.AdminFilmManagementController;
+import com.oap2024team7.team7mediastreamingapp.controllers.admin.AdminFilmManagementController;
+import com.oap2024team7.team7mediastreamingapp.controllers.admin.AdminAddFilmController;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.HBox;
@@ -10,17 +11,25 @@ public class AdminSpecialFeaturesCell extends ListCell<String> {
     private HBox hbox = new HBox();
     private CheckBox checkBox = new CheckBox();
     private Text featureItem = new Text();
-    private AdminFilmManagementController controller;
+    private Object controller;
 
-    public AdminSpecialFeaturesCell(AdminFilmManagementController controller) {
+    public AdminSpecialFeaturesCell(Object controller) {
         this.controller = controller;
         hbox.getChildren().addAll(checkBox, featureItem);
 
         checkBox.setOnAction(event -> {
             if (checkBox.isSelected()) {
-                controller.notifySpecialFeatureSelected(getItem());
+                if (controller instanceof AdminFilmManagementController) {
+                    ((AdminFilmManagementController) controller).notifySpecialFeatureSelected(getItem());
+                } else if (controller instanceof AdminAddFilmController) {
+                    ((AdminAddFilmController) controller).notifySpecialFeatureSelected(getItem());
+                }
             } else {
-                controller.notifySpecialFeatureDeselected(getItem());
+                if (controller instanceof AdminFilmManagementController) {
+                    ((AdminFilmManagementController) controller).notifySpecialFeatureDeselected(getItem());
+                } else if (controller instanceof AdminAddFilmController) {
+                    ((AdminAddFilmController) controller).notifySpecialFeatureDeselected(getItem());
+                }
             }
         });
     }

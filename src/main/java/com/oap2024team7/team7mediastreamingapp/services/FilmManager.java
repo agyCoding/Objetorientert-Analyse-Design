@@ -21,8 +21,8 @@ import java.sql.SQLException;
 
 /**
  * Class for the Film Manager.
- * This class is responsible for managing Film objects.
- * @author Agata (Agy) Olaussen (@agyCoding)
+ * This class is responsible for managing Film objects, providing functionality to add to, update, delete, and fetch films from the database.
+ * @authors Agata (Agy) Olaussen (@agyCoding), Adnan Duric (@adovic)
  */
 
 public class FilmManager {
@@ -47,6 +47,66 @@ public class FilmManager {
                 return "NC-17";
             default:
                 return null;
+        }
+    }
+
+    /**
+     * Inserts a new film into the database (film table and film_actor table).
+     * @param film The film to insert
+     * @return The ID of the newly inserted film, or -1 if insertion failed
+     */
+    public int addFilm(Film film) {
+        String insertFilmQuery = "INSERT INTO film (title, description, release_year, language_id, rental_duration, rental_rate, length, rating, special_features) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String insertFilmActorQuery = "INSERT INTO film_actor (film_id, actor_id) VALUES (?, ?)";
+
+        try (Connection conn = DatabaseManager.getConnection()) {
+            conn.setAutoCommit(false); // Start transaction
+            
+            try (PreparedStatement filmStmt = conn.prepareStatement(insertFilmQuery, PreparedStatement.RETURN_GENERATED_KEYS)) {
+                // Insert into film table
+                filmStmt.setString(1, film.getTitle());
+                filmStmt.setString(2, film.getDescription());
+                filmStmt.setInt(3, film.getReleaseYear());
+                filmStmt.setInt(4, film.getLanguage().getLanguageId());
+                filmStmt.setInt(5, film.getRentalDuration());
+                filmStmt.setDouble(6, film.getRentalRate());
+                filmStmt.setInt(7, film.getLength());
+                filmStmt.setString(8, mapRating(film.getRating()));
+                filmStmt.setString(9, String.join(",", film.getSpecialFeatures()));
+                
+                int rowsAffected = filmStmt.executeUpdate();
+                
+                if (rowsAffected > 0) {
+                    // Get the generated film_id
+                    ResultSet rs = filmStmt.getGeneratedKeys();
+                    if (rs.next()) {
+                        int filmId = rs.getInt(1);
+                        
+                        // Only try to insert actors if the list is not null and not empty
+                        List<Actor> actors = film.getActors();
+                        if (actors != null && !actors.isEmpty()) {
+                            try (PreparedStatement actorStmt = conn.prepareStatement(insertFilmActorQuery)) {
+                                for (Actor actor : actors) {
+                                    actorStmt.setInt(1, filmId);
+                                    actorStmt.setInt(2, actor.getActorId());
+                                    actorStmt.executeUpdate();
+                                }
+                            }
+                        }
+                        conn.commit();
+                        return filmId;
+                    }
+                }
+                conn.rollback();
+                return -1; 
+            } catch (SQLException e) {
+                conn.rollback();
+                e.printStackTrace();
+                return -1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
         }
     }
 
@@ -507,5 +567,110 @@ public class FilmManager {
             return null;
         }
     }
+
+    // METHODS FOR MY LIST FUNCTIONALITY
+    /**
+     * Adds a film to the My List table for a given profile.
+     * @param profileId The ID of the profile.
+     * @param filmId The ID of the film to add.
+     */
+    public static void addFilmToMyList(int profileId, int filmId) {
+        String insertQuery = "INSERT IGNORE INTO my_list (profile_id, film_id) VALUES (?, ?)";
     
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(insertQuery)) {
+            conn.setAutoCommit(false); // Start a transaction
+    
+            stmt.setInt(1, profileId);
+            stmt.setInt(2, filmId);
+            stmt.executeUpdate();
+    
+            conn.commit(); // Commit the transaction
+    
+            System.out.println("Film added to My List.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                Connection conn = getConnection();
+                if (conn != null) {
+                    conn.rollback(); // Rollback if there's an issue
+                    System.err.println("Transaction rolled back due to an error.");
+                }
+            } catch (SQLException rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
+        }
+    }
+    
+
+    /**
+     * Removes a film from the My List table for a given profile.
+     * @param profileId The ID of the profile.
+     * @param filmId The ID of the film to remove.
+     */
+    public static void removeFilmFromMyList(int profileId, int filmId) {
+        String deleteQuery = "DELETE FROM my_list WHERE profile_id = ? AND film_id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(deleteQuery)) {
+            conn.setAutoCommit(false); // Start a transaction
+
+            stmt.setInt(1, profileId);
+            stmt.setInt(2, filmId);
+            stmt.executeUpdate();
+
+            conn.commit(); // Commit the transaction
+
+            System.out.println("Film removed from My List.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                Connection conn = getConnection();
+                if (conn != null) {
+                    conn.rollback(); // Rollback if there's an issue
+                    System.err.println("Transaction rolled back due to an error.");
+                }
+            } catch (SQLException rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Retrieves the list of films from the My List table for a given profile.
+     * @param profileId The ID of the profile.
+     * @return A list of films that are in the profile's My List.
+     */
+    public static List<Film> getFilmsFromMyList(int profileId) {
+        List<Film> films = new ArrayList<>();
+        String selectQuery = "SELECT f.film_id, f.title, f.release_year, f.rating, f.description " +
+                "FROM my_list ml " +
+                "LEFT JOIN film f ON ml.film_id = f.film_id " +
+                "WHERE ml.profile_id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(selectQuery)) {
+            stmt.setInt(1, profileId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                // Creating a Film object using the new constructor
+                Film film = new Film(
+                    rs.getInt("film_id"),                // int filmId
+                    rs.getString("title"),               // String title
+                    rs.getString("description"),         // String description (if available, otherwise handle null)
+                    rs.getInt("release_year"),           // int releaseYear
+                    Film.Rating.valueOf(rs.getString("rating")) // Film.Rating rating (make sure to handle invalid cases)
+                );
+                films.add(film);
+            }
+            System.out.println("Number of films retrieved for profile ID " + profileId + ": " + films.size());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            System.err.println("Invalid rating value encountered.");
+            e.printStackTrace();
+        }
+        return films;
+    }    
 }
