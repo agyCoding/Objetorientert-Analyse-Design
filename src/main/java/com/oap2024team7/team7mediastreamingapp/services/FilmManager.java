@@ -577,7 +577,7 @@ public class FilmManager {
     public static void addFilmToMyList(int profileId, int filmId) {
         String insertQuery = "INSERT IGNORE INTO my_list (profile_id, film_id) VALUES (?, ?)";
     
-        try (Connection conn = getConnection();
+        try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(insertQuery)) {
             conn.setAutoCommit(false); // Start a transaction
     
@@ -591,7 +591,7 @@ public class FilmManager {
         } catch (SQLException e) {
             e.printStackTrace();
             try {
-                Connection conn = getConnection();
+                Connection conn = DatabaseManager.getConnection();
                 if (conn != null) {
                     conn.rollback(); // Rollback if there's an issue
                     System.err.println("Transaction rolled back due to an error.");
@@ -611,7 +611,7 @@ public class FilmManager {
     public static void removeFilmFromMyList(int profileId, int filmId) {
         String deleteQuery = "DELETE FROM my_list WHERE profile_id = ? AND film_id = ?";
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(deleteQuery)) {
             conn.setAutoCommit(false); // Start a transaction
 
@@ -625,7 +625,7 @@ public class FilmManager {
         } catch (SQLException e) {
             e.printStackTrace();
             try {
-                Connection conn = getConnection();
+                Connection conn = DatabaseManager.getConnection();
                 if (conn != null) {
                     conn.rollback(); // Rollback if there's an issue
                     System.err.println("Transaction rolled back due to an error.");
@@ -648,7 +648,7 @@ public class FilmManager {
                 "LEFT JOIN film f ON ml.film_id = f.film_id " +
                 "WHERE ml.profile_id = ?";
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(selectQuery)) {
             stmt.setInt(1, profileId);
             ResultSet rs = stmt.executeQuery();
