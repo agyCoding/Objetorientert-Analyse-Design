@@ -24,12 +24,10 @@ public class SessionData {
     private Address customerAddress;
     private Film selectedFilm;
     private List<Film> savedFilms; // List to store saved films
-    private List<Film> rentedFilms; // List to store rented films
 
     // Constructor is private to implement the Singleton pattern
     private SessionData() {
         savedFilms = new ArrayList<>(); // Initialize the saved films list
-        rentedFilms = new ArrayList<>(); // Initialize the rented films list
     }
 
     public static SessionData getInstance() {
@@ -86,7 +84,6 @@ public class SessionData {
         customerAddress = null;
         selectedFilm = null;
         savedFilms.clear(); // Clear saved films when session is cleared
-        rentedFilms.clear(); // Clear rented films when session is cleared
     }
 
     public void clearProfileData() {
@@ -135,29 +132,4 @@ public class SessionData {
         }
     }
 
-    /**
-     * Get the list of rented films
-     * @return List of rented films
-     */
-    public List<Film> getRentedFilms() {
-        return rentedFilms;
-    }
-
-    /**
-     * Add a film to the rented list
-     * @param film The film to add
-     */
-    public void addFilmToRentedList(Film film) {
-        if (!rentedFilms.contains(film)) {
-            rentedFilms.add(film);
-        }
-    }
-
-    /**
-     * Remove a film from the rented list
-     * @param film The film to remove
-     */
-    public void removeFilmFromRentedList(Film film) {
-        rentedFilms.remove(film);
-    }
 }
