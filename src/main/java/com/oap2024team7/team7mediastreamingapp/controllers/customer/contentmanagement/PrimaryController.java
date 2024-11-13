@@ -524,4 +524,23 @@ public class PrimaryController {
         }
     }
 
+    /**
+     * Handle the My Rentals button action.
+     * Opens the My Rentals screen.
+     */
+    @FXML
+    public void handleMyRentalsButtonAction() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/myrentals.fxml"));
+            Parent myRentalsRoot = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("My Rentals");
+            stage.setScene(new Scene(myRentalsRoot));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load My Rentals", "An error occurred while trying to load My Rentals.");
+        }
+    }
+
 }
