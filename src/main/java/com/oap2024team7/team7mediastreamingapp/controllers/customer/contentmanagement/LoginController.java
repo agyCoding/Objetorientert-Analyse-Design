@@ -186,7 +186,7 @@ public class LoginController {
     @FXML
     private void switchToUserRegistration() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("//views/customer/accountmanagement/registerCustomer.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/accountmanagement/registerCustomer.fxml"));
             Parent root = loader.load();
 
             // Get the current stage (window) and set the new scene
