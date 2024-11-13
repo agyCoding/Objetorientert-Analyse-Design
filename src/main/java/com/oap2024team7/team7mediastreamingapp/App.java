@@ -19,7 +19,7 @@ public class App extends Application {
 
 	@Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("login"), 206, 256);
+        scene = new Scene(loadFXML("views/customer/contentmanagement/login"), 206, 256);
         stage.setTitle("Streamify - Login");
         
         // Set the application logo
