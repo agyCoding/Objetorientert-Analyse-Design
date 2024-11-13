@@ -6,7 +6,17 @@ import java.sql.ResultSet;
 
 import com.oap2024team7.team7mediastreamingapp.models.Staff;
 
+/**
+ * Class for the Staff Manager.
+ * This class is responsible for managing Staff objects.
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
 public class StaffManager {
+    /**
+     * Gets a Staff object from the database, based on the username.
+     * @param username
+     * @return Staff object
+     */
     public static Staff getStaffByUsername(String username) {
         String selectQuery = "SELECT * FROM staff WHERE username = ?";
                 try (Connection conn = DatabaseManager.getConnection();

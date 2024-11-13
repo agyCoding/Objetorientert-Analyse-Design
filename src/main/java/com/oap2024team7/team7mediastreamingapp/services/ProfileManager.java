@@ -231,7 +231,7 @@ public class ProfileManager {
      * Check if a profile user can watch a specific film based on the film rating and the user's birth date
      * @param film
      * @param profile
-     * @return
+     * @return True if the user can watch the film, false otherwise
      */
     public static boolean canWatchFilm(Film film, Profile profile) {
         LocalDate usersBirthDate = profile.getBirthDate();
@@ -254,6 +254,12 @@ public class ProfileManager {
         }
     }
 
+    /**
+     * Check if a user is old enough to watch a film based on the age limit
+     * @param birthDate
+     * @param ageLimit
+     * @return True if the user is old enough, false otherwise
+     */
     public static boolean isAgeValid(LocalDate birthDate, int ageLimit) {
         LocalDate today = LocalDate.now();
         // Calculate the difference in years

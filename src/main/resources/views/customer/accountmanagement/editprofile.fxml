@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="377.0" prefWidth="433.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oap2024team7.team7mediastreamingapp.controllers.customer.accountmanagement.EditProfileController">
+   <children>
+      <Label text="Edit profile">
+         <font>
+            <Font name="System Bold Italic" size="20.0" />
+         </font>
+         <VBox.margin>
+            <Insets bottom="10.0" />
+         </VBox.margin>
+      </Label>
+      <Label text="Profile name:" />
+      <TextField fx:id="profileNameTF">
+         <VBox.margin>
+            <Insets bottom="10.0" />
+         </VBox.margin></TextField>
+      <Label text="Birth date:" />
+      <DatePicker fx:id="birthDateDP">
+         <VBox.margin>
+            <Insets bottom="10.0" />
+         </VBox.margin></DatePicker>
+      <Label text="Optional password" />
+      <PasswordField fx:id="passwordField">
+         <VBox.margin>
+            <Insets bottom="10.0" />
+         </VBox.margin>
+      </PasswordField>
+      <Label text="Repeat optional password" />
+      <PasswordField fx:id="repeatPasswordField">
+         <VBox.margin>
+            <Insets bottom="10.0" />
+         </VBox.margin>
+      </PasswordField>
+      <HBox alignment="TOP_CENTER" prefHeight="31.0" prefWidth="273.0">
+         <children>
+            <Button mnemonicParsing="false" onAction="#tryToUpdateProfile" text="Update profile" />
+            <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#tryToDeleteProfile" style="-fx-background-color: linear-gradient(#ff5400, #be1d00); -fx-text-fill: white;" text="Delete profile">
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </Button>
+         </children>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="40.0" left="80.0" right="80.0" top="40.0" />
+   </padding>
+</VBox>

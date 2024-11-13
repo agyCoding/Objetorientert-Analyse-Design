@@ -119,4 +119,19 @@ public class Customer {
     public void setStoreId(int storeId) {
         this.storeId = storeId;
     }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "customerId=" + customerId +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", addressId=" + addressId +
+                ", active=" + active +
+                ", createDate=" + createDate +
+                ", accountType=" + accountType +
+                ", storeId=" + storeId +
+                '}';
+    }
 }
