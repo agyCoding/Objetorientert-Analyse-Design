@@ -531,10 +531,10 @@ public class PrimaryController {
     @FXML
     public void handleMyRentalsButtonAction() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/myrentals.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/contentmanagement/myrentals.fxml"));
             Parent myRentalsRoot = loader.load();
             Stage stage = new Stage();
-            stage.setTitle("My Rentals");
+            stage.setTitle("Streamify - My Rentals");
             stage.setScene(new Scene(myRentalsRoot));
             stage.show();
         } catch (IOException e) {
