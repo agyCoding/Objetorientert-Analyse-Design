@@ -2,6 +2,7 @@ package com.oap2024team7.team7mediastreamingapp.controllers;
 
 import com.oap2024team7.team7mediastreamingapp.models.Film;
 import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
+import com.oap2024team7.team7mediastreamingapp.controllers.customer.contentmanagement.FilmDetailsController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -79,7 +80,7 @@ public class MyRentalsController {
     private void showFilmDetails(Film film) {
         try {
             // Load the film details FXML file
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/filmdetails.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/contentmanagement/filmdetails.fxml"));
             Parent root = loader.load();
 
             // Get the FilmDetailsController and set the selected film
