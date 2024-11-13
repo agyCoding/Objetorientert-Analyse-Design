@@ -22,9 +22,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 
 public class MyListController {
 
@@ -51,52 +49,42 @@ public class MyListController {
         releaseYearColumn.setCellValueFactory(new PropertyValueFactory<>("releaseYear"));
         ratingColumn.setCellValueFactory(new PropertyValueFactory<>("rating"));
 
-        // Load films from the session data initially
-        loadFilmsFromSession();
+        loadFilmsFromDatabase();
 
         // Refresh table to ensure data is displayed correctly
         myListTable.refresh();
     }
 
-    // Load films from the session data
-    private void loadFilmsFromSession() {
-        // Load the user's saved movies from SessionData
-        List<Film> savedFilms = SessionData.getInstance().getSavedFilms();
-
-        if (savedFilms == null) {
-            System.out.println("Warning: Saved films list from session is null, initializing empty list...");
-            savedFilms = new ArrayList<>();
-        }
-
-        // Print all saved films for debugging purposes
-        System.out.println("Number of films loaded from session: " + savedFilms.size());
-        savedFilms.forEach(film -> System.out.println("Loaded Film: " + film.getTitle()));
-
-        // Load the films into an observable list and set the TableView
-        filmList = FXCollections.observableArrayList(savedFilms);
-        myListTable.setItems(filmList);
-    }
-
     // Load films directly from the database
     private void loadFilmsFromDatabase() {
-        String selectQuery = "SELECT f.film_id, f.title, f.release_year, f.rating, f.description " +
-                             "FROM film f"; // Adjust this query as needed to match your specific requirement
+        Profile currentProfile = SessionData.getInstance().getCurrentProfile();
+        if (currentProfile == null) {
+            System.out.println("No current profile found.");
+            return;
+        }
+
+        int profileId = currentProfile.getProfileId();
+        String selectQuery = "SELECT DISTINCT f.* " +
+                 "FROM film f " +
+                 "JOIN my_list ml ON f.film_id = ml.film_id " +
+                 "WHERE ml.profile_id = ?";
 
         try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(selectQuery);
-             ResultSet rs = stmt.executeQuery()) {
+             PreparedStatement stmt = conn.prepareStatement(selectQuery)) {
+
+            stmt.setInt(1, profileId);
+            ResultSet rs = stmt.executeQuery();
 
             filmList = FXCollections.observableArrayList();
+            FilmManager filmManager = new FilmManager();
 
             while (rs.next()) {
-                Film film = new Film(
-                    rs.getInt("film_id"),
-                    rs.getString("title"),
-                    rs.getString("description"),
-                    rs.getInt("release_year"),
-                    Film.Rating.valueOf(rs.getString("rating"))
-                );
-                filmList.add(film);
+                int filmId = rs.getInt("film_id");
+
+                Film film = filmManager.getFilmById(filmId);
+                if (film != null) {
+                    filmList.add(film);
+                }
             }
 
             myListTable.setItems(filmList);
@@ -196,7 +184,7 @@ public class MyListController {
     @FXML
     private void handleRefresh() {
         System.out.println("Refreshing the My Saved Films list...");
-        loadFilmsFromSession();
+        loadFilmsFromDatabase();
         myListTable.refresh(); // Refresh the TableView after reloading the data
     }
 }
