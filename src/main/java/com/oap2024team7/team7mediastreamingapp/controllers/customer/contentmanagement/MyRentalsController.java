@@ -1,7 +1,6 @@
-package com.oap2024team7.team7mediastreamingapp.controllers;
+package com.oap2024team7.team7mediastreamingapp.controllers.customer.contentmanagement;
 
 import com.oap2024team7.team7mediastreamingapp.models.Film;
-import com.oap2024team7.team7mediastreamingapp.controllers.customer.contentmanagement.FilmDetailsController;
 import com.oap2024team7.team7mediastreamingapp.services.MyRentalsManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
