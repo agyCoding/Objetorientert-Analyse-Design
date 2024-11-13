@@ -26,7 +26,7 @@ import java.sql.SQLException;
  */
 
 public class FilmManager {
-    private static Connection connection;
+    // private static Connection connection;
 
     /**
      * Helper method to map the database rating to the Film.Rating enum that's without the hyphen
@@ -430,10 +430,6 @@ public class FilmManager {
                 // Fetch the actors for this film
                 List<Actor> actors = ActorManager.getInstance().getActorsForFilm(rs.getInt("film_id"));
     
-                // Debug: Print actors and special features to terminal
-                System.out.println("Special Features: " + specialFeatures);
-                System.out.println("Actors: " + actors);
-    
                 return new Film(
                     rs.getInt("film_id"),
                     rs.getString("title"),
@@ -643,10 +639,9 @@ public class FilmManager {
      */
     public static List<Film> getFilmsFromMyList(int profileId) {
         List<Film> films = new ArrayList<>();
-        String selectQuery = "SELECT f.film_id, f.title, f.release_year, f.rating, f.description " +
-                "FROM my_list ml " +
-                "LEFT JOIN film f ON ml.film_id = f.film_id " +
-                "WHERE ml.profile_id = ?";
+        String selectQuery = "SELECT ml.film_id " +
+            "FROM my_list ml " +
+            "WHERE ml.profile_id = ?";
 
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(selectQuery)) {
@@ -654,15 +649,13 @@ public class FilmManager {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                // Creating a Film object using the new constructor
-                Film film = new Film(
-                    rs.getInt("film_id"),                // int filmId
-                    rs.getString("title"),               // String title
-                    rs.getString("description"),         // String description (if available, otherwise handle null)
-                    rs.getInt("release_year"),           // int releaseYear
-                    Film.Rating.valueOf(rs.getString("rating")) // Film.Rating rating (make sure to handle invalid cases)
-                );
-                films.add(film);
+                int filmId = rs.getInt("film_id");
+
+                FilmManager filmManager = new FilmManager();
+                Film film = filmManager.getFilmById(filmId);
+                if (film != null) {
+                    films.add(film);
+                }
             }
             System.out.println("Number of films retrieved for profile ID " + profileId + ": " + films.size());
         } catch (SQLException e) {

@@ -1,8 +1,8 @@
 package com.oap2024team7.team7mediastreamingapp.controllers;
 
 import com.oap2024team7.team7mediastreamingapp.models.Film;
-import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 import com.oap2024team7.team7mediastreamingapp.controllers.customer.contentmanagement.FilmDetailsController;
+import com.oap2024team7.team7mediastreamingapp.services.MyRentalsManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -49,8 +49,9 @@ public class MyRentalsController {
         releaseYearColumn.setCellValueFactory(new PropertyValueFactory<>("releaseYear"));
         ratingColumn.setCellValueFactory(new PropertyValueFactory<>("rating"));
 
-        // Load the user's rented movies
-        List<Film> rentedFilms = SessionData.getInstance().getRentedFilms();
+        // Load the user's rented movies from the database
+        MyRentalsManager rentalsManager = new MyRentalsManager();
+        List<Film> rentedFilms = rentalsManager.loadRentedFilmsFromDatabase();
         filmList = FXCollections.observableArrayList(rentedFilms);
         myRentalsTable.setItems(filmList);
     }
