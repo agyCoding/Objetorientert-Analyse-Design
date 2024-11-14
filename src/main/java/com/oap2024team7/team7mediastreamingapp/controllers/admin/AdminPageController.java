@@ -166,7 +166,7 @@ public class AdminPageController {
     }    
    
     // Handles the action when the user clicks the "Edit Account" menu item.
-    private void handleEditAccount() {
+    private void handleEditAdminAccount() {
         StageUtils.showPopup(
             (Stage) loggedInUserLabel.getScene().getWindow(),
             "editAdminAccount",
