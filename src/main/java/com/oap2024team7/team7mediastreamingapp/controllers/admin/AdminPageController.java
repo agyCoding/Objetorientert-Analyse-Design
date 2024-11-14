@@ -112,7 +112,7 @@ public class AdminPageController {
         updateLoggedInUserLabel();
 
         // Handle edit account action
-        editAccountMenuItem.setOnAction(event -> handleEditAccount());
+        editAccountMenuItem.setOnAction(event -> handleEditAdminAccount());
 
         // Handle logout action
         logoutMenuItem.setOnAction(event -> handleLogout());
@@ -166,11 +166,11 @@ public class AdminPageController {
     }    
    
     // Handles the action when the user clicks the "Edit Account" menu item.
-    private void handleEditAccount() {
+    private void handleEditAdminAccount() {
         StageUtils.showPopup(
             (Stage) loggedInUserLabel.getScene().getWindow(),
-            "editAccount",
-            "Streamify - Edit Account",
+            "editAdminAccount",
+            "Streamify - Edit Admin Account",
             Modality.WINDOW_MODAL
         );
     }

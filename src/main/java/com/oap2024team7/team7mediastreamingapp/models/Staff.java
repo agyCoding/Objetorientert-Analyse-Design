@@ -13,7 +13,6 @@ public class Staff {
     private int addressId;
     private String email;
     private int storeId; // NN in the database so we will hardcode it to 1 in case of staff creation
-    @SuppressWarnings("unused")
     private int active; // this maps to TINYINT in the database with 1 for active and 0 for inactive
     private String username;
     private String password; // hashed password
@@ -43,33 +42,31 @@ public class Staff {
         this.password = password;
     }
 
-    // We don't need all getters and setters since 1. We're not setting staffId in the application and 2. We're not planning on managing staff's actvity or store connection
-
-    public int getstaffId() {
+    public int getStaffId() {
         return staffId;
     }
 
-    public String getfirstName() {
+    public String getFirstName() {
         return firstName;
     }
 
-    public void setfirstName(String firstName) {
+    public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
-    public String getlastName() {
+    public String getLastName() {
         return lastName;
     }
 
-    public void setlastName(String lastName) {
+    public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
-    public int getaddressId() {
+    public int getAddressId() {
         return addressId;
     }
 
-    public void setaddressId(int addressId) {
+    public void setAddressId(int addressId) {
         this.addressId = addressId;
     }
 
@@ -87,6 +84,14 @@ public class Staff {
 
     public void setStoreId(int storeId) {
         this.storeId = storeId;
+    }
+
+    public int getActive() {
+        return active;
+    }
+
+    public void setActive(int active) {
+        this.active = active;
     }
 
     public String getUsername() {

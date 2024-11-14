@@ -22,6 +22,7 @@ public class StageUtils {
         FXML_PATHS.put("adminFilmManagement", "/views/admin/adminfilmmanagement.fxml");
         FXML_PATHS.put("adminPage", "/views/admin/adminpage.fxml");
         FXML_PATHS.put("adminUserManagement", "/views/admin/adminusermanagment.fxml");
+        FXML_PATHS.put("editAdminAccount", "/views/admin/editaccount.fxml");
 
         FXML_PATHS.put("createProfile", "/views/customer/accountmanagement/createprofile.fxml");
         FXML_PATHS.put("editAccount", "/views/customer/accountmanagement/editaccount.fxml");
