@@ -1,13 +1,11 @@
 package com.oap2024team7.team7mediastreamingapp.controllers.admin;
 
-
-
-import com.oap2024team7.team7mediastreamingapp.models.Admin;
+import com.oap2024team7.team7mediastreamingapp.models.Staff;
 import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
 import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 import com.oap2024team7.team7mediastreamingapp.models.Address;
 import com.oap2024team7.team7mediastreamingapp.services.AddressManager;
-import com.oap2024team7.team7mediastreamingapp.services.AdminManager;
+import com.oap2024team7.team7mediastreamingapp.services.StaffManager;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
@@ -32,31 +30,36 @@ public class EditAdminAccountController {
     @FXML
     private TextField phoneField;
 
-    private Admin loggedInAdmin;
-    private Address adminAddress;
+    private Staff loggedInStaff;
+    private int staffAddressId;
+    private Address staffAddress;
 
     @FXML
     private void initialize() {
         emailField.setDisable(true);
 
-        // Get the logged-in admin from the session data
-        loggedInAdmin = SessionData.getInstance().getLoggedInAdmin();
-        adminAddress = SessionData.getInstance().getAdminAddress();
+        // Get the logged-in staff from the session data
+        loggedInStaff = SessionData.getInstance().getLoggedInStaff();
+        staffAddressId = loggedInStaff.getAddressId();
 
-        if (loggedInAdmin != null) {
-            firstNameField.setText(loggedInAdmin.getFirstName());
-            lastNameField.setText(loggedInAdmin.getLastName());
-            emailField.setText(loggedInAdmin.getEmail());
+        if (loggedInStaff != null) {
+            firstNameField.setText(loggedInStaff.getFirstName());
+            lastNameField.setText(loggedInStaff.getLastName());
+            emailField.setText(loggedInStaff.getEmail());
 
-            addressField.setText(adminAddress.getAddress());
-            districtField.setText(adminAddress.getDistrict());
-            int cityId = adminAddress.getCityId();
-            cityField.setText(AddressManager.getInstance().getCityNameFromCityId(cityId));
-
-            postalCodeField.setText(adminAddress.getPostalCode());
-            phoneField.setText(adminAddress.getPhone());
+            staffAddress = AddressManager.getAddressById(staffAddressId);
+            if (staffAddress != null) {
+                addressField.setText(staffAddress.getAddress());
+                districtField.setText(staffAddress.getDistrict());
+                int cityId = staffAddress.getCityId();
+                cityField.setText(AddressManager.getInstance().getCityNameFromCityId(cityId));
+                postalCodeField.setText(staffAddress.getPostalCode());
+                phoneField.setText(staffAddress.getPhone());
+            } else {
+                GeneralUtils.showAlert(AlertType.ERROR, "Error", "Address Not Found", "No address found for the logged-in staff.");
+            }
         } else {
-            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Admin Not Found", "No admin found with the provided email.");
+            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Staff Not Found", "No staff found with the provided email.");
         }
     }
 
@@ -77,17 +80,17 @@ public class EditAdminAccountController {
         }
 
         try {
-            loggedInAdmin.setFirstName(firstName);
-            loggedInAdmin.setLastName(lastName);
+            loggedInStaff.setFirstName(firstName);
+            loggedInStaff.setLastName(lastName);
 
-            adminAddress.setAddress(address);
-            adminAddress.setDistrict(district);
-            adminAddress.setCityId(AddressManager.getInstance().getCityIdFromCityName(city));
-            adminAddress.setPostalCode(postalCode);
-            adminAddress.setPhone(phone);
+            staffAddress.setAddress(address);
+            staffAddress.setDistrict(district);
+            staffAddress.setCityId(AddressManager.getInstance().getCityIdFromCityName(city));
+            staffAddress.setPostalCode(postalCode);
+            staffAddress.setPhone(phone);
 
-            AdminManager.updateAdmin(loggedInAdmin);
-            AddressManager.updateAddress(adminAddress);
+            StaffManager.updateStaff(loggedInStaff);
+            AddressManager.updateAddress(staffAddress);
 
             GeneralUtils.showAlert(AlertType.INFORMATION, "Success", "Account updated successfully", "Your account has been updated.");
         } catch (Exception e) {

@@ -115,7 +115,7 @@ public class AdminPageController {
         updateLoggedInUserLabel();
 
         // Handle edit account action
-        editAccountMenuItem.setOnAction(event -> handleEditAccount());
+        editAccountMenuItem.setOnAction(event -> handleEditAdminAccount());
 
         // Handle logout action
         logoutMenuItem.setOnAction(event -> handleLogout());
@@ -168,8 +168,8 @@ public class AdminPageController {
         loadFilms();
     }    
    
-    // Handles the action when the user clicks the "Edit Account" menu item. (Den er ny)
-    private void handleAdminEditAccount() {
+    // Handles the action when the user clicks the "Edit Account" menu item.
+    private void handleEditAdminAccount() {
     try {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/admin/editaccount.fxml"));
         Parent root = loader.load();
