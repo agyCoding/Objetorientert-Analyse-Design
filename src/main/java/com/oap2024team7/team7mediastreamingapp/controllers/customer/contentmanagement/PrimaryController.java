@@ -72,8 +72,6 @@ public class PrimaryController {
     @FXML
     private Button prevButton;
     @FXML
-    private ComboBox<String> sortComboBox;
-    @FXML
     private RadioButton sortByTitle;
     @FXML
     private RadioButton sortByReleaseYear;
@@ -302,15 +300,18 @@ public class PrimaryController {
     private void loadFilms() {
         List<Film> films;
         int customersStoreId = loggedInCustomer.getStoreId();
+
+        // Get sort criteria
+        String sortBy = sortByTitle.isSelected() ? "title" : "release_year";
     
         // Check if filters are applied
         if (selectedCategory != null || selectedRating != null || selectedMaxLength != null || selectedStartYear != null || selectedEndYear != null) {
             // If filters are applied, use the filterFilms method
             Integer categoryId = selectedCategory != null ? selectedCategory.getCategoryId() : null;
-            films = filmManager.filterFilms(categoryId, selectedRating, selectedMaxLength, selectedStartYear, selectedEndYear, offset, limit, customersStoreId);
+            films = filmManager.filterFilms(categoryId, selectedRating, selectedMaxLength, selectedStartYear, selectedEndYear, offset, limit, customersStoreId, sortBy);
         } else {
             // No filters applied, load all films
-            films = filmManager.getAllFilms(offset, limit, customersStoreId);
+            films = filmManager.getAllFilms(offset, limit, customersStoreId, sortBy);
         }
     
         // Clear the film list view and populate with filtered results
@@ -318,7 +319,7 @@ public class PrimaryController {
         filmListView.getItems().addAll(films);
     
         // Check if there are more films to load for pagination
-        if (films.size() < limit || filmManager.getAllFilms(offset + limit, limit, customersStoreId).isEmpty()) {
+        if (films.size() < limit || filmManager.getAllFilms(offset + limit, limit, customersStoreId, sortBy).isEmpty()) {
             nextButton.setDisable(true);
         } else {
             nextButton.setDisable(false);
@@ -352,17 +353,7 @@ public class PrimaryController {
     // Sort films based on the selected option
     @FXML    
     private void sortFilms() {
-        String selectedSort = sortComboBox.getValue();
-        List<Film> sortedFilms;
-        int customersStoreId = loggedInCustomer.getStoreId();
-
-        if ("Sort by Title".equals(selectedSort)) {
-            sortedFilms = filmManager.getFilmsSortedByTitle(customersStoreId);
-        } else {
-            sortedFilms = filmManager.getFilmsSortedByYear(customersStoreId);
-        }
-        filmListView.getItems().clear();
-        filmListView.getItems().addAll(sortedFilms);
+        loadFilms();
     }
 
     /**
