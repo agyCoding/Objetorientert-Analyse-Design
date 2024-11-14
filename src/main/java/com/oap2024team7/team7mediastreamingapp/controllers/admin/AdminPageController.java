@@ -9,8 +9,8 @@ import com.oap2024team7.team7mediastreamingapp.models.Category;
 import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 import com.oap2024team7.team7mediastreamingapp.models.Staff;
 import com.oap2024team7.team7mediastreamingapp.customcells.AdminFilmCell;
+import com.oap2024team7.team7mediastreamingapp.utils.StageUtils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.lang.System;
@@ -22,9 +22,6 @@ import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Alert.AlertType;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Button;
@@ -170,29 +167,12 @@ public class AdminPageController {
    
     // Handles the action when the user clicks the "Edit Account" menu item.
     private void handleEditAccount() {
-        // Load the edit account screen
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/accountmanagement/editaccount.fxml"));
-            Parent root = loader.load();
-
-            // Create a new stage for the pop-up window
-            Stage popupStage = new Stage();
-            popupStage.setTitle("Media Streaming and Rental - Edit Account");
-
-            // Set the scene for the pop-up stage
-            popupStage.setScene(new Scene(root));
-
-            // Make the pop-up window modal (blocks interaction with other windows until closed)
-            popupStage.initModality(Modality.WINDOW_MODAL);
-            popupStage.initOwner(loggedInUserLabel.getScene().getWindow());
-
-            // Show the pop-up window
-            popupStage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-
-            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the edit account screen", "An error occurred while trying to load the edit account screen");
-        }
+        StageUtils.showPopup(
+            (Stage) loggedInUserLabel.getScene().getWindow(),
+            "editAccount",
+            "Streamify - Edit Account",
+            Modality.WINDOW_MODAL
+        );
     }
 
     // Handles the action when the user clicks the "Logout" menu item.
@@ -205,21 +185,22 @@ public class AdminPageController {
 
     // Load films based on the current filters
     private void loadFilms() {
-        List<Film> films;
         int staffsStoreId = loggedInStaff.getStoreId();
 
         // Get sort criteria
         String sortBy = sortByTitle.isSelected() ? "title" : "release_year";
-    
-        // Check if filters are applied
-        if (selectedCategory != null || selectedRating != null || selectedMaxLength != null || selectedStartYear != null || selectedEndYear != null) {
-            // If filters are applied, use the filterFilms method
-            Integer categoryId = selectedCategory != null ? selectedCategory.getCategoryId() : null;
-            films = filmManager.filterFilms(categoryId, selectedRating, selectedMaxLength, selectedStartYear, selectedEndYear, offset, limit, staffsStoreId, sortBy);
-        } else {
-            // No filters applied, load all films
-            films = filmManager.getAllFilms(offset, limit, staffsStoreId, sortBy);
-        }
+
+        List<Film> films = filmManager.loadFilms(
+            selectedCategory != null ? selectedCategory.getCategoryId() : null,
+            selectedRating,
+            selectedMaxLength,
+            selectedStartYear,
+            selectedEndYear,
+            offset,
+            limit,
+            staffsStoreId,
+            sortBy
+        );
     
         // Clear the film list view and populate with filtered results
         filmListView.getItems().clear();
@@ -269,35 +250,14 @@ public class AdminPageController {
      * @param film
      */
     private void showFilmDetails(Film film) {
-        // Load the edit account screen
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/admin/adminfilmmanagement.fxml"));
-            Parent root = loader.load();
+        SessionData.getInstance().setSelectedFilm(film);
 
-            // Get the controller of the next scene
-            AdminFilmManagementController controller = loader.getController();
-
-            // Pass the customer object to the edit account controller
-            controller.setSelectedFilm(film);
-
-            // Create a new stage for the pop-up window
-            Stage popupStage = new Stage();
-            popupStage.setTitle("Streamify - Manage film");
-
-            // Set the scene for the pop-up stage
-            popupStage.setScene(new Scene(root));
-
-            popupStage.initOwner(loggedInUserLabel.getScene().getWindow());
-
-            // Show the pop-up window
-            popupStage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-
-            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the page with film details", "An error occurred while trying to load the film details page.");
-        }
-        // Small check in terminal (Debugging)
-        System.out.println("Film details: " + film.getTitle() + " (" + film.getReleaseYear() + ")");
+        StageUtils.showPopup(
+            (Stage) loggedInUserLabel.getScene().getWindow(),
+            "adminFilmManagement",
+            "Streamify - Manage A Film",
+            Modality.APPLICATION_MODAL
+        );
     }
 
     // Load all categories and add them to the ComboBox
@@ -476,19 +436,11 @@ public class AdminPageController {
      */
     @FXML
     private void changeToManageMovies() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/admin/adminpage.fxml"));
-            Parent root = loader.load();
-
-            // Get the current stage (window) and set the new scene
-            Stage stage = (Stage) loggedInUserLabel.getScene().getWindow();
-            stage.setTitle("Streamify - Manage Movies");
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the admin screen", "An error occurred while trying to load the admin screen.");
-        }
+        StageUtils.switchScene(
+            (Stage) loggedInUserLabel.getScene().getWindow(),
+            "adminPage",
+            "Streamify - Manage Movies"
+        );
     }
 
     /**
@@ -496,19 +448,11 @@ public class AdminPageController {
      */
     @FXML
     private void changeToManageUsers() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/admin/adminusermanagment.fxml"));
-            Parent root = loader.load();
-
-            // Get the current stage (window) and set the new scene
-            Stage stage = (Stage) loggedInUserLabel.getScene().getWindow();
-            stage.setTitle("Streamify - Manage Users");
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the user management screen", "An error occurred while trying to load the user management screen.");
-        }
+        StageUtils.switchScene(
+            (Stage) loggedInUserLabel.getScene().getWindow(),
+            "adminUserManagement",
+            "Streamify - Manage Users"
+        );
     }
 
     /**
@@ -516,46 +460,23 @@ public class AdminPageController {
      */
     @FXML
     private void tryToAddMovie() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/admin/adminaddfilm.fxml"));
-            Parent root = loader.load();
-
-            // Create a new stage for the pop-up window
-            Stage popupStage = new Stage();
-            popupStage.setTitle("Streamify - Add New Film");
-
-            // Set the scene for the pop-up stage
-            popupStage.setScene(new Scene(root));
-
-            // Make the pop-up window modal (blocks interaction with other windows until closed)
-            popupStage.initModality(Modality.WINDOW_MODAL);
-            popupStage.initOwner(loggedInUserLabel.getScene().getWindow());
-
-            // Show the pop-up window
-            popupStage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the add film screen", "An error occurred while trying to load the add film screen.");
-        }
+        StageUtils.showPopup(
+            (Stage) loggedInUserLabel.getScene().getWindow(),
+            "adminAddFilm",
+            "Streamify - Add A New Film",
+            Modality.WINDOW_MODAL
+        );
     }
 
     // Redirect to the login screen
     @FXML
     private void switchToLogin() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/contentmanagement/login.fxml"));
-            Parent root = loader.load();
-
-            // Get the current stage (window) and set the new scene
-            Stage stage = (Stage) loggedInUserLabel.getScene().getWindow();
-            stage.setTitle("Streamify - Login");
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            // Show an error alert if the login screen cannot be loaded
-            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the login screen", "En error occured while trying to load the registration screen");
-        }
+        StageUtils.switchScene(
+            (Stage) loggedInUserLabel.getScene().getWindow(),
+            "login",
+            "Streamify - Login"
+        );
     }
+    
 
 }

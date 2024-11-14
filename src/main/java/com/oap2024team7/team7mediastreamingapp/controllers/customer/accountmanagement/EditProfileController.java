@@ -6,16 +6,14 @@ import com.oap2024team7.team7mediastreamingapp.services.ProfileManager;
 import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
 import com.oap2024team7.team7mediastreamingapp.utils.PasswordUtils;
 import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
+import com.oap2024team7.team7mediastreamingapp.utils.StageUtils;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
 import javafx.stage.Stage;
-import javafx.scene.Parent;
 
 import java.time.LocalDate;
 
@@ -138,21 +136,12 @@ public class EditProfileController {
             SessionData.getInstance().clearProfileData();
 
             // Change the scene to manageprofiles.fxml
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/accountmanagement/manageprofiles.fxml"));
-                Parent root = loader.load();
+            StageUtils.switchScene(
+                (Stage) profileNameTF.getScene().getWindow(), 
+                "manageProfiles", 
+                "Streamify - Manage Profiles");
 
-                // Get the current stage (window) and set the new scene
-                Stage stage = (Stage) profileNameTF.getScene().getWindow();
-                stage.setTitle("Streamify - Manage Profiles");
-                stage.setScene(new Scene(root));
-                stage.show();
-            } catch (Exception e) {
-                e.printStackTrace();
-                GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load Manage Profiles", "An error occurred while trying to load the manage profiles screen.");
-            }
-
-            // Close the window if necessary
+            // Close the window
             profileNameTF.getScene().getWindow().hide();
         } else {
             // If the deletion failed, show an error message

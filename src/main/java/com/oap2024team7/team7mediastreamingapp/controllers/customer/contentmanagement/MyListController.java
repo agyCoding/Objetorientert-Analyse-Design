@@ -4,6 +4,7 @@ import com.oap2024team7.team7mediastreamingapp.models.Film;
 import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 import com.oap2024team7.team7mediastreamingapp.models.Profile;
 import com.oap2024team7.team7mediastreamingapp.services.FilmManager;
+import com.oap2024team7.team7mediastreamingapp.utils.StageUtils;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,12 +13,10 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.stage.Modality;
 
-import java.io.IOException;
 import java.util.Comparator;
+
 
 public class MyListController {
 
@@ -130,24 +129,14 @@ public class MyListController {
 
     // Show the details of the selected film
     private void showFilmDetails(Film film) {
-        try {
-            // Load the film details FXML file
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/contentmanagement/filmdetails.fxml"));
-            Parent root = loader.load();
+        SessionData.getInstance().setSelectedFilm(film);
 
-            // Get the FilmDetailsController and set the selected film
-            FilmDetailsController filmDetailsController = loader.getController();
-            filmDetailsController.setSelectedFilm(film);
-
-            // Create a new stage for the film details window
-            Stage detailsStage = new Stage();
-            detailsStage.setTitle(film.getTitle() + " Details");
-            detailsStage.setScene(new Scene(root));
-            detailsStage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Error loading film details view.");
-        }
+        StageUtils.showPopup(
+            (Stage) myListTable.getScene().getWindow(),
+            "filmDetails",  // Using the short name for the FXML file
+            "Streamify - Film Details",
+            Modality.WINDOW_MODAL  // Specify the modality
+        );
     }
 
     // Handle refreshing the list
