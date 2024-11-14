@@ -554,5 +554,31 @@ public class FilmManager {
             e.printStackTrace();
         }
         return films;
-    }    
+    }
+    
+    // METHODS FOR HIGHER-LEVEL LOGIC RELATED TO DISPLAYING FILMS
+    public List<Film> loadFilms(
+        Integer categoryId,
+        Film.Rating rating,
+        Integer maxLength,
+        Integer startYear,
+        Integer endYear,
+        int offset,
+        int limit,
+        int storeId,
+        String sortBy) {
+            List<Film> films;
+
+            // Determine if filters are applied and set sorting order
+            boolean hasFilters = categoryId != null || rating != null || maxLength != null || startYear != null || endYear != null;
+            
+            if (hasFilters) {
+                films = filterFilms(categoryId, rating, maxLength, startYear, endYear, offset, limit, storeId, sortBy);
+            } else {
+                films = getAllFilms(offset, limit, storeId, sortBy);
+            }
+            
+            return films;
+    }
+
 }

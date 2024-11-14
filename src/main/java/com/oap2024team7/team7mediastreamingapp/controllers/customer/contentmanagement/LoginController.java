@@ -13,16 +13,13 @@ import com.oap2024team7.team7mediastreamingapp.models.Profile;
 import com.oap2024team7.team7mediastreamingapp.services.StaffManager;
 import com.oap2024team7.team7mediastreamingapp.services.FilmManager;
 import com.oap2024team7.team7mediastreamingapp.models.Film;
+import com.oap2024team7.team7mediastreamingapp.utils.StageUtils;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Alert.AlertType;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -63,9 +60,9 @@ public class LoginController {
     /**
      * Method to handle the login process.
      * It checks the username and password entered by the user.
-     * If the login is successful, it retrieves the customer information from the database and saves it in the session data.
-     * It also checks if the customer has any profiles and if not, creates a default profile.
-     * Then the method switches to the primary screen.
+     * If the login is successful, it checks if the user is a customer or staff member.
+     * If the user is a customer, it checks if the customer has any profiles and if not, creates a default profile.
+     * Then the method switches to the primary screen (customer) or admin page (staff).
      */
     @FXML
     private void tryToLogin() {
@@ -87,92 +84,11 @@ public class LoginController {
             String userType = loginResult.getUserType();
 
             if ("customer".equals(userType)) {
-                // Load customer info and redirect to primary.fxml
-                try {
-                    Customer dbCustomer = CustomerManager.getCustomerByUsername(usernameText);
-
-                    // Ensure customer is found
-                    if (dbCustomer != null) {   
-                        // Fetch customer address based on addressId
-                        Address customersAddress = AddressManager.getAddressById(dbCustomer.getAddressId());
-                        if (customersAddress == null) {
-                            GeneralUtils.showAlert(AlertType.ERROR, "Login Failed", "Address not found", "Unable to retrieve customer address.");
-                            return;
-                        }
-
-                        // Save the customer and address object to the session data
-                        SessionData.getInstance().setLoggedInCustomer(dbCustomer);
-                        SessionData.getInstance().setCustomerAddress(customersAddress);
-
-                        // Check if the customer has any profiles
-                        List<Profile> profiles = ProfileManager.getProfilesByCustomerId(dbCustomer.getCustomerId());
-                        Profile newProfile = null;
-
-                        if (profiles.isEmpty()) {
-                            // If no profiles exist, create a default profile
-                            newProfile = new Profile(dbCustomer.getCustomerId(), dbCustomer.getFirstName(), null);
-                            newProfile.setIsMainProfile(true); // Set as the main profile
-                            int profileId = ProfileManager.registerNewProfile(newProfile);
-                            if (profileId != -1) {
-                                newProfile.setProfileId(profileId); // Set the generated ID in the profile object
-                                SessionData.getInstance().setCurrentProfile(newProfile); // Save the newly created profile in the session
-                            } else {
-                                GeneralUtils.showAlert(AlertType.ERROR, "Profile Creation Failed", "Unable to create the default profile", "Please try again later.");
-                                return;
-                            }
-                        } else {
-                            // If profiles exist, save the main profile to session data
-                            for (Profile profile : profiles) {
-                                if (profile.isMainProfile()) {
-                                    SessionData.getInstance().setCurrentProfile(profile);
-                                    break;
-                                }
-                            }
-                        }
-
-                        // Load the user's saved films into the session
-                        Profile currentProfile = SessionData.getInstance().getCurrentProfile();
-                        if (currentProfile != null) {
-                            List<Film> savedFilms = FilmManager.getFilmsFromMyList(currentProfile.getProfileId());
-                            if (savedFilms != null && !savedFilms.isEmpty()) {
-                                System.out.println("Loaded " + savedFilms.size() + " films for profile ID: " + currentProfile.getProfileId());
-                            } else {
-                                System.out.println("No films loaded from the database for profile ID: " + currentProfile.getProfileId());
-                            }
-                            SessionData.getInstance().setSavedFilms(savedFilms);
-                            
-                            System.out.println("Loaded saved films for profile ID: " + currentProfile.getProfileId() + ". Number of films: " + savedFilms.size());
-                        }
-
-
-                        // Load primary screen
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/contentmanagement/primary.fxml"));
-                        Parent root = loader.load();
-                        Stage stage = (Stage) usernameField.getScene().getWindow();
-                        stage.setTitle("Media Streaming and Rental - Content Viewer");
-                        stage.setScene(new Scene(root));
-                        stage.show();
-                    }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the main app/primary screen", "An error occurred while trying to load the primary app");
-                }
+                // Handle customer login
+                handleCustomerLogin(usernameText);
             } else if ("staff".equals(userType)) {
-                // Load admin screen for staff
-                try {
-                    SessionData.getInstance().setLoggedInStaff(StaffManager.getStaffByUsername(usernameText));
-
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/admin/adminpage.fxml"));
-                    Parent root = loader.load();
-                    Stage stage = (Stage) usernameField.getScene().getWindow();
-                    stage.setTitle("Admin Dashboard");
-                    stage.setScene(new Scene(root));
-                    stage.show();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the admin dashboard", "An error occurred while trying to load the admin screen");
-                }
+                // Handle staff login
+                handleStaffLogin(usernameText);
             }
         } else {
             // If password and username aren't correct, show an error alert
@@ -181,23 +97,109 @@ public class LoginController {
     }
 
     /**
+     * Method to handle the customer login process.
+     * After successful login, it fetches the customer's address and saves the customer and address objects to the session data.
+     * It then checks if the customer has any profiles and if not, creates a default profile.
+     * Finally, it loads the films for the customer's profile (My List) and switches to the primary screen.
+     */
+    private void handleCustomerLogin(String usernameText) {
+        Customer dbCustomer = CustomerManager.getCustomerByUsername(usernameText);
+
+        // Ensure customer is found
+        if (dbCustomer != null) {
+            // Fetch customer address based on addressId
+            Address customersAddress = AddressManager.getAddressById(dbCustomer.getAddressId());
+            if (customersAddress == null) {
+                GeneralUtils.showAlert(AlertType.ERROR, "Login Failed", "Address not found", "Unable to retrieve customer address.");
+                return;
+            }
+
+            // Save the customer and address object to the session data
+            SessionData.getInstance().setLoggedInCustomer(dbCustomer);
+            SessionData.getInstance().setCustomerAddress(customersAddress);
+
+            // Check if the customer has any profiles
+            List<Profile> profiles = ProfileManager.getProfilesByCustomerId(dbCustomer.getCustomerId());
+            Profile newProfile = null;
+
+            if (profiles.isEmpty()) {
+                // If no profiles exist, create a default profile
+                newProfile = createDefaultProfile(dbCustomer);
+            } else {
+                // If profiles exist, save the main profile to session data
+                newProfile = profiles.stream()
+                        .filter(Profile::isMainProfile)
+                        .findFirst()
+                        .orElse(null);
+            }
+
+            // If a profile is found or created, proceed
+            if (newProfile != null) {
+                SessionData.getInstance().setCurrentProfile(newProfile);
+                loadFilmsForProfile(newProfile);
+
+                // Load primary screen
+                StageUtils.switchScene(
+                    (Stage) usernameField.getScene().getWindow(),
+                    "primary", // FXML short name
+                    "Streamify - Customer's Content Viewer");
+            }
+        }
+    }
+
+    /**
+     * Method to create a default profile for a customer.
+     */
+    private Profile createDefaultProfile(Customer dbCustomer) {
+        Profile newProfile = new Profile(dbCustomer.getCustomerId(), dbCustomer.getFirstName(), null);
+        newProfile.setIsMainProfile(true); // Set as the main profile
+        int profileId = ProfileManager.registerNewProfile(newProfile);
+        if (profileId != -1) {
+            newProfile.setProfileId(profileId); // Set the generated ID in the profile object
+            SessionData.getInstance().setCurrentProfile(newProfile); // Save the newly created profile in the session
+            return newProfile;
+        } else {
+            GeneralUtils.showAlert(AlertType.ERROR, "Profile Creation Failed", "Unable to create the default profile", "Please try again later.");
+            return null;
+        }
+    }
+
+    /**
+     * Method to load the films for a customer's profile (My List).
+     */
+    private void loadFilmsForProfile(Profile profile) {
+        List<Film> savedFilms = FilmManager.getFilmsFromMyList(profile.getProfileId());
+        if (savedFilms != null && !savedFilms.isEmpty()) {
+            System.out.println("Loaded " + savedFilms.size() + " films for profile ID: " + profile.getProfileId());
+        } else {
+            System.out.println("No films loaded from the database for profile ID: " + profile.getProfileId());
+        }
+        SessionData.getInstance().setSavedFilms(savedFilms);
+    }
+
+    /**
+     * Method to handle the staff login process.
+     * After successful login, it fetches the staff member and saves the staff object to the session data.
+     * It then loads the admin screen and switches to it.
+     */
+    private void handleStaffLogin(String usernameText) {
+        SessionData.getInstance().setLoggedInStaff(StaffManager.getStaffByUsername(usernameText));
+
+        // Load admin screen using the StageUtils
+        StageUtils.switchScene(
+            (Stage) usernameField.getScene().getWindow(),
+            "adminPage", // FXML short name
+            "Streamify - Admin Dashboard");
+    }
+
+    /**
      * Method to switch to the user registration screen.
      */
     @FXML
     private void switchToUserRegistration() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/accountmanagement/registerCustomer.fxml"));
-            Parent root = loader.load();
-
-            // Get the current stage (window) and set the new scene
-            Stage stage = (Stage) usernameField.getScene().getWindow();
-            stage.setTitle("Streamify - Register New Customer");
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            // If an error occurs while trying to load the registration screen, show an error alert
-            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the registration screen", "An error occurred while trying to load the registration screen");
-        }
+        StageUtils.switchScene(
+            (Stage) usernameField.getScene().getWindow(), 
+            "registerCustomer", 
+            "Streamify - Register New Customer");
     }
 }

@@ -1,15 +1,13 @@
-// Last Modified: 04.10.2024
 package com.oap2024team7.team7mediastreamingapp.controllers.customer.accountmanagement;
 
 import com.oap2024team7.team7mediastreamingapp.models.Profile;
 import com.oap2024team7.team7mediastreamingapp.services.ProfileManager;
 import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 import com.oap2024team7.team7mediastreamingapp.utils.PasswordUtils;
-import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
+import com.oap2024team7.team7mediastreamingapp.utils.StageUtils;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.Label;
@@ -18,10 +16,6 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
-import javafx.scene.Parent;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import java.io.IOException;
 
 import java.util.List;
 import java.util.Optional;
@@ -113,21 +107,10 @@ public class ManageProfilesController {
     private void handleCreateProfileClick() {
         System.out.println("Create new profile clicked!");
 
-        try {
-            // Load the FXML file for the create profile scene
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/accountmanagement/createprofile.fxml"));
-            Parent root = loader.load();
-
-            // Get the current stage (window) and set the new scene
-            Stage stage = (Stage) profileContainer.getScene().getWindow();
-            stage.setTitle("Streamify - Content Viewer");
-            stage.setScene(new Scene(root));
-            stage.show();
-            
-        } catch (IOException e) {
-            e.printStackTrace();
-            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the create profile screen", "An error occurred while trying to load the create profile screen");
-        }
+        StageUtils.switchScene(
+            (Stage) profileContainer.getScene().getWindow(), 
+            "createProfile", 
+            "Streamify - Create Profile");
     }
 
 
@@ -143,17 +126,11 @@ public class ManageProfilesController {
     private void updateSessionProfile(Profile profile) {
         sessionData.setCurrentProfile(profile);
         showAlert("Profile switched to: " + profile.getProfileName());
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/contentmanagement/primary.fxml"));
-            Parent root = loader.load();
-            Scene scene = new Scene(root);
-            Stage stage = (Stage) profileContainer.getScene().getWindow();
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            showAlert("Failed to load the primary view.");
-        }
+
+        StageUtils.switchScene(
+            (Stage) profileContainer.getScene().getWindow(), 
+            "primary", 
+            "Streamify - Customer's Content Viewer");
     }
 
     private void showAlert(String message) {

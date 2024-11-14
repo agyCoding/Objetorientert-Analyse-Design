@@ -1,9 +1,6 @@
 package com.oap2024team7.team7mediastreamingapp.controllers.admin;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.control.Alert.AlertType;
@@ -25,6 +22,8 @@ import com.oap2024team7.team7mediastreamingapp.models.Customer;
 import com.oap2024team7.team7mediastreamingapp.services.CustomerManager;
 import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
 import com.oap2024team7.team7mediastreamingapp.customcells.CustomerLVCell;
+import com.oap2024team7.team7mediastreamingapp.utils.StageUtils;
+
 import javafx.stage.FileChooser;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -110,29 +109,12 @@ public class AdminUserManagementController {
 
     // Handles the action when the user clicks the "Edit Account" menu item.
     private void handleEditAccount() {
-        // Load the edit account screen
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/accountmanagement/editaccount.fxml"));
-            Parent root = loader.load();
-
-            // Create a new stage for the pop-up window
-            Stage popupStage = new Stage();
-            popupStage.setTitle("Media Streaming and Rental - Edit Account");
-
-            // Set the scene for the pop-up stage
-            popupStage.setScene(new Scene(root));
-
-            // Make the pop-up window modal (blocks interaction with other windows until closed)
-            popupStage.initModality(Modality.WINDOW_MODAL);
-            popupStage.initOwner(loggedInUserLabel.getScene().getWindow());
-
-            // Show the pop-up window
-            popupStage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-
-            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the edit account screen", "An error occurred while trying to load the edit account screen");
-        }
+        StageUtils.showPopup(
+            (Stage) loggedInUserLabel.getScene().getWindow(),
+            "editAccount",
+            "Streamify - Edit Account",
+            Modality.WINDOW_MODAL
+        );
     }
     
     // Handles the action when the user clicks the "Logout" menu item.
@@ -280,19 +262,11 @@ public class AdminUserManagementController {
      */
     @FXML
     private void changeToManageMovies() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/admin/adminpage.fxml"));
-            Parent root = loader.load();
-
-            // Get the current stage (window) and set the new scene
-            Stage stage = (Stage) loggedInUserLabel.getScene().getWindow();
-            stage.setTitle("Streamify - Manage Movies");
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the admin screen", "An error occurred while trying to load the admin screen.");
-        }
+        StageUtils.switchScene(
+            (Stage) loggedInUserLabel.getScene().getWindow(),
+            "adminPage",
+            "Streamify - Manage Movies"
+        );
     }
 
     /**
@@ -301,37 +275,20 @@ public class AdminUserManagementController {
      */
     @FXML
     private void changeToManageUsers() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/admin/adminusermanagment.fxml"));
-            Parent root = loader.load();
-
-            // Get the current stage (window) and set the new scene
-            Stage stage = (Stage) loggedInUserLabel.getScene().getWindow();
-            stage.setTitle("Streamify - Manage Users");
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the user management screen", "An error occurred while trying to load the user management screen.");
-        }
+        StageUtils.switchScene(
+            (Stage) loggedInUserLabel.getScene().getWindow(),
+            "adminUserManagment",
+            "Streamify - Manage Users"
+        );
     }
 
     // Redirect to the login screen
     @FXML
     private void switchToLogin() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/contentmanagement/login.fxml"));
-            Parent root = loader.load();
-
-            // Get the current stage (window) and set the new scene
-            Stage stage = (Stage) loggedInUserLabel.getScene().getWindow();
-            stage.setTitle("Streamify - Login");
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            // Show an error alert if the login screen cannot be loaded
-            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the login screen", "En error occured while trying to load the registration screen");
-        }
+        StageUtils.switchScene(
+            (Stage) loggedInUserLabel.getScene().getWindow(),
+            "login",
+            "Streamify - Login"
+        );
     }
 }

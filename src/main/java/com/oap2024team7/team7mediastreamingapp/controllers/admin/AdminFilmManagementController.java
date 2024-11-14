@@ -110,12 +110,21 @@ public class AdminFilmManagementController {
     private Language selectedLanguage = null;
 
 
-    public void initialize() {     
+    public void initialize() {   
+        // Retrieve the selected film from the session data
+        selectedFilm = SessionData.getInstance().getSelectedFilm();
+
         loadCategories();
         loadRatings();
         loadLanguages();
         loadSpecialFeatures();
         loadActors();
+
+        if (selectedFilm != null) {
+            updateFilmDetails();
+        } else {
+            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Film not found", "Unable to retrieve the selected film.");
+        }
     }
 
     /**
@@ -132,21 +141,6 @@ public class AdminFilmManagementController {
                 SessionData.getInstance().setSelectedFilm(null);
             }
         });
-    }
-
-    /**
-     * This method is called when a film is clicked in the admin screen.
-     * @param film The film object that was clicked.
-     */
-    public void setSelectedFilm(Film film) {
-        // Set the film object to the film object that was clicked
-        this.selectedFilm = film;
-
-        // Save the selected film to the session data
-        SessionData.getInstance().setSelectedFilm(selectedFilm);
-        
-        // Now that the film is set, update the labels with the film's details
-        updateFilmDetails();
     }
 
     /**
