@@ -168,6 +168,7 @@ public class RentFilmController {
             inventoryManager.removeRentalFromDatabase(rentalId);
             return;
         }
+        
         Platform.runLater(() -> {
             GeneralUtils.showAlert(Alert.AlertType.INFORMATION, SUCCESS_TITLE, SUCCESS_MESSAGE, "The total cost is: $" + totalCost);
             // Get the current stage and close it

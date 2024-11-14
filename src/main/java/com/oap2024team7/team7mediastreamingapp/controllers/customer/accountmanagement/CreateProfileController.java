@@ -8,11 +8,9 @@ import com.oap2024team7.team7mediastreamingapp.services.ProfileManager;
 import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
 import com.oap2024team7.team7mediastreamingapp.utils.PasswordUtils;
 import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
+import com.oap2024team7.team7mediastreamingapp.utils.StageUtils;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.PasswordField;
@@ -87,22 +85,16 @@ public class CreateProfileController {
             newProfile.setHashedPassword(null); // Set to null if password is empty
         }
 
-        // Save the new profile to the database
+        // Save the new profile to the database and SessionData
         if (ProfileManager.registerNewProfile(newProfile) != -1) {
             GeneralUtils.showAlert(AlertType.INFORMATION, "Profile Created", "Profile created successfully", "The new profile has been created.");
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/contentmanagement/primary.fxml"));
-                Parent root = loader.load();
+            SessionData.getInstance().setCurrentProfile(newProfile);
 
-                // Get the current stage (window) and set the new scene
-                Stage stage = (Stage) profileNameTF.getScene().getWindow();
-                stage.setTitle("Streamify - Content Viewer");
-                stage.setScene(new Scene(root));
-                stage.show();
-            } catch (Exception e) {
-                e.printStackTrace();
-                GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the main app/primary screen", "An error occurred while trying to load the primary app");
-            }
+            // Change scene to the main application screen
+            StageUtils.switchScene(
+                (Stage) profileNameTF.getScene().getWindow(), 
+                "primary", 
+                "Streamify - Customer's Content Viewer");
         } else {
             GeneralUtils.showAlert(AlertType.ERROR, "Profile Creation Failed", "Profile creation failed", "An error occurred while creating the profile.");
         }

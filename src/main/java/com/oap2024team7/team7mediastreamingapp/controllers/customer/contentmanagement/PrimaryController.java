@@ -13,8 +13,8 @@ import com.oap2024team7.team7mediastreamingapp.customcells.CategoryCell;
 import com.oap2024team7.team7mediastreamingapp.customcells.CustomerFilmCell;
 import com.oap2024team7.team7mediastreamingapp.customcells.RatingCell;
 import com.oap2024team7.team7mediastreamingapp.controllers.customer.accountmanagement.EditProfileController;
+import com.oap2024team7.team7mediastreamingapp.utils.StageUtils;
 
-import java.io.IOException;
 import java.util.List;
 
 import javafx.fxml.FXML;
@@ -23,9 +23,6 @@ import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Alert.AlertType;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Button;
@@ -71,8 +68,6 @@ public class PrimaryController {
     private Button nextButton;
     @FXML
     private Button prevButton;
-    @FXML
-    private ComboBox<String> sortComboBox;
     @FXML
     private RadioButton sortByTitle;
     @FXML
@@ -198,95 +193,48 @@ public class PrimaryController {
 
     // Handles the action when the user clicks the "Manage profiles" menu item.
     private void handleManageProfiles() {
-        System.out.println("Manage Profiles clicked");
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/accountmanagement/manageprofiles.fxml"));
-            Parent root = loader.load();
-
-            // Get the current stage from the loggedInUserLabel
-            Stage currentStage = (Stage) loggedInUserLabel.getScene().getWindow();
-
-            // Set the new scene for the current stage
-            currentStage.setScene(new Scene(root));
-
-            currentStage.setTitle("Streamify - Manage Profiles");
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the manage profiles screen", "An error occurred while trying to load the manage profiles screen");
-        }
+        StageUtils.switchScene(
+            (Stage) loggedInUserLabel.getScene().getWindow(),
+            "manageProfiles",
+            "Streamify - Manage Profiles"
+        );
     }
    
     // Handles the action when the user clicks the "Edit Account" menu item.
+    @FXML
     private void handleEditAccount() {
-        // Load the edit account screen
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/accountmanagement/editaccount.fxml"));
-            Parent root = loader.load();
-
-            // Create a new stage for the pop-up window
-            Stage popupStage = new Stage();
-            popupStage.setTitle("Streamify - Edit Account");
-
-            // Set the scene for the pop-up stage
-            popupStage.setScene(new Scene(root));
-
-            // Make the pop-up window modal (blocks interaction with other windows until closed)
-            popupStage.initModality(Modality.WINDOW_MODAL);
-            popupStage.initOwner(loggedInUserLabel.getScene().getWindow());
-
-            // Show the pop-up window
-            popupStage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-
-            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the edit account screen", "An error occurred while trying to load the edit account screen");
-        }
+        StageUtils.showPopup(
+            (Stage) loggedInUserLabel.getScene().getWindow(),
+            "editAccount",
+            "Streamify - Edit Account",
+            Modality.WINDOW_MODAL
+        );
     }
+
     @FXML
     private void handleMyList() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/contentmanagement/mylist.fxml"));
-            Parent root = loader.load();
-            Stage stage = new Stage();
-            stage.setTitle("My List");
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load My List", "An error occurred while trying to load My List.");
-        }
+        StageUtils.showPopup(
+            (Stage) loggedInUserLabel.getScene().getWindow(),
+            "myList",
+            "Streamify - My List",
+            Modality.APPLICATION_MODAL
+        );
     }
     
     // Handles the action when the user clicks the "Edit Profile" menu item.
     private void handleEditProfile() {
-        System.out.println("Edit Profile clicked");
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/accountmanagement/editprofile.fxml"));
-            Parent root = loader.load();
+        Stage popupStage = StageUtils.showPopup(
+            (Stage) loggedInUserLabel.getScene().getWindow(),
+            "editProfile",
+            "Streamify - Edit Profile",
+            Modality.WINDOW_MODAL
+        );
 
-            EditProfileController editProfileController = loader.getController();
-
-            // Pass the PrimaryController reference to EditProfileController
-            editProfileController.setPrimaryController(this);
-
-            // Create a new stage for the pop-up window
-            Stage popupStage = new Stage();
-            popupStage.setTitle("Streamify - Edit Profile");
-
-            // Set the scene for the pop-up stage
-            popupStage.setScene(new Scene(root));
-
-            // Make the pop-up window modal (blocks interaction with other windows until closed)
-            popupStage.initModality(Modality.WINDOW_MODAL);
-            popupStage.initOwner(loggedInUserLabel.getScene().getWindow());
-
-            // Show the pop-up window
-            popupStage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-
-            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the edit profile screen", "An error occurred while trying to load the edit profile screen");
+        if (popupStage != null) {
+            EditProfileController controller = (EditProfileController) popupStage.getUserData();
+            if (controller != null) {
+                controller.setPrimaryController(this);
+            }
         }
     }
     
@@ -300,25 +248,30 @@ public class PrimaryController {
 
     // Load films based on the current filters
     private void loadFilms() {
-        List<Film> films;
+
         int customersStoreId = loggedInCustomer.getStoreId();
+
+        // Get sort criteria
+        String sortBy = sortByTitle.isSelected() ? "title" : "release_year";
     
-        // Check if filters are applied
-        if (selectedCategory != null || selectedRating != null || selectedMaxLength != null || selectedStartYear != null || selectedEndYear != null) {
-            // If filters are applied, use the filterFilms method
-            Integer categoryId = selectedCategory != null ? selectedCategory.getCategoryId() : null;
-            films = filmManager.filterFilms(categoryId, selectedRating, selectedMaxLength, selectedStartYear, selectedEndYear, offset, limit, customersStoreId);
-        } else {
-            // No filters applied, load all films
-            films = filmManager.getAllFilms(offset, limit, customersStoreId);
-        }
+        List<Film> films = filmManager.loadFilms(
+            selectedCategory != null ? selectedCategory.getCategoryId() : null,
+            selectedRating,
+            selectedMaxLength,
+            selectedStartYear,
+            selectedEndYear,
+            offset,
+            limit,
+            customersStoreId,
+            sortBy
+        );
     
         // Clear the film list view and populate with filtered results
         filmListView.getItems().clear();
         filmListView.getItems().addAll(films);
     
         // Check if there are more films to load for pagination
-        if (films.size() < limit || filmManager.getAllFilms(offset + limit, limit, customersStoreId).isEmpty()) {
+        if (films.size() < limit || filmManager.getAllFilms(offset + limit, limit, customersStoreId, sortBy).isEmpty()) {
             nextButton.setDisable(true);
         } else {
             nextButton.setDisable(false);
@@ -352,17 +305,7 @@ public class PrimaryController {
     // Sort films based on the selected option
     @FXML    
     private void sortFilms() {
-        String selectedSort = sortComboBox.getValue();
-        List<Film> sortedFilms;
-        int customersStoreId = loggedInCustomer.getStoreId();
-
-        if ("Sort by Title".equals(selectedSort)) {
-            sortedFilms = filmManager.getFilmsSortedByTitle(customersStoreId);
-        } else {
-            sortedFilms = filmManager.getFilmsSortedByYear(customersStoreId);
-        }
-        filmListView.getItems().clear();
-        filmListView.getItems().addAll(sortedFilms);
+        loadFilms();
     }
 
     /**
@@ -370,35 +313,13 @@ public class PrimaryController {
      * @param film
      */
     private void showFilmDetails(Film film) {
-        // Load the edit account screen
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/contentmanagement/filmdetails.fxml"));
-            Parent root = loader.load();
-
-            // Get the controller of the next scene
-            FilmDetailsController filmDetailsController = loader.getController();
-
-            // Pass the customer object to the edit account controller
-            filmDetailsController.setSelectedFilm(film);
-
-            // Create a new stage for the pop-up window
-            Stage popupStage = new Stage();
-            popupStage.setTitle("Streamify - Film Details");
-
-            // Set the scene for the pop-up stage
-            popupStage.setScene(new Scene(root));
-
-            popupStage.initOwner(loggedInUserLabel.getScene().getWindow());
-
-            // Show the pop-up window
-            popupStage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-
-            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the page with film details", "An error occurred while trying to load the film details page.");
-        }
-        // Small check in terminal (Debugging)
-        System.out.println("Film details: " + film.getTitle() + " (" + film.getReleaseYear() + ")");
+        SessionData.getInstance().setSelectedFilm(film);
+        StageUtils.showPopup(
+            (Stage) loggedInUserLabel.getScene().getWindow(),
+            "filmDetails",  // Using the short name for the FXML file
+            "Streamify - Film Details",
+            Modality.WINDOW_MODAL  // Specify the modality
+        );
     }
 
     /**
@@ -416,7 +337,6 @@ public class PrimaryController {
             // Add a null option for the empty category
             genreComboBox.getItems().add(null);  // Displayed as an empty option
     
-            // OBS! Is it several places in the code? looks like a bug
             // Set custom cells for displaying category names
             genreComboBox.setButtonCell(new CategoryCell());
             genreComboBox.setCellFactory(lv -> new CategoryCell());
@@ -508,20 +428,25 @@ public class PrimaryController {
      */
     @FXML
     private void switchToLogin() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/contentmanagement/login.fxml"));
-            Parent root = loader.load();
+        StageUtils.switchScene(
+            (Stage) loggedInUserLabel.getScene().getWindow(),
+            "login",
+            "Streamify - Login"
+        );
+    }
 
-            // Get the current stage (window) and set the new scene
-            Stage stage = (Stage) loggedInUserLabel.getScene().getWindow();
-            stage.setTitle("Streamify - Login");
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            // Show an error alert if the login screen cannot be loaded
-            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the login screen", "En error occured while trying to load the registration screen");
-        }
+    /**
+     * Handle the My Rentals button action.
+     * Opens the My Rentals screen.
+     */
+    @FXML
+    public void handleMyRentalsButtonAction() {
+        StageUtils.showPopup(
+            (Stage) loggedInUserLabel.getScene().getWindow(),
+            "myRentals",
+            "Streamify - My Rentals",
+            Modality.APPLICATION_MODAL
+        );
     }
 
 }

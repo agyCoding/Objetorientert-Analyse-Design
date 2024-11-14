@@ -1,7 +1,5 @@
-// Last Modified: 30.09.2024
 package com.oap2024team7.team7mediastreamingapp.controllers.customer.accountmanagement;
 
-import java.io.IOException;
 import java.time.LocalDate;
 
 import com.oap2024team7.team7mediastreamingapp.models.Customer;
@@ -11,14 +9,13 @@ import com.oap2024team7.team7mediastreamingapp.models.Address;
 import com.oap2024team7.team7mediastreamingapp.services.AddressManager;
 import com.oap2024team7.team7mediastreamingapp.services.CustomerManager;
 import com.oap2024team7.team7mediastreamingapp.services.ProfileManager;
+
 import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
 import com.oap2024team7.team7mediastreamingapp.utils.PasswordUtils;
+import com.oap2024team7.team7mediastreamingapp.utils.StageUtils;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -177,21 +174,9 @@ public class RegisterCustomerController {
     // Method to switch to the login screen
     @FXML
     private void switchToLogin() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/contentmanagement/login.fxml"));
-            Parent root = loader.load();
-
-            // Get the current stage (window) and set the new scene
-            Stage stage = (Stage) firstNameField.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-
-            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the login screen", "En error occured while trying to load the registration screen");
-        }
+        StageUtils.switchScene(
+            (Stage) firstNameField.getScene().getWindow(), 
+            "login", 
+            "Login");
     }
-    
-
-
 }

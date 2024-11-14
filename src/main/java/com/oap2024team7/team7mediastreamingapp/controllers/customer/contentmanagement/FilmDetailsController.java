@@ -1,4 +1,3 @@
-// Last Modified: 30.09.2024
 package com.oap2024team7.team7mediastreamingapp.controllers.customer.contentmanagement;
 
 import java.util.List;
@@ -11,17 +10,17 @@ import com.oap2024team7.team7mediastreamingapp.models.Profile;
 import com.oap2024team7.team7mediastreamingapp.services.ActorManager;
 import com.oap2024team7.team7mediastreamingapp.services.FilmManager;
 import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
+import com.oap2024team7.team7mediastreamingapp.utils.StageUtils;
+import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
+
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import java.io.IOException;
 
 /**
  * Controller class for the Film Details screen.
@@ -92,7 +91,6 @@ public class FilmDetailsController {
         }
     }
     
-
     /**
      * The stage for the Film Details window.
      * This is used to set a listener to clear the selected film when the window is closed.
@@ -109,29 +107,27 @@ public class FilmDetailsController {
         });
     }
 
-    /**
-     * This method is called when a film is clicked in the main screen.
-     * 
-     * @param film The film object that was clicked.
-     */
-    public void setSelectedFilm(Film film) {
-        // Set the film object to the film object that was clicked
-        selectedFilm = film;
-
-        // Now that the film is set, update the labels with the film's details
-        updateFilmDetails();
-
-        // Set button visibility based on account type
-        setButtonVisibility();
-
-        // Save the selected film to the session data
-        SessionData.getInstance().setSelectedFilm(selectedFilm);
-
-        // Update the status label based on whether the film is already in the list
-        if (SessionData.getInstance().getSavedFilms().contains(selectedFilm)) {
-            statusLabel.setText("Film is already in your list.");
+    @FXML
+    public void initialize() {
+        // Retrieve the selected film from the session data
+        selectedFilm = SessionData.getInstance().getSelectedFilm();
+    
+        if (selectedFilm != null) {
+            // Now that the film is set, update the labels with the film's details
+            updateFilmDetails();
+    
+            // Set button visibility based on account type
+            setButtonVisibility();
+    
+            // Update the status label based on whether the film is already in the list
+            if (SessionData.getInstance().getSavedFilms().contains(selectedFilm)) {
+                statusLabel.setText("Film is already in your list.");
+            } else {
+                statusLabel.setText("");
+            }
         } else {
-            statusLabel.setText("");
+            // If no film is selected, handle appropriately (e.g., show an error)
+            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Film not found", "Unable to retrieve the selected film.");
         }
     }
 
@@ -189,18 +185,11 @@ public class FilmDetailsController {
 
     @FXML
     private void showRentWindow() {
-        // Show rent window for the selected film
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/customer/contentmanagement/rentfilm.fxml"));
-            Parent root = fxmlLoader.load();
+        StageUtils.switchScene(
+            (Stage) titleLabel.getScene().getWindow(), 
+            "rentFilm", 
+            "Streamify - Rent Film");
 
-            Stage rentStage = new Stage();
-            rentStage.setTitle("Rent Film");
-            rentStage.setScene(new Scene(root));
-            rentStage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         System.out.println("Rent window for film: " + selectedFilm.getTitle());
     }
 
