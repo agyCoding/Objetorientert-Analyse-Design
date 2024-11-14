@@ -207,15 +207,18 @@ public class AdminPageController {
     private void loadFilms() {
         List<Film> films;
         int staffsStoreId = loggedInStaff.getStoreId();
+
+        // Get sort criteria
+        String sortBy = sortByTitle.isSelected() ? "title" : "release_year";
     
         // Check if filters are applied
         if (selectedCategory != null || selectedRating != null || selectedMaxLength != null || selectedStartYear != null || selectedEndYear != null) {
             // If filters are applied, use the filterFilms method
             Integer categoryId = selectedCategory != null ? selectedCategory.getCategoryId() : null;
-            films = filmManager.filterFilms(categoryId, selectedRating, selectedMaxLength, selectedStartYear, selectedEndYear, offset, limit, staffsStoreId);
+            films = filmManager.filterFilms(categoryId, selectedRating, selectedMaxLength, selectedStartYear, selectedEndYear, offset, limit, staffsStoreId, sortBy);
         } else {
             // No filters applied, load all films
-            films = filmManager.getAllFilms(offset, limit, staffsStoreId);
+            films = filmManager.getAllFilms(offset, limit, staffsStoreId, sortBy);
         }
     
         // Clear the film list view and populate with filtered results
@@ -223,7 +226,7 @@ public class AdminPageController {
         filmListView.getItems().addAll(films);
     
         // Check if there are more films to load for pagination
-        if (films.size() < limit || filmManager.getAllFilms(offset + limit, limit, staffsStoreId).isEmpty()) {
+        if (films.size() < limit || filmManager.getAllFilms(offset + limit, limit, staffsStoreId, sortBy).isEmpty()) {
             nextButton.setDisable(true);
         } else {
             nextButton.setDisable(false);
@@ -258,17 +261,7 @@ public class AdminPageController {
     // Sort films based on the selected option
     @FXML    
     private void sortFilms() {
-        String selectedSort = sortComboBox.getValue();
-        List<Film> sortedFilms;
-        int staffsStoreId = loggedInStaff.getStoreId();
-
-        if ("Sort by Title".equals(selectedSort)) {
-            sortedFilms = filmManager.getFilmsSortedByTitle(staffsStoreId);
-        } else {
-            sortedFilms = filmManager.getFilmsSortedByYear(staffsStoreId);
-        }
-        filmListView.getItems().clear();
-        filmListView.getItems().addAll(sortedFilms);
+        loadFilms();
     }
 
     /**
