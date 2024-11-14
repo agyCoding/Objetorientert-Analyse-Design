@@ -168,7 +168,7 @@ public class AdminPageController {
         loadFilms();
     }    
    
-    // Handles the action when the user clicks the "Edit Account" menu item.
+    // Handles the action when the user clicks the "Edit Account" menu item. (Den er ny)
     private void handleAdminEditAccount() {
     try {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/admin/editaccount.fxml"));
