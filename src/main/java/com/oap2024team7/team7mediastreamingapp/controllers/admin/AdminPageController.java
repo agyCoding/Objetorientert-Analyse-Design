@@ -169,31 +169,24 @@ public class AdminPageController {
     }    
    
     // Handles the action when the user clicks the "Edit Account" menu item.
-    private void handleEditAccount() {
-        // Load the edit account screen
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/accountmanagement/editaccount.fxml"));
-            Parent root = loader.load();
+    private void handleAdminEditAccount() {
+    try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/admin/editaccount.fxml"));
+        Parent root = loader.load();
 
-            // Create a new stage for the pop-up window
-            Stage popupStage = new Stage();
-            popupStage.setTitle("Media Streaming and Rental - Edit Account");
+        Stage popupStage = new Stage();
+        popupStage.setTitle("Media Streaming and Rental - Edit Admin Account");
 
-            // Set the scene for the pop-up stage
-            popupStage.setScene(new Scene(root));
+        popupStage.setScene(new Scene(root));
+        popupStage.initModality(Modality.WINDOW_MODAL);
+        popupStage.initOwner(loggedInUserLabel.getScene().getWindow());
 
-            // Make the pop-up window modal (blocks interaction with other windows until closed)
-            popupStage.initModality(Modality.WINDOW_MODAL);
-            popupStage.initOwner(loggedInUserLabel.getScene().getWindow());
+        popupStage.showAndWait();
+    } catch (IOException e) {
+        e.printStackTrace();
 
-            // Show the pop-up window
-            popupStage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-
-            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the edit account screen", "An error occurred while trying to load the edit account screen");
-        }
     }
+}
 
     // Handles the action when the user clicks the "Logout" menu item.
     private void handleLogout() {
