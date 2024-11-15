@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.oap2024team7.team7mediastreamingapp.controllers.customer.accountmanagement.EditProfileController;
+import com.oap2024team7.team7mediastreamingapp.controllers.customer.contentmanagement.PrimaryController;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -65,16 +68,11 @@ public class StageUtils {
         }
     }
     
-/**
-     * Opens a new stage in a pop-up window by FXML name.
-     *
-     * @param ownerStage The owner stage for the pop-up.
-     * @param fxmlName The name of the FXML file as defined in FXML_PATHS.
-     * @param title The title of the pop-up window.
-     * @param modality The modality type for the pop-up (e.g., WINDOW_MODAL or APPLICATION_MODAL).
-     * @return The new pop-up stage, or null if an error occurs.
-     */
     public static Stage showPopup(Stage ownerStage, String fxmlName, String title, Modality modality) {
+        return showPopup(ownerStage, fxmlName, title, modality, null); // Call overloaded method without controller
+    }
+
+    public static Stage showPopup(Stage ownerStage, String fxmlName, String title, Modality modality, Object primaryController) {
         String fxmlPath = FXML_PATHS.get(fxmlName);
         if (fxmlPath == null) {
             System.err.println("FXML path not found for name: " + fxmlName);
@@ -86,18 +84,29 @@ public class StageUtils {
             FXMLLoader loader = new FXMLLoader(StageUtils.class.getResource(fxmlPath));
             Parent root = loader.load();
 
+            // Get the controller of the loaded FXML
+            Object controller = loader.getController();
+            
+            // Check if primaryController is provided and set it if needed
+            if (primaryController != null && controller instanceof EditProfileController) {
+                ((EditProfileController) controller).setPrimaryController((PrimaryController) primaryController);
+            }
+
             Stage popupStage = new Stage();
             popupStage.setTitle(title);
             popupStage.setScene(new Scene(root));
             popupStage.initOwner(ownerStage);
-            popupStage.initModality(modality);  // Set the specified modality
+            popupStage.initModality(modality);
+            popupStage.show();
 
-            popupStage.showAndWait();
             return popupStage;
+
         } catch (IOException e) {
             e.printStackTrace();
             GeneralUtils.showAlert(AlertType.ERROR, "Error", "Unable to load the pop-up window", "An error occurred while trying to load the pop-up.");
             return null;
         }
     }
+
+
 }

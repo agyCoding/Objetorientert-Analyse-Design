@@ -1,48 +1,126 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="336.0" prefWidth="609.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oap2024team7.team7mediastreamingapp.controllers.customer.contentmanagement.FilmDetailsController">
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="541.0" prefWidth="780.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oap2024team7.team7mediastreamingapp.controllers.customer.contentmanagement.FilmDetailsController">
   <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES" maxWidth="399.0" minWidth="10.0" prefWidth="297.0" />
-    <ColumnConstraints hgrow="SOMETIMES" maxWidth="245.0" minWidth="10.0" prefWidth="90.0" />
-    <ColumnConstraints hgrow="SOMETIMES" maxWidth="241.0" minWidth="10.0" prefWidth="139.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="399.0" minWidth="10.0" prefWidth="188.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="245.0" minWidth="10.0" prefWidth="179.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="241.0" minWidth="10.0" prefWidth="204.0" />
     <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="10.0" prefWidth="169.0" />
   </columnConstraints>
   <rowConstraints>
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="192.0" minHeight="10.0" prefHeight="72.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="184.0" minHeight="10.0" prefHeight="83.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="128.0" minHeight="0.0" prefHeight="41.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="157.0" minHeight="10.0" prefHeight="64.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="127.0" minHeight="10.0" prefHeight="127.0" vgrow="SOMETIMES" />
+      <RowConstraints />
   </rowConstraints>
   <children>
     <Label fx:id="titleLabel" text="Film Title" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="0">
       <font>
         <Font name="System Bold Italic" size="23.0" />
       </font>
+         <GridPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </GridPane.margin>
     </Label>
-    <Label fx:id="releaseYearLabel" text="Release year: " GridPane.columnIndex="2" />
-    <Label fx:id="descriptionLabel" text="Description" wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="1" />
-    <Label fx:id="actorsLabel" text="Actors: " wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="2" />
-    <Label fx:id="languageLabel" text="Language: " GridPane.columnIndex="2" GridPane.rowIndex="1" />
-    <Label fx:id="pgRatingLabel" text="PG Rating: " GridPane.columnIndex="3" />
-    <Label fx:id="specialFeaturesLabel" text="Special features: " GridPane.columnSpan="2" GridPane.rowIndex="3" />
-    <Button fx:id="rentButton" mnemonicParsing="false" onAction="#showRentWindow" text="Rent" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-    <Button fx:id="streamButton" mnemonicParsing="false" onAction="#tryToStream" text="Stream" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+    <Label fx:id="releaseYearLabel" text="Release year: " GridPane.columnIndex="2">
+         <GridPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </GridPane.margin></Label>
+    <Label fx:id="descriptionLabel" text="Description" wrapText="true" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.valignment="TOP">
+         <GridPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </GridPane.margin></Label>
+    <Label fx:id="actorsLabel" text="Actors: " wrapText="true" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="2" GridPane.rowSpan="2" GridPane.valignment="TOP">
+         <GridPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </GridPane.margin></Label>
+    <Label fx:id="languageLabel" text="Language: " GridPane.columnIndex="2" GridPane.rowIndex="4" GridPane.valignment="TOP">
+         <GridPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </GridPane.margin></Label>
+    <Label fx:id="pgRatingLabel" text="PG Rating: " GridPane.columnIndex="3">
+         <GridPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </GridPane.margin></Label>
+    <Label fx:id="specialFeaturesLabel" text="Special features: " wrapText="true" GridPane.columnIndex="3" GridPane.rowIndex="2" GridPane.rowSpan="2" GridPane.valignment="TOP">
+         <GridPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </GridPane.margin></Label>
     
     <!-- Save to List button -->
-    <Button fx:id="saveToListButton" mnemonicParsing="false" onAction="#handleSaveToList" text="Save to My List" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+    <Button fx:id="saveToListButton" mnemonicParsing="false" onAction="#handleSaveToList" text="Save to My List" GridPane.rowIndex="4">
+         <GridPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </GridPane.margin></Button>
 
     <!-- New Label to show the status of the "Save to List" action -->
-    <Label fx:id="statusLabel" text="" GridPane.columnIndex="3" GridPane.rowIndex="5" style="-fx-font-size: 14px; -fx-text-fill: green;" wrapText="true"/>
+    <Label fx:id="statusLabel" style="-fx-font-size: 14px; -fx-text-fill: green;" text="" wrapText="true" GridPane.columnIndex="3" GridPane.rowIndex="6" />
+      <ImageView fitHeight="189.0" fitWidth="365.0" pickOnBounds="true" preserveRatio="true" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.rowSpan="2" GridPane.valignment="TOP">
+        <image>
+          <Image url="@/images/play button.png" />
+        </image>
+      </ImageView>
+      <HBox prefHeight="28.0" prefWidth="188.0" spacing="10.0" GridPane.rowIndex="3">
+         <children>
+          <Button fx:id="streamButton" mnemonicParsing="false" onAction="#tryToStream" text="Stream" />
+          <Button fx:id="rentButton" mnemonicParsing="false" onAction="#showRentWindow" text="Rent" />
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </HBox>
+      <Label fx:id="avgScoreLabel" text="Average score: " GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="TOP">
+         <GridPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </GridPane.margin>
+      </Label>
+      <Hyperlink onAction="#tryToOpenAllReviews" text="See all reviews" GridPane.columnIndex="3" GridPane.rowIndex="6" />
+      <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="5">
+         <children>
+            <Label text="Reviews: " />
+            <Text fx:id="reviewsText" strokeType="OUTSIDE" strokeWidth="0.0" text="Placeholder" />
+         </children>
+      </VBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+         <children>
+            <Button mnemonicParsing="false" fx:id="likeButton">
+              <graphic>
+              <ImageView fitHeight="25.0" fitWidth="25.0">
+                <image>
+                <Image url="@/images/like.png" />
+                </image>
+              </ImageView>
+              </graphic>
+            </Button>
+            <Button mnemonicParsing="false" fx:id="dislikeButton">
+              <graphic>
+              <ImageView fitHeight="25.0" fitWidth="25.0">
+                <image>
+                <Image url="@/images/dislike.png" />
+                </image>
+              </ImageView>
+              </graphic>
+            </Button>
+         </children>
+         <GridPane.margin>
+            <Insets />
+         </GridPane.margin>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </HBox>
   </children>
   <padding>
     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
   </padding>
 </GridPane>
-
