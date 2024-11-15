@@ -138,7 +138,9 @@ public class AdminAddFilmController {
         }
     }
 
-    // Load all ratings and add them to the ComboBox
+    /**
+     * Load all ratings and add them to the ComboBox
+     */
     private void loadRatings() {
         // Get all the enum values
         Film.Rating[] ratings = Film.Rating.values();
@@ -154,7 +156,7 @@ public class AdminAddFilmController {
     }
 
     /**
-     * Loads all possible languages to choose from into the ComboBox and listens to the changes made by the staff member.
+     * Loads all possible languages to choose from into the ComboBox.
      * Display is steered by the Custom Cell factory.
      * Updates attribute selectedLanguage to the choice selected in the ComboBox.
      */

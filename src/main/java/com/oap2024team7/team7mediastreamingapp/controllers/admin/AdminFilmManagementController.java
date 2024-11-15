@@ -9,9 +9,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.sql.SQLException;
 import java.sql.Connection;
-import java.util.ResourceBundle;
 import java.time.LocalDate;
-import java.sql.PreparedStatement;
 import java.time.temporal.ChronoUnit;
 
 import com.oap2024team7.team7mediastreamingapp.customcells.CategoryCell;
