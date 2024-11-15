@@ -2,6 +2,7 @@ package com.oap2024team7.team7mediastreamingapp.services;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -9,7 +10,7 @@ import java.sql.Statement;
 /**
  * Class for the Database Manager.
  * This class is responsible for managing the database connection and schema.
- * @author Agata (Agy) Olaussen (@agyCoding)
+ * @autor Agata (Agy) Olaussen (@agyCoding), Saman (for profile image path implementation)
  */
 
 public class DatabaseManager {
@@ -42,21 +43,22 @@ public class DatabaseManager {
     }
 
     /**
-     * Updates the database schema by adding a new column 'account_type' to the 'customer' table
-     * and creating a new 'profile' table.
+     * Updates the database schema by adding a new column 'account_type' to the 'customer' table,
+     * creating a new 'profile' table, and adding a column for profile pictures.
      */
     public static void updateDatabaseSchema() {
         String checkColumnQuery = "SELECT column_name FROM information_schema.columns WHERE table_name = 'customer' AND column_name = 'account_type'";
         String alterCustomerTable = "ALTER TABLE customer ADD account_type ENUM('FREE', 'PREMIUM') DEFAULT 'FREE';";
 
-        // Create the Profile table
+        // Create the Profile table with an additional 'profile_image_path' column
         String createProfileTable = "CREATE TABLE IF NOT EXISTS profile (" +
             "profile_id INT AUTO_INCREMENT PRIMARY KEY, " +
             "customer_id SMALLINT UNSIGNED NOT NULL, " +
             "main_profile BOOLEAN DEFAULT FALSE, " +
             "profile_name VARCHAR(255) NOT NULL, " +
             "birth_date DATE, " +
-            "hashed_password VARCHAR(255)," +
+            "hashed_password VARCHAR(255), " +
+            "profile_image_path VARCHAR(255), " +
             "FOREIGN KEY (customer_id) REFERENCES customer(customer_id) ON DELETE CASCADE" +
             ");";
 
@@ -95,4 +97,47 @@ public class DatabaseManager {
         }
     }
 
+    /**
+     * Updates the profile image path for a given profile.
+     * @param profileId The ID of the profile.
+     * @param imagePath The path to the profile image.
+     */
+    public static void updateProfileImagePath(int profileId, String imagePath) {
+        String updateImagePathQuery = "UPDATE profile SET profile_image_path = ? WHERE profile_id = ?";
+
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(updateImagePathQuery)) {
+
+            pstmt.setString(1, imagePath);
+            pstmt.setInt(2, profileId);
+            pstmt.executeUpdate();
+
+            System.out.println("Profile image path updated for profile ID: " + profileId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Fetches the profile image path for a given profile.
+     * @param profileId The ID of the profile.
+     * @return The path to the profile image, or null if not set.
+     */
+    public static String getProfileImagePath(int profileId) {
+        String getImagePathQuery = "SELECT profile_image_path FROM profile WHERE profile_id = ?";
+
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(getImagePathQuery)) {
+
+            pstmt.setInt(1, profileId);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getString("profile_image_path");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

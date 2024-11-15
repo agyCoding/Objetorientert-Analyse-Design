@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.oap2024team7.team7mediastreamingapp.models.Profile;
+import com.oap2024team7.team7mediastreamingapp.services.DatabaseManager;
 import com.oap2024team7.team7mediastreamingapp.services.ProfileManager;
 import com.oap2024team7.team7mediastreamingapp.utils.PasswordUtils;
 import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
@@ -52,8 +53,14 @@ public class ManageProfilesController {
     private VBox createProfileBox(Profile profile) {
         VBox box = new VBox();
         
-        // Load the placeholder image
-        Image profileImage = new Image(getClass().getResourceAsStream("/images/pfp.png"));
+        // Hent stien til profilbildet fra databasen
+        String imagePath = DatabaseManager.getProfileImagePath(profile.getProfileId());
+        Image profileImage;
+        if (imagePath != null && !imagePath.isEmpty()) {
+            profileImage = new Image(new File(imagePath).toURI().toString());
+        } else {
+            profileImage = new Image(getClass().getResourceAsStream("/images/pfp.png"));
+        }
         ImageView imageView = new ImageView(profileImage);
         
         // Set size for the image view (optional)
@@ -107,7 +114,9 @@ public class ManageProfilesController {
         if (selectedFile != null) {
             Image newProfileImage = new Image(selectedFile.toURI().toString());
             imageView.setImage(newProfileImage);
-            // You might want to save this new profile picture path in your database
+
+            // Oppdater bilde-stien i databasen
+            DatabaseManager.updateProfileImagePath(profile.getProfileId(), selectedFile.getAbsolutePath());
         }
     }
 
@@ -160,19 +169,3 @@ public class ManageProfilesController {
         alert.showAndWait();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
