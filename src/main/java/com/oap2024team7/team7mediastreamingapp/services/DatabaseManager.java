@@ -46,8 +46,10 @@ public class DatabaseManager {
      * and creating a new 'profile' table.
      */
     public static void updateDatabaseSchema() {
-        String checkColumnQuery = "SELECT column_name FROM information_schema.columns WHERE table_name = 'customer' AND column_name = 'account_type'";
         String alterCustomerTable = "ALTER TABLE customer ADD account_type ENUM('FREE', 'PREMIUM') DEFAULT 'FREE';";
+
+        // When is_streamable is FALSE, only Premium customers should have access to stream the film, while Free accounts may only rent it.
+        String alterFilmTable = "ALTER TABLE film ADD is_streamable BOOLEAN DEFAULT FALSE;";
 
         // Create the Profile table
         String createProfileTable = "CREATE TABLE IF NOT EXISTS profile (" +
@@ -55,6 +57,7 @@ public class DatabaseManager {
             "customer_id SMALLINT UNSIGNED NOT NULL, " +
             "main_profile BOOLEAN DEFAULT FALSE, " +
             "profile_name VARCHAR(255) NOT NULL, " +
+            "profile_picture VARCHAR(255), " +
             "birth_date DATE, " +
             "hashed_password VARCHAR(255)," +
             "FOREIGN KEY (customer_id) REFERENCES customer(customer_id) ON DELETE CASCADE" +
@@ -69,17 +72,48 @@ public class DatabaseManager {
             "FOREIGN KEY (film_id) REFERENCES film(film_id) ON DELETE CASCADE " +
             ");";
 
+        // Create new table to store discount information
+        String createDiscountTable = "CREATE TABLE IF NOT EXISTS film_discount (" +
+            "discount_id INT AUTO_INCREMENT PRIMARY KEY, " +
+            "film_id SMALLINT UNSIGNED NOT NULL, " +
+            "discount_percentage DECIMAL(4, 2) NOT NULL, " +
+            "start_date DATE NOT NULL, " +
+            "expiry_date DATE NOT NULL, " +
+            "FOREIGN KEY (film_id) REFERENCES film(film_id) ON DELETE CASCADE " +
+            ");";
+
+        // Create new table for storing likes, dislikes and reviews for a film
+        String createFilmReviewTable = "CREATE TABLE IF NOT EXISTS film_review (" +
+            "review_id INT AUTO_INCREMENT PRIMARY KEY, " +
+            "film_id SMALLINT UNSIGNED NOT NULL, " +
+            "profile_id INT NOT NULL, " +
+            "liked BOOLEAN DEFAULT NULL, " +
+            "review TEXT, " +
+            "review_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+            "FOREIGN KEY (film_id) REFERENCES film(film_id) ON DELETE CASCADE, " +
+            "FOREIGN KEY (profile_id) REFERENCES profile(profile_id) ON DELETE CASCADE " +
+            ");";
+
         try (Connection conn = DatabaseManager.getConnection();
              Statement stmt = conn.createStatement()) {
-
             // Check if the account_type column exists in the customer table
+            String checkColumnQuery = "SELECT column_name FROM information_schema.columns WHERE table_name = 'customer' AND column_name = 'account_type'";
             ResultSet rs = stmt.executeQuery(checkColumnQuery);
-
             if (!rs.next()) { // Column doesn't exist
-                stmt.executeUpdate(alterCustomerTable);
-                System.out.println("Column 'account_type' added to customer table.");
+            stmt.executeUpdate(alterCustomerTable);
+            System.out.println("Column 'account_type' added to customer table.");
             } else {
-                System.out.println("Column 'account_type' already exists in customer table.");
+            System.out.println("Column 'account_type' already exists in customer table.");
+            }
+
+            // Check if the is_streamable column exists in the film table
+            String checkFilmColumnQuery = "SELECT column_name FROM information_schema.columns WHERE table_name = 'film' AND column_name = 'is_streamable'";
+            rs = stmt.executeQuery(checkFilmColumnQuery);
+            if (!rs.next()) { // Column doesn't exist
+            stmt.executeUpdate(alterFilmTable);
+            System.out.println("Column 'is_streamable' added to film table.");
+            } else {
+            System.out.println("Column 'is_streamable' already exists in film table.");
             }
 
             // Create the Profile table if it doesn't exist
@@ -89,6 +123,14 @@ public class DatabaseManager {
             // Create My List table if it doesn't exist
             stmt.executeUpdate(createMyListTable);
             System.out.println("Table 'my_list' created (if it didn't already exist).");
+
+            // Create Discount table if it doesn't exist
+            stmt.executeUpdate(createDiscountTable);
+            System.out.println("Table 'film_discount' created (if it didn't already exist).");
+
+            // Create Film Review table if it doesn't exist
+            stmt.executeUpdate(createFilmReviewTable);
+            System.out.println("Table 'film_review' created (if it didn't already exist).");
 
         } catch (SQLException e) {
             e.printStackTrace();

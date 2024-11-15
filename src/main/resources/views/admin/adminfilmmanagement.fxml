@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="786.0" prefWidth="662.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oap2024team7.team7mediastreamingapp.controllers.admin.AdminFilmManagementController">
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="878.0" prefWidth="1107.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oap2024team7.team7mediastreamingapp.controllers.admin.AdminFilmManagementController">
   <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES" maxWidth="399.0" minWidth="10.0" prefWidth="325.0" />
-    <ColumnConstraints hgrow="SOMETIMES" maxWidth="307.0" minWidth="10.0" prefWidth="297.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="399.0" minWidth="10.0" prefWidth="338.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="399.0" minWidth="10.0" prefWidth="264.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="377.0" minWidth="10.0" prefWidth="283.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="307.0" minWidth="10.0" prefWidth="253.0" />
   </columnConstraints>
   <rowConstraints>
-      <RowConstraints maxHeight="276.0" minHeight="10.0" prefHeight="56.0" vgrow="SOMETIMES" />
-    <RowConstraints maxHeight="657.0" minHeight="10.0" prefHeight="642.0" vgrow="SOMETIMES" />
-    <RowConstraints maxHeight="95.0" minHeight="0.0" prefHeight="47.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="276.0" minHeight="0.0" prefHeight="84.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="657.0" minHeight="10.0" prefHeight="147.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="657.0" minHeight="10.0" prefHeight="185.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="473.0" minHeight="10.0" prefHeight="396.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="264.0" minHeight="0.0" prefHeight="57.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <Button fx:id="updateButton" mnemonicParsing="false" onAction="#tryToUpdateFilm" prefHeight="27.0" prefWidth="71.0" text="Update" GridPane.rowIndex="2">
+      <Button fx:id="updateButton" mnemonicParsing="false" onAction="#tryToUpdateFilm" prefHeight="27.0" prefWidth="71.0" text="Update" GridPane.columnIndex="3" GridPane.rowIndex="4">
          <GridPane.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </GridPane.margin></Button>
-      <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" GridPane.rowIndex="1">
+         </GridPane.margin>
+         <font>
+            <Font size="15.0" />
+         </font></Button>
+      <VBox prefHeight="560.0" prefWidth="277.0" spacing="10.0" GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.rowSpan="2">
          <children>
-            <HBox prefHeight="25.0" prefWidth="377.0" spacing="10.0">
-               <children>
-                  <Label fx:id="titleLabel" text="Film Title: " />
-                  <TextField fx:id="filmTitleTF" />
-               </children>
-            </HBox>
-            <Label fx:id="descriptionLabel" text="Description:" wrapText="true" />
-            <TextArea fx:id="descriptionTA" prefHeight="89.0" prefWidth="305.0" wrapText="true" />
             <HBox prefHeight="35.0" prefWidth="305.0" spacing="10.0">
                <children>
                   <Label text="Category: " />
@@ -61,44 +61,13 @@
                   <TextField fx:id="lengthTF" />
                </children>
             </HBox>
-            <Separator prefWidth="200.0" />
-            <Label fx:id="specialFeaturesLabel" text="Special features: " />
-            <HBox prefHeight="28.0" prefWidth="377.0" spacing="10.0">
-               <children>
-                  <ComboBox fx:id="specialfeaturesCB" prefWidth="150.0" />
-                  <Button fx:id="addSpecialFeatureButton" mnemonicParsing="false" onAction="#tryToAddSF" text="Add" />
-                  <Button fx:id="deleteSelectedSFButton" style="-fx-background-color: linear-gradient(#ff5400, #be1d00); -fx-text-fill: white;" mnemonicParsing="false" text="Delete" visible="false" onAction="#tryToDeleteSelectedSpecialFeatures"/>
-               </children>
-            </HBox>
-            <ListView fx:id="specialFeaturesLV" prefHeight="124.0" prefWidth="305.0" />
-         </children>
-         <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </padding>
-      </VBox>
-      <VBox prefHeight="560.0" prefWidth="277.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-         <children>
-            <Label fx:id="actorsLabel" text="Add actors: " wrapText="true" />
-            <HBox prefHeight="27.0" prefWidth="245.0" spacing="10.0">
-               <children>
-                  <ComboBox fx:id="actorsCB" prefWidth="150.0" />
-                  <Button fx:id="addActorButton" mnemonicParsing="false" onAction="#tryToAddActor" text="Add" />
-                  <Button fx:id="deleteSelectedActorsButton" style="-fx-background-color: linear-gradient(#ff5400, #be1d00); -fx-text-fill: white;" mnemonicParsing="false" text="Delete" visible="false" onAction="#tryToDeleteSelectedActors"/>
-               </children>
-            </HBox>
-            <ListView fx:id="actorsLV" prefHeight="160.0" prefWidth="277.0" />
-            <Separator prefWidth="200.0" />
             <Label text="Rental Information">
                <font>
                   <Font name="System Bold Italic" size="18.0" />
                </font>
             </Label>
-            <HBox prefHeight="30.0" prefWidth="277.0" spacing="10.0">
-               <children>
-                  <Label text="Max allowed rental duration:" />
-                  <TextField fx:id="rentalDurationTF" prefHeight="25.0" prefWidth="113.0" />
-               </children>
-            </HBox>
+            <Label prefHeight="17.0" prefWidth="191.0" text="Max allowed rental duration:" />
+            <TextField fx:id="rentalDurationTF" prefHeight="25.0" prefWidth="94.0" />
             <HBox prefHeight="27.0" prefWidth="277.0" spacing="10.0">
                <children>
                   <Label text="Rental rate: " />
@@ -128,6 +97,114 @@
             <Font name="System Bold Italic" size="22.0" />
          </font>
       </Label>
+      <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" GridPane.columnIndex="3" GridPane.rowIndex="2" GridPane.rowSpan="2">
+         <children>
+            <Label fx:id="actorsLabel" text="Add actors: " wrapText="true" />
+            <HBox prefHeight="27.0" prefWidth="245.0" spacing="10.0">
+               <children>
+                  <ComboBox fx:id="actorsCB" prefHeight="25.0" prefWidth="124.0" />
+                  <Button fx:id="addActorButton" mnemonicParsing="false" onAction="#tryToAddActor" prefHeight="25.0" prefWidth="53.0" text="Add" />
+                  <Button fx:id="deleteSelectedActorsButton" mnemonicParsing="false" onAction="#tryToDeleteSelectedActors" style="-fx-background-color: linear-gradient(#ff5400, #be1d00); -fx-text-fill: white;" text="Delete" visible="false" />
+               </children>
+            </HBox>
+            <ListView fx:id="actorsLV" prefHeight="160.0" prefWidth="277.0" />
+            <Separator prefWidth="200.0" />
+            <Label fx:id="specialFeaturesLabel" text="Special features: " />
+            <HBox prefHeight="28.0" prefWidth="377.0" spacing="10.0">
+               <children>
+                  <ComboBox fx:id="specialfeaturesCB" prefHeight="25.0" prefWidth="149.0" />
+                  <Button fx:id="addSpecialFeatureButton" mnemonicParsing="false" onAction="#tryToAddSF" prefHeight="25.0" prefWidth="68.0" text="Add" />
+                  <Button fx:id="deleteSelectedSFButton" mnemonicParsing="false" onAction="#tryToDeleteSelectedSpecialFeatures" style="-fx-background-color: linear-gradient(#ff5400, #be1d00); -fx-text-fill: white;" text="Delete" visible="false" />
+               </children>
+            </HBox>
+            <ListView fx:id="specialFeaturesLV" prefHeight="124.0" prefWidth="305.0" />
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </VBox>
+      <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1">
+         <children>
+            <Label fx:id="descriptionLabel" text="Description:" wrapText="true" />
+            <TextArea fx:id="descriptionTA" prefHeight="89.0" prefWidth="305.0" wrapText="true" />
+         </children>
+      </VBox>
+      <VBox prefHeight="300.0" prefWidth="500.0" spacing="10.0" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.rowSpan="2">
+         <children>
+            <HBox prefHeight="25.0" prefWidth="377.0" spacing="10.0">
+               <children>
+                  <Label fx:id="titleLabel" text="Film Title: ">
+                     <font>
+                        <Font size="16.0" />
+                     </font></Label>
+                  <TextField fx:id="filmTitleTF" />
+               </children>
+            </HBox>
+            <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+               <children>
+                  <ImageView fitHeight="302.0" fitWidth="433.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@/images/play button.png" />
+                     </image>
+                  </ImageView>
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </VBox>
+      <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" GridPane.rowIndex="3">
+         <children>
+            <Button fx:id="tryToEditMovieFile" mnemonicParsing="false" text="Edit movie file" />
+            <Separator prefWidth="200.0" />
+            <Label text="Discount">
+               <font>
+                  <Font name="System Bold Italic" size="18.0" />
+               </font>
+            </Label>
+            <Label text="Discount percentage" />
+            <TextField fx:id="discountPercentageTF" />
+            <Label text="Discount end date:" />
+            <DatePicker fx:id="discountEndDateDP" />
+            <HBox alignment="TOP_RIGHT" prefHeight="41.0" prefWidth="342.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#applyDiscount" text="Apply" />
+               </children>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </VBox>
+      <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+         <children>
+            <HBox prefHeight="24.0" prefWidth="361.0" spacing="10.0">
+               <children>
+                  <Label text="Enable Like/Dislike" />
+                  <CheckBox fx:id="likeDislikeCheckBox" mnemonicParsing="false" selected="true" />
+               </children>
+            </HBox>
+            <HBox prefHeight="24.0" prefWidth="361.0" spacing="10.0">
+               <children>
+                  <Label text="Enable Reviews" />
+                  <CheckBox fx:id="enableReviewCheckBox" mnemonicParsing="false" selected="true" />
+               </children>
+            </HBox>
+            <HBox prefHeight="24.0" prefWidth="361.0" spacing="10.0">
+               <children>
+                  <Label text="Enable Free tier access" />
+                  <CheckBox fx:id="enableFreeCheckBox" mnemonicParsing="false" selected="false" />
+               </children>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </VBox>
    </children>
    <padding>
       <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

@@ -9,6 +9,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.sql.SQLException;
 import java.sql.Connection;
+import java.util.ResourceBundle;
+import java.time.LocalDate;
+import java.sql.PreparedStatement;
+import java.time.temporal.ChronoUnit;
 
 import com.oap2024team7.team7mediastreamingapp.customcells.CategoryCell;
 import com.oap2024team7.team7mediastreamingapp.customcells.LanguageCell;
@@ -29,6 +33,8 @@ import com.oap2024team7.team7mediastreamingapp.services.ActorManager;
 import com.oap2024team7.team7mediastreamingapp.customcells.ActorComboBoxCell;
 import com.oap2024team7.team7mediastreamingapp.services.FilmManager;
 import com.oap2024team7.team7mediastreamingapp.services.DatabaseManager;
+import com.oap2024team7.team7mediastreamingapp.models.Discount;
+import com.oap2024team7.team7mediastreamingapp.services.DiscountManager;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -41,6 +47,9 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.DatePicker;
+
 
 /**
  * Controller class for the Film Management window in the admin screen.
@@ -93,6 +102,20 @@ public class AdminFilmManagementController {
     @FXML
     private TextField inventoryAmountTF;
 
+    // Discount information from FXML
+    @FXML
+    private TextField discountPercentageTF;
+    @FXML
+    private DatePicker discountEndDateDP;
+
+    // Information about enabling different features
+    @FXML
+    private CheckBox likeDislikeCheckBox;
+    @FXML
+    private CheckBox enableReviewCheckBox;
+    @FXML
+    private CheckBox enableFreeCheckBox;
+
     // Local variables
     private Film selectedFilm;
     private Stage stage;
@@ -103,6 +126,7 @@ public class AdminFilmManagementController {
     private ActorManager actorManager = ActorManager.getInstance();
     private InventoryManager inventoryManager = new InventoryManager();
     private FilmManager filmManager = new FilmManager();
+    private DiscountManager discountManager = new DiscountManager();
         
     // Store information about chosen inputs
     private Category selectedCategory;
@@ -156,6 +180,13 @@ public class AdminFilmManagementController {
         rentalDurationTF.setText(String.valueOf(selectedFilm.getRentalDuration()));
         rentalRateTF.setText(String.valueOf(selectedFilm.getRentalRate()));
 
+        // Set the discount information
+        Discount discount = discountManager.getActiveDiscount(selectedFilm.getFilmId());
+        if (discount != null) {
+            discountPercentageTF.setText(String.valueOf(discount.getDiscountPercentage()));
+            discountEndDateDP.setValue(discount.getEndDate());
+        }
+
         // Set the current inventory label
         InventoryManager inventoryManager = new InventoryManager();
         Staff staff = SessionData.getInstance().getLoggedInStaff();
@@ -191,7 +222,6 @@ public class AdminFilmManagementController {
                     break;
                 }
             }
-            System.out.println("Selected category: " + selectedCategory.getCategoryName());
         } else {
             System.out.println("No category loaded");
         }
@@ -731,4 +761,95 @@ public class AdminFilmManagementController {
         selectedSpecialFeatures.clear();
         updateDeleteSpecialFeaturesButtonVisibility();
     }
+
+    /**
+     * Method for applying a discount to the selected film.
+     * The discount percentage and end date are taken from the input fields.
+     * If there is no active discount for the film, a new discount is created, else the existing discount is updated.
+     */
+    @FXML
+    public void applyDiscount() {
+        System.out.println("Applying discount...");
+
+        // Define common alert messages
+        String discountUpdatedMessage = "The discount has been updated for the film.";
+        String discountAppliedMessage = "The discount has been successfully applied to the film.";
+        String failedToApplyHeader = "Failed to Apply Discount";
+        String failedToUpdateDiscountMessage = "There was an error updating the discount. Please try again.";
+        String failedToApplyDiscountMessage = "There was an error applying the discount. Please try again.";
+
+        String discountPercentage = discountPercentageTF.getText();
+        LocalDate discountEndDate = discountEndDateDP.getValue();
+
+        // Validate and normalize discount percentage
+        String normalizedDiscountPercentage = GeneralUtils.normalizeDecimalFormat(discountPercentage, 4, 2);
+        if (normalizedDiscountPercentage == null) {
+            GeneralUtils.showAlert(AlertType.WARNING, "Warning", "Invalid Discount Percentage", "Please enter a valid discount percentage in the format 4,2 (e.g., 12.34).");
+            return;
+        }
+
+        // Validate discount end date
+        if (discountEndDate == null) {
+            GeneralUtils.showAlert(AlertType.WARNING, "Warning", "Invalid Discount End Date", "Please select a valid discount end date.");
+            return;
+        }
+
+        // Ensure the discount end date is not in the past
+        if (discountEndDate.isBefore(LocalDate.now())) {
+            GeneralUtils.showAlert(AlertType.WARNING, "Warning", "Invalid Discount End Date", "Discount end date cannot be in the past.");
+            return;
+        }
+
+        long discountDurationDays = ChronoUnit.DAYS.between(LocalDate.now(), discountEndDate);
+        if (discountDurationDays > 365) {
+            GeneralUtils.showAlert(AlertType.WARNING, "Warning", "Invalid Discount Duration", "Please select a discount end date within one year from today.");
+            return;
+        }
+
+        // Check for an existing active discount for the selected film
+        Discount existingDiscount = null;
+        try {
+            existingDiscount = discountManager.getActiveDiscount(selectedFilm.getFilmId());
+            if (existingDiscount == null) {
+                // If no active discount is found, create a new one
+                Discount newDiscount = new Discount(selectedFilm.getFilmId(), Double.parseDouble(normalizedDiscountPercentage), LocalDate.now(), discountEndDate);
+                int discountId = discountManager.registerDiscount(newDiscount);
+                if (discountId != -1) {
+                    GeneralUtils.showAlert(AlertType.INFORMATION, "Success", "Discount Applied", discountAppliedMessage);
+                } else {
+                    GeneralUtils.showAlert(AlertType.ERROR, "Error", "Failed to Apply Discount", failedToApplyDiscountMessage);
+                }
+            } else {
+                // There is an active discount for the film; check if the new expiry date overlaps
+                if (discountEndDate.isBefore(existingDiscount.getEndDate())) {
+                    // If the new expiry date is within the existing discount period, update the discount
+                    existingDiscount.setDiscountPercentage(Double.parseDouble(normalizedDiscountPercentage));
+                    existingDiscount.setEndDate(discountEndDate);
+                    boolean success = discountManager.updateDiscount(existingDiscount);
+                    if (success) {
+                        GeneralUtils.showAlert(AlertType.INFORMATION, "Success", "Discount Updated", discountUpdatedMessage);
+                    } else {
+                        GeneralUtils.showAlert(AlertType.ERROR, "Error", "Failed to Update Discount", failedToUpdateDiscountMessage);
+                    }
+                } else {
+                    // If the new expiry date is after the existing one, create a new discount
+                    Discount newDiscount = new Discount(selectedFilm.getFilmId(), Double.parseDouble(normalizedDiscountPercentage), LocalDate.now(), discountEndDate);
+                    int discountId = discountManager.registerDiscount(newDiscount);
+                    if (discountId != -1) {
+                        GeneralUtils.showAlert(AlertType.INFORMATION, "Success", "Discount Applied", discountAppliedMessage);
+                    } else {
+                        GeneralUtils.showAlert(AlertType.ERROR, "Error", failedToApplyHeader, failedToApplyDiscountMessage);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // Handle any other exceptions (e.g., SQLException wrapped by your manager class)
+            System.err.println("Error retrieving active discount: " + e.getMessage());
+            GeneralUtils.showAlert(AlertType.ERROR, "Error", "Database Error", "An error occurred while retrieving the discount information. Please try again.");
+            return; // Stop further execution
+        }
+    }
+
+
+    
 }
