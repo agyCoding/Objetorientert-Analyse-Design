@@ -14,6 +14,7 @@ public class AdminFilmCell extends ListCell<Film> {
     private CheckBox checkBox = new CheckBox();
     private Text filmItem = new Text();
     private Film film;
+    @SuppressWarnings("unused")
     private AdminPageController controller;
     
     public AdminFilmCell(AdminPageController controller) {

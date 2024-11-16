@@ -92,8 +92,10 @@ public class AdminAddFilmController {
     private FilmManager filmManager = new FilmManager();
         
     // Store information about chosen inputs
+    @SuppressWarnings("unused")
     private Category selectedCategory;
     private String selectedSpecialFeature;
+    @SuppressWarnings("unused")
     private Language selectedLanguage = null;
 
     /**

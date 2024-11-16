@@ -129,6 +129,7 @@ public class AdminFilmManagementController {
     // Store information about chosen inputs
     private Category selectedCategory;
     private String selectedSpecialFeature;
+    @SuppressWarnings("unused")
     private Language selectedLanguage = null;
 
 
