@@ -64,6 +64,7 @@ public class RentFilmController {
     private void initialize() {
         // Get the selected film from the session data
         selectedFilm = SessionData.getInstance().getSelectedFilm();
+        rentalDaysTF.setText("0");
 
         // Display the selected film's details
         String filmString = selectedFilm.getTitle() + " (" + selectedFilm.getReleaseYear() + ")";

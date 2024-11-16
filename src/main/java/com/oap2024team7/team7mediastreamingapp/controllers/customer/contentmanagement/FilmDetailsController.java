@@ -9,14 +9,18 @@ import com.oap2024team7.team7mediastreamingapp.models.Film;
 import com.oap2024team7.team7mediastreamingapp.models.Profile;
 import com.oap2024team7.team7mediastreamingapp.services.ActorManager;
 import com.oap2024team7.team7mediastreamingapp.services.FilmManager;
+import com.oap2024team7.team7mediastreamingapp.services.ProfileManager;
 import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 import com.oap2024team7.team7mediastreamingapp.utils.StageUtils;
 import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
+import com.oap2024team7.team7mediastreamingapp.services.ReviewManager;
+import com.oap2024team7.team7mediastreamingapp.models.Review;
 
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
+import javafx.scene.text.Text;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -58,10 +62,12 @@ public class FilmDetailsController {
     private Button dislikeButton;
     @FXML
     private Label avgScoreLabel;
+    @FXML
+    private Text reviewsText;
 
     private Film selectedFilm;
     private Stage stage;
-    private FilmManager filmManager;
+    private ReviewManager reviewManager;
    
     /**
      * The stage for the Film Details window.
@@ -83,7 +89,7 @@ public class FilmDetailsController {
     public void initialize() {
         // Retrieve the selected film from the session data
         selectedFilm = SessionData.getInstance().getSelectedFilm();
-        filmManager = new FilmManager();
+        reviewManager = new ReviewManager();
     
         if (selectedFilm != null) {
             // Now that the film is set, update the labels with the film's details
@@ -154,9 +160,9 @@ public class FilmDetailsController {
         // Check if the current profile has already liked or disliked the film
         Profile currentProfile = SessionData.getInstance().getCurrentProfile();
         if (currentProfile != null) {
-            int reviewId = filmManager.getReviewId(selectedFilm.getFilmId(), currentProfile.getProfileId());
-            if (reviewId != -1) {
-            boolean isLiked = filmManager.isReviewLiked(reviewId);
+            Review review = reviewManager.getReview(selectedFilm.getFilmId(), currentProfile.getProfileId());
+            if (review != null) {
+            boolean isLiked = reviewManager.isReviewLiked(review);
             if (isLiked) {
                 likeButton.setStyle("-fx-opacity: 1;");
                 dislikeButton.setStyle("-fx-opacity: 0.5;");
@@ -170,6 +176,8 @@ public class FilmDetailsController {
             dislikeButton.setStyle("-fx-opacity: 1;");
             }
         }
+
+        displayAllReviews();
     }
 
     // This method sets the visibility of the Rent and Stream buttons based on the logged-in customer's account type.
@@ -244,7 +252,8 @@ public class FilmDetailsController {
      * Method to add like for the selected film and update average score shown.
      */
     private void likeFilm() {
-        int reviewId = filmManager.addLikeDislike(selectedFilm.getFilmId(), SessionData.getInstance().getCurrentProfile().getProfileId(), true);
+        Review newLike = new Review(selectedFilm.getFilmId(), SessionData.getInstance().getCurrentProfile().getProfileId(), true);
+        int reviewId = reviewManager.addLikeDislike(newLike);
         if (reviewId != -1) {
             updateAverageScore();
         } else {
@@ -258,8 +267,9 @@ public class FilmDetailsController {
      */
     private void dislikeFilm() {
         System.out.println("Disliking film: " + selectedFilm.getTitle());
-        int reviewId = filmManager.addLikeDislike(selectedFilm.getFilmId(), SessionData.getInstance().getCurrentProfile().getProfileId(), false);
-        
+        Review newDislike = new Review(selectedFilm.getFilmId(), SessionData.getInstance().getCurrentProfile().getProfileId(), false);
+        int reviewId = reviewManager.addLikeDislike(newDislike);
+
         // Debugging the returned review ID
         System.out.println("Returned reviewId: " + reviewId);
     
@@ -271,15 +281,51 @@ public class FilmDetailsController {
         }
     }    
 
+    /**
+     * Method to update and show the average score for the selected film.
+     * This method is called after a like or dislike is added, and at the start of the controller.
+     */
     private void updateAverageScore() {
         System.out.println("Updating average score for film: " + selectedFilm.getTitle());
-        double avgScore = filmManager.getAverageReviewScore(selectedFilm.getFilmId());
+        double avgScore = reviewManager.getAverageReviewScore(selectedFilm.getFilmId());
         if (avgScore != 6.00) {
             avgScoreLabel.setText("Average score: " + avgScore);
         } else {
             System.out.println("Error: Unable to update average score.");
             GeneralUtils.showAlert(AlertType.ERROR, "Error", "Update Failed", "Unable to update the average score. Please try again later.");
         }
+    }
+
+    /**
+     * Display all reviews for the selected film.
+     */
+    @FXML
+    private void displayAllReviews() {
+        int filmId = selectedFilm.getFilmId();
+
+        // Get all reviews for the selected film from the database
+        List<Review> reviews = reviewManager.getReviewsByFilmId(filmId);
+
+        // Clear the existing text
+        reviewsText.setText("");
+
+        // Format and display each review
+        StringBuilder reviewsTextBuilder = new StringBuilder();
+        for (Review review : reviews) {
+            int profileId = review.getProfileId();
+            String profileName = ProfileManager.getProfileById(profileId).getProfileName();
+            String reviewDate = review.getReviewDate().toString();
+            String reviewText = review.getReview();
+
+            reviewsTextBuilder.append(profileName)
+                              .append(" (")
+                              .append(reviewDate)
+                              .append("): ")
+                              .append(reviewText)
+                              .append("\n");
+        }
+
+        reviewsText.setText(reviewsTextBuilder.toString());
     }
 
     // TO DO
@@ -289,9 +335,12 @@ public class FilmDetailsController {
         System.out.println("Trying to stream film: " + selectedFilm.getTitle());
     }
 
-    // TO DO
     @FXML
     private void tryToOpenAllReviews() {
         System.out.println("Opening all reviews for film: " + selectedFilm.getTitle());
+        StageUtils.switchScene(
+            (Stage) titleLabel.getScene().getWindow(), 
+            "review", 
+            "Streamify - All Reviews");
     }
 }

@@ -11,6 +11,7 @@ public class AdminSpecialFeaturesCell extends ListCell<String> {
     private HBox hbox = new HBox();
     private CheckBox checkBox = new CheckBox();
     private Text featureItem = new Text();
+    @SuppressWarnings("unused")
     private Object controller;
 
     public AdminSpecialFeaturesCell(Object controller) {

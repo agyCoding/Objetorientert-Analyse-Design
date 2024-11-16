@@ -2,6 +2,11 @@ package com.oap2024team7.team7mediastreamingapp.models;
 
 import java.time.LocalDate;
 
+/**
+ * Class for the Discount model.
+ * This class is responsible for managing discount information.
+ * @author Judith Déné Schjønneberg
+ */
 public class Discount {
     private int discountId;
     private int filmId;

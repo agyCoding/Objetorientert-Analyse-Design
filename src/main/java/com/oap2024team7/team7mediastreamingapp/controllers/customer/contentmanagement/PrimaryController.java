@@ -237,7 +237,7 @@ public class PrimaryController {
         System.out.println("Edit Profile clicked");
     
         // Call showPopup with the primary controller reference
-        Stage popupStage = StageUtils.showPopup(
+        StageUtils.showPopup(
             (Stage) loggedInUserLabel.getScene().getWindow(),
             "editProfile",
             "Streamify - Edit Profile",

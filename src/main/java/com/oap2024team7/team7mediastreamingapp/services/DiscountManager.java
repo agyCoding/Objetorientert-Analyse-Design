@@ -10,6 +10,11 @@ import java.sql.Date;
 
 import com.oap2024team7.team7mediastreamingapp.models.Discount;
 
+/**
+ * Class for the Discount Manager.
+ * This class is responsible for managing discounts in the database.
+ * @author Judith Déné Schjønneberg
+ */
 public class DiscountManager {
 
     /**
