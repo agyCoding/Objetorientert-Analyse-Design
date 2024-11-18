@@ -1,24 +1,35 @@
 package com.oap2024team7.team7mediastreamingapp.controllers.customer.accountmanagement;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.Optional;
+
 import com.oap2024team7.team7mediastreamingapp.models.Profile;
+import com.oap2024team7.team7mediastreamingapp.services.ProfileImageManager;
 import com.oap2024team7.team7mediastreamingapp.services.ProfileManager;
-import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 import com.oap2024team7.team7mediastreamingapp.utils.PasswordUtils;
+import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 import com.oap2024team7.team7mediastreamingapp.utils.StageUtils;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.layout.HBox;
 import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.util.List;
-import java.util.Optional;
+/*
+ * Author: Saman Shaheen @saman091
+ */
 
 
 public class ManageProfilesController {
@@ -27,6 +38,7 @@ public class ManageProfilesController {
     private HBox profileContainer;
 
     private SessionData sessionData = SessionData.getInstance();
+    private ProfileImageManager profileImageManager = new ProfileImageManager();
 
     @FXML
     public void initialize() {
@@ -49,16 +61,22 @@ public class ManageProfilesController {
 
     private VBox createProfileBox(Profile profile) {
         VBox box = new VBox();
-        
-        // Load the placeholder image
-        Image profileImage = new Image(getClass().getResourceAsStream("/images/pfp.png"));
+
+        // Retrieve profile image from the database
+        byte[] imageBytes = profileImageManager.retrieveProfileImage(profile.getProfileId());
+        Image profileImage;
+        if (imageBytes != null) {
+            profileImage = new Image(new ByteArrayInputStream(imageBytes));
+        } else {
+            profileImage = new Image(getClass().getResourceAsStream("/images/pfp.png"));
+        }
         ImageView imageView = new ImageView(profileImage);
-        
+
         // Set size for the image view (optional)
         imageView.setFitWidth(100);  // Set the desired width
         imageView.setFitHeight(100);  // Set the desired height
         imageView.setPreserveRatio(true);  // Preserve aspect ratio
-        
+
         Label profileName = new Label(profile.getProfileName());
 
         // Set an action for clicking the image
@@ -66,38 +84,75 @@ public class ManageProfilesController {
 
         // Add the image view and profile name to the VBox
         box.getChildren().addAll(imageView, profileName);
-        
+
+        // Add "Change PFP" button
+        Button changePFPButton = new Button("Change PFP");
+        changePFPButton.setOnAction(event -> handleChangePFP(profile, imageView));
+        box.getChildren().add(changePFPButton);
+
         return box;
     }
 
     private VBox createCreateProfileBox() {
         VBox box = new VBox();
-        
+
         // Use the placeholder image for the "+" button
         ImageView plusImageView = new ImageView(new Image(getClass().getResourceAsStream("/images/plus.png")));
         plusImageView.setFitWidth(100);  // Set a fixed width for the image
         plusImageView.setFitHeight(100);  // Set the desired height
         plusImageView.setPreserveRatio(true);  // Preserve the aspect ratio
-    
+
         Label createProfileText = new Label("Create profile");
-        
+
         plusImageView.setOnMouseClicked(event -> handleCreateProfileClick());
         box.getChildren().addAll(plusImageView, createProfileText);
-        
+
         return box;
     }
-    
+
+    private void handleChangePFP(Profile profile, ImageView imageView) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Choose a Profile Picture");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
+        );
+
+        Stage stage = (Stage) profileContainer.getScene().getWindow();
+        File selectedFile = fileChooser.showOpenDialog(stage);
+
+        if (selectedFile != null) {
+            try {
+                // Load the selected image
+                Image newProfileImage = new Image(selectedFile.toURI().toString());
+                imageView.setImage(newProfileImage);
+
+                // Convert the image to byte array
+                byte[] imageBytes = Files.readAllBytes(selectedFile.toPath());
+
+                // Save the image in the database
+                boolean success = profileImageManager.storeProfileImage(profile.getProfileId(), imageBytes);
+
+                if (!success) {
+                    showAlert("Failed to save the profile picture.");
+                }
+            } catch (IOException e) {
+                showAlert("Error processing the image: " + e.getMessage());
+            }
+        }
+    }
 
     private void handleProfileClick(Profile profile) {
         if (profile.getHashedPassword() != null) {
             // Prompt for password if profile is protected
             Optional<String> passwordInput = promptForPassword();
-            String hashedPasswordInput = PasswordUtils.hashPassword(passwordInput.get());
-            String storedHashedPassword = profile.getHashedPassword();
-            if (passwordInput.isPresent() && hashedPasswordInput.equals(storedHashedPassword)) {
-                updateSessionProfile(profile);
-            } else {
-                showAlert("Incorrect password!");
+            if (passwordInput.isPresent()) {
+                String hashedPasswordInput = PasswordUtils.hashPassword(passwordInput.get());
+                String storedHashedPassword = profile.getHashedPassword();
+                if (hashedPasswordInput.equals(storedHashedPassword)) {
+                    updateSessionProfile(profile);
+                } else {
+                    showAlert("Incorrect password!");
+                }
             }
         } else {
             updateSessionProfile(profile);
@@ -108,19 +163,17 @@ public class ManageProfilesController {
         System.out.println("Create new profile clicked!");
 
         StageUtils.switchScene(
-            (Stage) profileContainer.getScene().getWindow(), 
-            "createProfile", 
+            (Stage) profileContainer.getScene().getWindow(),
+            "createProfile",
             "Streamify - Create Profile");
     }
-
 
     private Optional<String> promptForPassword() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Profile Password");
         dialog.setHeaderText("Enter the password for this profile:");
 
-        Optional<String> result = dialog.showAndWait();
-        return result;  // Returns the Optional<String> directly
+        return dialog.showAndWait();
     }
 
     private void updateSessionProfile(Profile profile) {
@@ -128,8 +181,8 @@ public class ManageProfilesController {
         showAlert("Profile switched to: " + profile.getProfileName());
 
         StageUtils.switchScene(
-            (Stage) profileContainer.getScene().getWindow(), 
-            "primary", 
+            (Stage) profileContainer.getScene().getWindow(),
+            "primary",
             "Streamify - Customer's Content Viewer");
     }
 
@@ -137,5 +190,4 @@ public class ManageProfilesController {
         Alert alert = new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK);
         alert.showAndWait();
     }
-    
 }
