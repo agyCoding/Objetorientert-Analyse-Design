@@ -557,6 +557,10 @@ public class FilmManager {
     }
     
     // METHODS FOR HIGHER-LEVEL LOGIC RELATED TO DISPLAYING FILMS
+
+    /**
+     * Helper method for getting a list films based on filters, storeId and order, or all films if no filters are applied.
+     */
     public List<Film> loadFilms(
         Integer categoryId,
         Film.Rating rating,
