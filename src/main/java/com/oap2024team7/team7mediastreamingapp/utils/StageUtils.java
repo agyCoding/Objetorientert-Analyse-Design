@@ -73,6 +73,15 @@ public class StageUtils {
         return showPopup(ownerStage, fxmlName, title, modality, null); // Call overloaded method without controller
     }
 
+    /**
+     * Shows a pop-up window with the specified FXML file, title, and modality.
+     * @param ownerStage
+     * @param fxmlName
+     * @param title
+     * @param modality
+     * @param primaryController
+     * @return the Stage object of the pop-up window
+     */
     public static Stage showPopup(Stage ownerStage, String fxmlName, String title, Modality modality, Object primaryController) {
         String fxmlPath = FXML_PATHS.get(fxmlName);
         if (fxmlPath == null) {
