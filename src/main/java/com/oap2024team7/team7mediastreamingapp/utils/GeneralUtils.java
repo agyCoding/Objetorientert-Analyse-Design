@@ -5,6 +5,7 @@ import javafx.scene.control.Alert.AlertType;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Locale;
 
 /**
  * Class for general methods that are used throughout the application.
@@ -30,8 +31,11 @@ public class GeneralUtils {
  
     /**
      * Method to normalize a string.
-     * @param str
-     * @return normalized string
+     * This method trims leading and trailing whitespace, replaces multiple spaces with a single space,
+     * and capitalizes the first letter of each word while converting the rest of the characters to lowercase.
+     * 
+     * @param str the string to normalize
+     * @return the normalized string
      */
     public static String normalizeString(String str) {
         if (str == null || str.isEmpty()) {
@@ -55,7 +59,7 @@ public class GeneralUtils {
     }
 
     /**
-     * Method to normalize a number string.
+     * Method to normalize a number string (removed all non-digit characters from the string)
      * @param str
      * @return normalized number string
      */
@@ -84,5 +88,51 @@ public class GeneralUtils {
     public static boolean isNumeric(String str) {
         return str.matches("-?\\d+(\\.\\d+)?");
     }
+
+    /**
+     * This method takes a decimal string and formats it to a specified number of digits
+     * in the integer and fractional parts. If the input string is not a valid number,
+     * the method returns null.
+     * 
+     * @param str the decimal string to normalize
+     * @param integerPart the number of digits in the integer part
+     * @param fractionalPart the number of digits in the fractional part
+     * @return normalized decimal string or null if the input is invalid
+     */
+    public static String normalizeDecimalFormat(String str, int integerPart, int fractionalPart) {
+        if (str == null || str.isEmpty()) {
+            return null;
+        }
+    
+        // Step 1: Replace commas with periods to standardize the decimal separator
+        // (Handling case where comma is used as a decimal separator)
+        str = str.replace(",", ".");
+    
+        try {
+            // Step 2: Parse the number using the US locale (which uses the period as a decimal separator)
+            double number = Double.parseDouble(str);
+    
+            // Step 3: Round the number to the specified fractional part (2 decimals)
+            double roundedNumber = Math.round(number * Math.pow(10, fractionalPart)) / Math.pow(10, fractionalPart);
+    
+            // Step 4: Format the number to 2 decimal places (ensure formatting is based on Locale.US for consistency)
+            String formattedNumber = String.format(Locale.US, "%.2f", roundedNumber);
+    
+            // Step 5: Split the formatted number into integer and fractional parts
+            String[] parts = formattedNumber.split("\\.");
+            String integerPartStr = parts[0]; // Integer part of the number
+    
+            // Step 6: Validate integer part length
+            if (integerPartStr.length() > integerPart) {
+                return null; // Too many digits in integer part
+            }
+    
+            // Step 7: Return the correctly formatted and rounded number
+            return formattedNumber;
+    
+        } catch (NumberFormatException e) {
+            return null; // In case of invalid format
+        }
+    }       
     
 }

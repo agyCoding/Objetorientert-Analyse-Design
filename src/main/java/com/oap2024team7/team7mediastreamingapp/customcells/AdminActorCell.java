@@ -14,6 +14,7 @@ public class AdminActorCell extends ListCell<Actor> {
     private CheckBox checkBox = new CheckBox();
     private Text actorItem = new Text();
     private Actor actor;
+    @SuppressWarnings("unused")
     private Object controller;
 
     public AdminActorCell(Object controller) {

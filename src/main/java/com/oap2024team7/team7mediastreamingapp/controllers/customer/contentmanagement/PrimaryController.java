@@ -12,7 +12,6 @@ import com.oap2024team7.team7mediastreamingapp.models.Profile;
 import com.oap2024team7.team7mediastreamingapp.customcells.CategoryCell;
 import com.oap2024team7.team7mediastreamingapp.customcells.CustomerFilmCell;
 import com.oap2024team7.team7mediastreamingapp.customcells.RatingCell;
-import com.oap2024team7.team7mediastreamingapp.controllers.customer.accountmanagement.EditProfileController;
 import com.oap2024team7.team7mediastreamingapp.utils.StageUtils;
 
 import java.util.List;
@@ -31,7 +30,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Modality;
-
 
 /**
  * Controller class for the primary screen.
@@ -173,6 +171,10 @@ public class PrimaryController {
         });
     }
 
+    /**
+     * Updates the logged-in user label with the current profile name,
+     * and shows/hides the edit account menu item based on the current profile (if it's main profile or not).
+     */
     private void updateLoggedInUserLabel() {
         currentProfile = SessionData.getInstance().getCurrentProfile();
         String profileName = currentProfile.getProfileName();
@@ -186,12 +188,17 @@ public class PrimaryController {
         }
     }
 
+    /**
+     * Reloads the user data when the user logs in or changes the profile.
+     */
     public void reloadUserData() {
         updateLoggedInUserLabel();
         loadFilms();
     }    
 
-    // Handles the action when the user clicks the "Manage profiles" menu item.
+    /**
+     * Changes scene when the user clicks the "Manage Profiles" menu item.
+     */
     private void handleManageProfiles() {
         StageUtils.switchScene(
             (Stage) loggedInUserLabel.getScene().getWindow(),
@@ -200,7 +207,9 @@ public class PrimaryController {
         );
     }
    
-    // Handles the action when the user clicks the "Edit Account" menu item.
+    /**
+     * Opens pop-up with Edit Account when the user clicks the "Edit Account" menu item.
+     */
     @FXML
     private void handleEditAccount() {
         StageUtils.showPopup(
@@ -221,24 +230,25 @@ public class PrimaryController {
         );
     }
     
-    // Handles the action when the user clicks the "Edit Profile" menu item.
+    /**
+     * Opens pop-up with Edit Profile when the user clicks the "Edit Profile" menu item.
+     */
     private void handleEditProfile() {
-        Stage popupStage = StageUtils.showPopup(
+        System.out.println("Edit Profile clicked");
+    
+        // Call showPopup with the primary controller reference
+        StageUtils.showPopup(
             (Stage) loggedInUserLabel.getScene().getWindow(),
             "editProfile",
             "Streamify - Edit Profile",
-            Modality.WINDOW_MODAL
+            Modality.WINDOW_MODAL,
+            this  // Pass the reference of PrimaryController
         );
-
-        if (popupStage != null) {
-            EditProfileController controller = (EditProfileController) popupStage.getUserData();
-            if (controller != null) {
-                controller.setPrimaryController(this);
-            }
-        }
     }
     
-    // Handles the action when the user clicks the "Logout" menu item.
+    /**
+     * Logs out the user and switches to the login screen.
+     */
     private void handleLogout() {
         // Logic to log out the user
         System.out.println("Logout clicked");
@@ -246,7 +256,9 @@ public class PrimaryController {
         switchToLogin();
     }
 
-    // Load films based on the current filters
+    /**
+     * Loads films into the LV based on the selected filters, sort criteria, customer's storeId and pagination.
+     */
     private void loadFilms() {
 
         int customersStoreId = loggedInCustomer.getStoreId();
@@ -296,13 +308,17 @@ public class PrimaryController {
         }
     }
 
-    // Update the current page label based on pagination
+    /**
+     * Updates the current page label with the current page number.
+     */
     private void updateCurrentPageLabel() {
         int currentPage = (offset / limit) + 1;
         currentPageLabel.setText("Page: " + currentPage);
     }
 
-    // Sort films based on the selected option
+    /**
+     * Sorts the films based on the selected criteria.
+     */
     @FXML    
     private void sortFilms() {
         loadFilms();

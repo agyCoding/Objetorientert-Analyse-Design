@@ -7,6 +7,8 @@ import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 import com.oap2024team7.team7mediastreamingapp.services.InventoryManager;
 import com.oap2024team7.team7mediastreamingapp.models.Inventory;
 import com.oap2024team7.team7mediastreamingapp.models.Customer;
+import com.oap2024team7.team7mediastreamingapp.services.DiscountManager;
+import com.oap2024team7.team7mediastreamingapp.models.Discount;
 
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
@@ -52,6 +54,8 @@ public class RentFilmController {
     private static final String SUCCESS_MESSAGE = "The film has been successfully rented.";
     private static final String INVALID_INPUT_MESSAGE = "Please enter a valid number of days.";
 
+    private double rentalRate;
+
     /**
      * This method initializes the view with the selected film's details
      * and sets up the pause transition for updating the total cost
@@ -60,12 +64,29 @@ public class RentFilmController {
     private void initialize() {
         // Get the selected film from the session data
         selectedFilm = SessionData.getInstance().getSelectedFilm();
+        rentalDaysTF.setText("0");
 
         // Display the selected film's details
         String filmString = selectedFilm.getTitle() + " (" + selectedFilm.getReleaseYear() + ")";
         selectedFilmLabel.setText(filmString);
         maxRentalLengthLabel.setText("Max rental duration: " + String.valueOf(selectedFilm.getRentalDuration()));
-        rentalRateLabel.setText("Rental rate: " + String.valueOf(selectedFilm.getRentalRate()));
+
+        // Get information about the current rental rate and if there's a discount
+        rentalRate = selectedFilm.getRentalRate();
+        DiscountManager discountManager = new DiscountManager();
+        Discount discount = discountManager.getActiveDiscount(selectedFilm.getFilmId());
+
+        // Change rental rate to discounted rate if there's an active discount
+        if (discount != null) {
+            double discountPercentage = discount.getDiscountPercentage();
+            rentalRate = rentalRate - (rentalRate * discountPercentage / 100);
+        }
+
+        rentalRateLabel.setText("Rental rate: $" + String.format("%.2f", rentalRate));
+        if (discount != null) {
+            rentalRateLabel.setStyle("-fx-text-fill: red;");
+            rentalRateLabel.setText(rentalRateLabel.getText() + " (Discounted)");
+        }
 
         // Initialize the PauseTransition with a 1-second delay, giving use time to write correct input
         pause = new PauseTransition(Duration.seconds(1));
@@ -91,7 +112,7 @@ public class RentFilmController {
                 totalCostLabel.setText("Total cost: $0.00");
                 return;
             }
-            totalCost = rentalDays * selectedFilm.getRentalRate();
+            totalCost = rentalDays * rentalRate;
             totalCostLabel.setText(String.format("Total cost: $%.2f", totalCost));
         } catch (NumberFormatException e) {
             Platform.runLater(() -> {
