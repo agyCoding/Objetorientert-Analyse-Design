@@ -178,6 +178,7 @@ public class AdminFilmManagementController {
         lengthTF.setText(String.valueOf(selectedFilm.getLength()));
         rentalDurationTF.setText(String.valueOf(selectedFilm.getRentalDuration()));
         rentalRateTF.setText(String.valueOf(selectedFilm.getRentalRate()));
+        enableFreeCheckBox.setSelected(selectedFilm.isStreamable());
 
         // Set the discount information
         Discount discount = discountManager.getActiveDiscount(selectedFilm.getFilmId());
@@ -433,7 +434,8 @@ public class AdminFilmManagementController {
         }
         selectedFilm.setSpecialFeatures(new HashSet<>(specialFeatures));
         selectedFilm.setActors(actors);
-
+        selectedFilm.setStreamable(enableFreeCheckBox.isSelected());
+        
         // Validate the rental duration and set it in the Film object
         try {
             int rentalDuration = Integer.parseInt(rentalDurationTF.getText());

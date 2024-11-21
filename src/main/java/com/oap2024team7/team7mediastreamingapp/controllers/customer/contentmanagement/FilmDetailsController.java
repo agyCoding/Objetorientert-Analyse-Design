@@ -189,12 +189,17 @@ public class FilmDetailsController {
             AccountType accountType = loggedInCustomer.getAccountType();
 
             if (accountType == AccountType.FREE) {
-                // Show Rent button and hide Stream button for FREE users
-                rentButton.setVisible(true);
-                streamButton.setVisible(false);
-
+                if (selectedFilm.isStreamable()) {
+                    // Show Stream button and hide Rent button if the film is streamable
+                    rentButton.setVisible(false);
+                    streamButton.setVisible(true);
+                } else {
+                    // Show Rent button and hide Stream button if the film is not streamable
+                    rentButton.setVisible(true);
+                    streamButton.setVisible(false);
+                }
             } else if (accountType == AccountType.PREMIUM) {
-                // Show Stream button and hide Rent button for PREMIUM users
+                // Always show Stream button and hide Rent button for PREMIUM users
                 rentButton.setVisible(false);
                 streamButton.setVisible(true);
             }
