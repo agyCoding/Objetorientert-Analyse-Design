@@ -23,6 +23,8 @@ public class Film {
     private Set<String> specialFeatures; // Set of special features that come with the film
     private List<Actor> actors; // List of actors in the film
     private boolean isStreamable; // Flag to indicate if the film is streamable for free users
+    private boolean isRatable;
+    private boolean isReviewable;
 
     // Define enum at the class level
     public enum Rating { NONE, G, PG, PG13, R, NC17 }
@@ -48,7 +50,7 @@ public class Film {
     }
 
     // Constructor for creating a new film from the database
-    public Film(int filmId, String title, String description, int releaseYear, Language language, int rentalDuration, int length, Rating rating, Set<String> specialFeatures, Double rentalRate, List<Actor> actors, boolean isStreamable) {
+    public Film(int filmId, String title, String description, int releaseYear, Language language, int rentalDuration, int length, Rating rating, Set<String> specialFeatures, Double rentalRate, List<Actor> actors, boolean isStreamable, boolean isRatable, boolean isReviewable) {
         this.filmId = filmId;
         this.title = title;
         this.description = description;
@@ -61,6 +63,8 @@ public class Film {
         this.rentalRate = rentalRate;
         this.actors = actors;
         this.isStreamable = isStreamable;
+        this.isRatable = isRatable;
+        this.isReviewable = isReviewable;
     }
 
     // Constructor for creating a new film to be added to the database
@@ -190,5 +194,21 @@ public class Film {
 
     public void setStreamable(boolean streamable) {
         isStreamable = streamable;
+    }
+
+    public boolean isRatable() {
+        return isRatable;
+    }
+
+    public void setRatable(boolean ratable) {
+        isRatable = ratable;
+    }
+
+    public boolean isReviewable() {
+        return isReviewable;
+    }
+
+    public void setReviewable(boolean reviewable) {
+        isReviewable = reviewable;
     }
 }

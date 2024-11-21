@@ -168,7 +168,7 @@ public class AdminFilmManagementController {
 
     /**
      * Method to update the film details in the admin screen.
-     * It sets the text fields and ComboBoxes to the values of the selected film.
+     * It pre-sets the text fields and ComboBoxes to the values of the selected film (based on the info from the DB).
      */
     
     private void updateFilmDetails() {
@@ -179,6 +179,8 @@ public class AdminFilmManagementController {
         rentalDurationTF.setText(String.valueOf(selectedFilm.getRentalDuration()));
         rentalRateTF.setText(String.valueOf(selectedFilm.getRentalRate()));
         enableFreeCheckBox.setSelected(selectedFilm.isStreamable());
+        likeDislikeCheckBox.setSelected(selectedFilm.isRatable());
+        enableReviewCheckBox.setSelected(selectedFilm.isReviewable());
 
         // Set the discount information
         Discount discount = discountManager.getActiveDiscount(selectedFilm.getFilmId());
@@ -435,7 +437,9 @@ public class AdminFilmManagementController {
         selectedFilm.setSpecialFeatures(new HashSet<>(specialFeatures));
         selectedFilm.setActors(actors);
         selectedFilm.setStreamable(enableFreeCheckBox.isSelected());
-        
+        selectedFilm.setRatable(likeDislikeCheckBox.isSelected());
+        selectedFilm.setReviewable(enableReviewCheckBox.isSelected());
+
         // Validate the rental duration and set it in the Film object
         try {
             int rentalDuration = Integer.parseInt(rentalDurationTF.getText());

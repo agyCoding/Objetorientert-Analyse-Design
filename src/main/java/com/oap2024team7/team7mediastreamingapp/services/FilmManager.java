@@ -56,7 +56,7 @@ public class FilmManager {
      * @return The ID of the newly inserted film, or -1 if insertion failed
      */
     public int addFilm(Film film) {
-        String insertFilmQuery = "INSERT INTO film (title, description, release_year, language_id, rental_duration, rental_rate, length, rating, special_features, is_streamable) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String insertFilmQuery = "INSERT INTO film (title, description, release_year, language_id, rental_duration, rental_rate, length, rating, special_features, is_streamable, is_ratable, is_reviewable) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         String insertFilmActorQuery = "INSERT INTO film_actor (film_id, actor_id) VALUES (?, ?)";
 
         try (Connection conn = DatabaseManager.getConnection()) {
@@ -74,6 +74,8 @@ public class FilmManager {
                 filmStmt.setString(8, mapRating(film.getRating()));
                 filmStmt.setString(9, String.join(",", film.getSpecialFeatures()));
                 filmStmt.setBoolean(10, film.isStreamable());
+                filmStmt.setBoolean(11, film.isRatable());
+                filmStmt.setBoolean(12, film.isReviewable());
                 
                 int rowsAffected = filmStmt.executeUpdate();
                 
@@ -117,7 +119,7 @@ public class FilmManager {
      * @return boolean indicating if the film was updated successfully.
      */
     public boolean updateFilm(Film film) {
-        String updateQuery = "UPDATE film SET title = ?, description = ?, release_year = ?, language_id = ?, rental_duration = ?, rental_rate = ?, length = ?, rating = ?, special_features = ?, is_streamable = ? WHERE film_id = ?";
+        String updateQuery = "UPDATE film SET title = ?, description = ?, release_year = ?, language_id = ?, rental_duration = ?, rental_rate = ?, length = ?, rating = ?, special_features = ?, is_streamable = ?, is_ratable = ?, is_reviewable = ? WHERE film_id = ?";
         
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
@@ -131,8 +133,10 @@ public class FilmManager {
             stmt.setInt(7, film.getLength());
             stmt.setString(8, mapRating(film.getRating()));
             stmt.setString(9, String.join(",", film.getSpecialFeatures()));
-            stmt.setInt(10, film.getFilmId());
-            stmt.setBoolean(11, film.isStreamable()); 
+            stmt.setBoolean(10, film.isStreamable());
+            stmt.setBoolean(11, film.isRatable());
+            stmt.setBoolean(12, film.isReviewable());
+            stmt.setInt(13, film.getFilmId()); 
             
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
@@ -277,7 +281,9 @@ public class FilmManager {
                     specialFeatures,
                     rs.getDouble("rental_rate"),
                     actors,
-                    rs.getBoolean("is_streamable")
+                    rs.getBoolean("is_streamable"),
+                    rs.getBoolean("is_ratable"),
+                    rs.getBoolean("is_reviewable")
                 );
                 // The method is reused between primary controller and admin page
                 // Admins don't have profiles so we don't need to check if the film is watchable
@@ -334,7 +340,9 @@ public class FilmManager {
                     specialFeatures,
                     rs.getDouble("rental_rate"),
                     actors,
-                    rs.getBoolean("is_streamable")
+                    rs.getBoolean("is_streamable"),
+                    rs.getBoolean("is_ratable"),
+                    rs.getBoolean("is_reviewable")
                 );
             } else {
                 return null;
@@ -438,7 +446,9 @@ public class FilmManager {
                     specialFeatures,
                     rs.getDouble("rental_rate"),
                     actors,
-                    rs.getBoolean("is_streamable")
+                    rs.getBoolean("is_streamable"),
+                    rs.getBoolean("is_ratable"),
+                    rs.getBoolean("is_reviewable")
                 );
 
                 // The method is reused between primary controller and admin page

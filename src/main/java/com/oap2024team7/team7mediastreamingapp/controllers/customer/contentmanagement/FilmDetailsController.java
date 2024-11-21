@@ -25,6 +25,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.Hyperlink;
 
 /**
  * Controller class for the Film Details screen.
@@ -63,7 +64,11 @@ public class FilmDetailsController {
     @FXML
     private Label avgScoreLabel;
     @FXML
+    private Label reviewsLabel;
+    @FXML
     private Text reviewsText;
+    @FXML
+    private Hyperlink allReviewsHL;
 
     private Film selectedFilm;
     private Stage stage;
@@ -95,8 +100,11 @@ public class FilmDetailsController {
             // Now that the film is set, update the labels with the film's details
             updateFilmDetails();
     
-            // Set button visibility based on account type
-            setButtonVisibility();
+            // Set Rent/Stream button visibility based on account type
+            setRentStreamButtonVisibility();
+
+            // Set visibility of rating and review buttons based on film attributes
+            setRatingAndReviewButtonVisibility();
     
             // Update the status label based on whether the film is already in the list
             if (SessionData.getInstance().getSavedFilms().contains(selectedFilm)) {
@@ -181,7 +189,7 @@ public class FilmDetailsController {
     }
 
     // This method sets the visibility of the Rent and Stream buttons based on the logged-in customer's account type.
-    private void setButtonVisibility() {
+    private void setRentStreamButtonVisibility() {
         // Retrieve the logged-in customer
         Customer loggedInCustomer = SessionData.getInstance().getLoggedInCustomer();
 
@@ -202,6 +210,35 @@ public class FilmDetailsController {
                 // Always show Stream button and hide Rent button for PREMIUM users
                 rentButton.setVisible(false);
                 streamButton.setVisible(true);
+            }
+        }
+    }
+
+    /**
+     * Method to set the visibility of the rating and review buttons based on the film's attributes (set by admin).
+     */
+    private void setRatingAndReviewButtonVisibility() {
+        // Hide the like/dislike buttons and review hyperlink if the film is not ratable or reviewable
+        if (selectedFilm != null) {
+            if (!selectedFilm.isRatable()) {
+                // Hide rating buttons if film isn't supposed to be rated
+                likeButton.setVisible(false);
+                dislikeButton.setVisible(false);
+                avgScoreLabel.setVisible(false);
+            } else {
+                likeButton.setVisible(true);
+                dislikeButton.setVisible(true);
+                avgScoreLabel.setVisible(true);
+            }
+
+            if (!selectedFilm.isReviewable()) {
+                reviewsLabel.setVisible(false); // Hide the label for reviews
+                reviewsText.setVisible(false); // Hide review text area if not reviewable
+                allReviewsHL.setVisible(false); // Hide the hyperlink to view all reviews and add a review
+            } else {
+                reviewsLabel.setVisible(true);
+                reviewsText.setVisible(true);
+                allReviewsHL.setVisible(true);
             }
         }
     }
@@ -274,9 +311,6 @@ public class FilmDetailsController {
         System.out.println("Disliking film: " + selectedFilm.getTitle());
         Review newDislike = new Review(selectedFilm.getFilmId(), SessionData.getInstance().getCurrentProfile().getProfileId(), false);
         int reviewId = reviewManager.addLikeDislike(newDislike);
-
-        // Debugging the returned review ID
-        System.out.println("Returned reviewId: " + reviewId);
     
         if (reviewId != -1) {
             updateAverageScore();
