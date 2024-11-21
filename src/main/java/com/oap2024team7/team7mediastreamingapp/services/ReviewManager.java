@@ -84,11 +84,15 @@ public class ReviewManager {
         int profileId = review.getProfileId();
         boolean liked = review.isLiked();
 
-        // Retrieve the existing review ID
-        int reviewId = getReview(filmId, profileId).getReviewId();
+        // Retrieve the existing review
+        Review existingReview = getReview(filmId, profileId);
+        int reviewId = -1;
 
         // If review exists, update it
-        if (reviewId != -1) {
+        if (existingReview != null) {
+            // If review exists, get its ID
+            reviewId = existingReview.getReviewId();
+
             try (Connection conn = DatabaseManager.getConnection();
                 PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
 
