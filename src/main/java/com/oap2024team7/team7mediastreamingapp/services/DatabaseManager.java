@@ -6,6 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Class for the Database Manager.
  * This class is responsible for managing the database connection and schema.
@@ -47,9 +50,6 @@ public class DatabaseManager {
      */
     public static void updateDatabaseSchema() {
         String alterCustomerTable = "ALTER TABLE customer ADD account_type ENUM('FREE', 'PREMIUM') DEFAULT 'FREE';";
-
-        // When is_streamable is FALSE, only Premium customers should have access to stream the film, while Free accounts may only rent it.
-        String alterFilmTable = "ALTER TABLE film ADD is_streamable BOOLEAN DEFAULT FALSE;";
 
         // Create the Profile table
         String createProfileTable = "CREATE TABLE IF NOT EXISTS profile (" +
@@ -106,14 +106,37 @@ public class DatabaseManager {
             System.out.println("Column 'account_type' already exists in customer table.");
             }
 
-            // Check if the is_streamable column exists in the film table
-            String checkFilmColumnQuery = "SELECT column_name FROM information_schema.columns WHERE table_name = 'film' AND column_name = 'is_streamable'";
+            // Check if the necessary columns exist in the film table
+            String checkFilmColumnQuery = "SELECT column_name FROM information_schema.columns WHERE table_name = 'film' AND column_name IN ('is_streamable', 'is_reviewable', 'is_ratable')";
             rs = stmt.executeQuery(checkFilmColumnQuery);
-            if (!rs.next()) { // Column doesn't exist
-            stmt.executeUpdate(alterFilmTable);
-            System.out.println("Column 'is_streamable' added to film table.");
-            } else {
-            System.out.println("Column 'is_streamable' already exists in film table.");
+
+            Set<String> existingColumns = new HashSet<>();
+            while (rs.next()) {
+                existingColumns.add(rs.getString("column_name"));
+            }
+
+            // SQL statements to add needed columns to the film table
+            String alterFilmTable = "ALTER TABLE film ADD is_streamable BOOLEAN DEFAULT FALSE;";
+            String alterFilmTableReviewable = "ALTER TABLE film ADD is_reviewable BOOLEAN DEFAULT TRUE;";
+            String alterFilmTableRatable = "ALTER TABLE film ADD is_ratable BOOLEAN DEFAULT TRUE;";
+
+            // Check each column and add missing ones
+            if (!existingColumns.contains("is_streamable")) {
+                stmt.executeUpdate(alterFilmTable);
+                System.out.println("Column 'is_streamable' added to the film table.");
+            }
+            if (!existingColumns.contains("is_reviewable")) {
+                stmt.executeUpdate(alterFilmTableReviewable);
+                System.out.println("Column 'is_reviewable' added to the film table.");
+            }
+            if (!existingColumns.contains("is_ratable")) {
+                stmt.executeUpdate(alterFilmTableRatable);
+                System.out.println("Column 'is_ratable' added to the film table.");
+            }
+
+            // If all required columns exist, print the confirmation
+            if (existingColumns.contains("is_streamable") && existingColumns.contains("is_reviewable") && existingColumns.contains("is_ratable")) {
+                System.out.println("Columns 'is_streamable', 'is_reviewable', and 'is_ratable' already exist in the film table.");
             }
 
             // Create the Profile table if it doesn't exist

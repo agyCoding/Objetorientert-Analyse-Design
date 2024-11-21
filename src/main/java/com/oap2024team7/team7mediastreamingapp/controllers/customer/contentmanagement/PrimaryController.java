@@ -164,6 +164,10 @@ public class PrimaryController {
         filmListView.setOnMouseClicked(event -> {
             if (event.getClickCount() == 1) {
                 Film selectedFilm = filmListView.getSelectionModel().getSelectedItem();
+                System.out.println("Selected film: " + selectedFilm.getTitle());
+                System.out.println("Selected is ratable: " + selectedFilm.isRatable());
+                System.out.println("Selected is reviewable: " + selectedFilm.isReviewable());
+
                 if (selectedFilm != null) {
                     showFilmDetails(selectedFilm);
                 }
@@ -338,6 +342,7 @@ public class PrimaryController {
      */
     private void showFilmDetails(Film film) {
         SessionData.getInstance().setSelectedFilm(film);
+
         StageUtils.showPopup(
             (Stage) loggedInUserLabel.getScene().getWindow(),
             "filmDetails",  // Using the short name for the FXML file
