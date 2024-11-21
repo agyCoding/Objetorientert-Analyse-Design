@@ -53,7 +53,7 @@ public class Customer {
         this.active = active;
         this.createDate = LocalDate.now(); // Automatically set to the current date when the object is created
         this.accountType = AccountType.FREE; // For all users created in the application, set account type to FREE
-        this.storeId = 1; // For all users created in the application, set storeId to 1
+        this.storeId = 2; // For all users created in the application, set storeId to 2
     }
 
     public int getCustomerId() {
