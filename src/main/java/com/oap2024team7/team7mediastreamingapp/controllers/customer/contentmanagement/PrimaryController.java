@@ -265,10 +265,18 @@ public class PrimaryController {
 
         // Get sort criteria
         String sortBy = sortByTitle.isSelected() ? "title" : "release_year";
+
+        // Check if the selectedCategory is the placeholder (-1); if so, treat it as null
+        Integer categoryId = (selectedCategory != null && selectedCategory.getCategoryId() != -1) 
+        ? selectedCategory.getCategoryId() 
+        : null;
     
+        // For rating: If selectedRating is null, treat it as no filter for the rating
+        Film.Rating rating = selectedRating == Film.Rating.NONE ? null : selectedRating;
+
         List<Film> films = filmManager.loadFilms(
-            selectedCategory != null ? selectedCategory.getCategoryId() : null,
-            selectedRating,
+            categoryId,
+            rating,
             selectedMaxLength,
             selectedStartYear,
             selectedEndYear,
@@ -351,7 +359,8 @@ public class PrimaryController {
             genreComboBox.getItems().clear();
             
             // Add a null option for the empty category
-            genreComboBox.getItems().add(null);  // Displayed as an empty option
+            Category placeholder = new Category(-1, "");
+            genreComboBox.getItems().add(placeholder);
     
             // Set custom cells for displaying category names
             genreComboBox.setButtonCell(new CategoryCell());
@@ -377,21 +386,32 @@ public class PrimaryController {
      * Load all ratings and add them to the ComboBox.
      */
     private void loadRatings() {
-        // Get all the enum values
+        // Get all the enum values, but do not include 'NONE' manually here
         Film.Rating[] ratings = Film.Rating.values();
-
+    
         ratingComboBox.getItems().clear();
-
-        // Add a null option
-        ratingComboBox.getItems().add(null);  // This will be displayed as an empty choice
-
+    
+        // Add all the enum values to the ComboBox
+        ratingComboBox.getItems().addAll(ratings);
+    
         // Set custom cells for displaying rating names
         ratingComboBox.setCellFactory(lv -> new RatingCell());
         ratingComboBox.setButtonCell(new RatingCell());
-
-        // Add all the enum values to the ComboBox
-        ratingComboBox.getItems().addAll(ratings);
+    
+        // Set the ComboBox value to 'NONE' initially, acting as the empty option
+        ratingComboBox.setValue(Film.Rating.NONE);
+    
+        // Add listener to handle the selection
+        ratingComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            // If the selected value is 'NONE', set selectedRating to null (empty selection)
+            if (newValue == Film.Rating.NONE) {
+                selectedRating = null;  // Reset the selectedRating to null
+            } else {
+                selectedRating = newValue;  // Set the selectedRating to the valid selected value
+            }
+        });
     }
+       
 
     /**
      * Apply the filters selected by the user and load the films.

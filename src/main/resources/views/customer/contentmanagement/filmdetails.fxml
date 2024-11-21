@@ -40,7 +40,7 @@
          <GridPane.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </GridPane.margin></Label>
-    <Label fx:id="actorsLabel" text="Actors: " wrapText="true" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="2" GridPane.rowSpan="2" GridPane.valignment="TOP">
+    <Label fx:id="actorsLabel" text="Actors: " wrapText="true" GridPane.columnIndex="2" GridPane.columnSpan="1" GridPane.rowIndex="2" GridPane.rowSpan="2" GridPane.valignment="TOP">
          <GridPane.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </GridPane.margin></Label>

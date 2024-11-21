@@ -387,7 +387,7 @@ public class FilmManager {
                 stmt.setInt(paramIndex++, categoryId);
             }
             if (rating != null) {
-                stmt.setString(paramIndex++, rating.name());
+                stmt.setString(paramIndex++, mapRating(rating));
             }
             if (maxLength != null) {
                 stmt.setInt(paramIndex++, maxLength);
