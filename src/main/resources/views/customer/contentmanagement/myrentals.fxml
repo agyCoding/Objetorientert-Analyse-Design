@@ -4,6 +4,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
+<!-- Authors: Magnus Bjordammen -->
+
 <VBox xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.oap2024team7.team7mediastreamingapp.controllers.customer.contentmanagement.MyRentalsController"
       spacing="10" style="-fx-padding: 20; -fx-background-color: #f4f4f4;">
@@ -27,13 +29,12 @@
 
     <!-- Horizontal box for action buttons -->
     <HBox spacing="10" alignment="CENTER">
+
+        <!-- Button to view details -->
+        <Button fx:id="playFilmButton" text="Play" onAction="#playFilm" style="-fx-background-color: #dd4141; -fx-text-fill: white;"/>
+
         <!-- Button to view details -->
         <Button fx:id="viewDetailsButton" text="View Details" onAction="#handleViewDetails" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
 
-        <!-- Button to sort films by title -->
-        <Button fx:id="sortByTitleButton" text="Sort by Title" onAction="#handleSortByTitle" style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
-
-        <!-- Button to sort films by year -->
-        <Button fx:id="sortByYearButton" text="Sort by Year" onAction="#handleSortByYear" style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
     </HBox>
 </VBox>
