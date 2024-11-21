@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.control.Button?>
+
+<!-- Authors: Mari Østern and Kaisa Bakstad -->
+
+<StackPane prefWidth="1920.0" prefHeight="1080.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.oap2024team7.team7mediastreamingapp.controllers.customer.contentmanagement.PlaybackController"
+           style="-fx-background-color: black;">
+
+    <!-- Root Pane for entire screen, centered by default -->
+    <Pane fx:id="contentPane" prefWidth="1920.0" prefHeight="1080.0">
+        <!-- Text to indicate playback placeholder -->
+        <Text x="50" y="100" fill="white" style="-fx-font-size: 36px;" text="Now Playing..."/>
+
+        <!-- Button to close the playback window -->
+        <Button fx:id="closeButton" layoutX="1800" layoutY="20" text="Close" onAction="#closeFullScreen"
+                style="-fx-background-color: #d63c3c; -fx-text-fill: white;"/>
+    </Pane>
+
+    <!-- Centered Play/Pause button -->
+    <StackPane fx:id="playPauseIcon" visible="false">
+        <!-- Play text -->
+        <Text fx:id="playText" text="Play" fill="white" style="-fx-font-size: 24px;" visible="true"/>
+
+        <!-- Pause text -->
+        <Text fx:id="pauseText" text="Pause" fill="white" style="-fx-font-size: 24px;" visible="false"/>
+    </StackPane>
+</StackPane>
