@@ -192,7 +192,7 @@ public class AdminFilmManagementController {
         // Set the current inventory label
         InventoryManager inventoryManager = new InventoryManager();
         Staff staff = SessionData.getInstance().getLoggedInStaff();
-        List<Inventory> currentInventory = inventoryManager.checkInventoryForFilmAndStore(selectedFilm, staff);
+        List<Inventory> currentInventory = inventoryManager.checkInventoryForFilmAndStore(selectedFilm, staff.getStoreId());
         currentInventorySize = currentInventory.size();
         
         currentInventoryLabel.setText("Current inventory: " + currentInventorySize);

@@ -88,7 +88,7 @@ public class RentFilmController {
             rentalRateLabel.setText(rentalRateLabel.getText() + " (Discounted)");
         }
 
-        // Initialize the PauseTransition with a 1-second delay, giving use time to write correct input
+        // Initialize the PauseTransition with a 1-second delay, giving user time to write correct input
         pause = new PauseTransition(Duration.seconds(1));
         pause.setOnFinished(event -> updateTotalCost());
 
