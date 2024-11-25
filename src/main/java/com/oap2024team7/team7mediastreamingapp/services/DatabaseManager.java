@@ -81,6 +81,7 @@ public class DatabaseManager {
             "expiry_date DATE NOT NULL, " +
             "FOREIGN KEY (film_id) REFERENCES film(film_id) ON DELETE CASCADE" +
             ");";
+            
         String createProfileImageTable = "CREATE TABLE IF NOT EXISTS profile_image (" +
             "id INT AUTO_INCREMENT PRIMARY KEY, " +
             "profile_id INT NOT NULL, " +
