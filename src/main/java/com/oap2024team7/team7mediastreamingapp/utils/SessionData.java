@@ -1,21 +1,22 @@
 package com.oap2024team7.team7mediastreamingapp.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.oap2024team7.team7mediastreamingapp.models.Address;
 import com.oap2024team7.team7mediastreamingapp.models.Customer;
-import com.oap2024team7.team7mediastreamingapp.models.Profile;
 import com.oap2024team7.team7mediastreamingapp.models.Film;
+import com.oap2024team7.team7mediastreamingapp.models.Profile;
 import com.oap2024team7.team7mediastreamingapp.models.Staff;
 import com.oap2024team7.team7mediastreamingapp.models.Rental;
 import com.oap2024team7.team7mediastreamingapp.models.Payment;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.oap2024team7.team7mediastreamingapp.services.ProfileImageManager;
 
 /**
  * Class for the SessionData object.
  * This class is responsible for managing the session data of the application.
  * It stores the logged in customer, current profile, customer's address, and selected film.
- * @authors Agata (Agy) Olaussen (@agyCoding), Adnan @adovic (savedFilms and methods for my saved films)
+ * @authors Agata (Agy) Olaussen (@agyCoding), Adnan @adovic (savedFilms and methods for my saved films), @saman091 (profile image methods)
  */
 
 public class SessionData {
@@ -28,10 +29,12 @@ public class SessionData {
     private Rental newRental;
     private Payment newPayment;
     private List<Film> savedFilms; // List to store saved films
+    private ProfileImageManager profileImageManager; // ProfileImageManager for database operations
 
     // Constructor is private to implement the Singleton pattern
     private SessionData() {
         savedFilms = new ArrayList<>(); // Initialize the saved films list
+        profileImageManager = new ProfileImageManager(); // Initialize ProfileImageManager
     }
 
     public static SessionData getInstance() {
@@ -154,4 +157,22 @@ public class SessionData {
         }
     }
 
+    /**
+     * Save a profile image to the database.
+     * @param profileId The ID of the profile.
+     * @param imageData The image data as a byte array.
+     * @return True if the image was successfully saved, false otherwise.
+     */
+    public boolean saveProfileImage(int profileId, byte[] imageData) {
+        return profileImageManager.storeProfileImage(profileId, imageData);
+    }
+
+    /**
+     * Retrieve a profile image from the database.
+     * @param profileId The ID of the profile.
+     * @return The image data as a byte array, or null if not found.
+     */
+    public byte[] getProfileImage(int profileId) {
+        return profileImageManager.retrieveProfileImage(profileId);
+    }
 }

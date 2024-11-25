@@ -12,7 +12,7 @@ import java.util.Set;
 /**
  * Class for the Database Manager.
  * This class is responsible for managing the database connection and schema.
- * @author Agata (Agy) Olaussen (@agyCoding)
+ * @author Agata (Agy) Olaussen (@agyCoding) and Saman Shaheen @saman091 (createProfileImageTable, addColumnIfNotExists amd createTableIfNotExists methods)
  */
 
 public class DatabaseManager {
@@ -44,7 +44,7 @@ public class DatabaseManager {
         }
     }
 
-    /**
+      /**
      * Updates the database schema by adding a new column 'account_type' to the 'customer' table
      * and creating a new 'profile' table.
      */
@@ -62,7 +62,7 @@ public class DatabaseManager {
             "hashed_password VARCHAR(255)," +
             "FOREIGN KEY (customer_id) REFERENCES customer(customer_id) ON DELETE CASCADE" +
             ");";
-
+        
         // Create My List table to store user's saved films
         String createMyListTable = "CREATE TABLE IF NOT EXISTS my_list (" +
             "list_id INT AUTO_INCREMENT PRIMARY KEY, " +
@@ -79,7 +79,13 @@ public class DatabaseManager {
             "discount_percentage DECIMAL(4, 2) NOT NULL, " +
             "start_date DATE NOT NULL, " +
             "expiry_date DATE NOT NULL, " +
-            "FOREIGN KEY (film_id) REFERENCES film(film_id) ON DELETE CASCADE " +
+            "FOREIGN KEY (film_id) REFERENCES film(film_id) ON DELETE CASCADE" +
+            ");";
+        String createProfileImageTable = "CREATE TABLE IF NOT EXISTS profile_image (" +
+            "id INT AUTO_INCREMENT PRIMARY KEY, " +
+            "profile_id INT NOT NULL, " +
+            "image LONGBLOB, " +
+            "FOREIGN KEY (profile_id) REFERENCES profile(profile_id) ON DELETE CASCADE" +
             ");";
 
         // Create new table for storing likes, dislikes and reviews for a film
@@ -91,7 +97,7 @@ public class DatabaseManager {
             "review TEXT, " +
             "review_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
             "FOREIGN KEY (film_id) REFERENCES film(film_id) ON DELETE CASCADE, " +
-            "FOREIGN KEY (profile_id) REFERENCES profile(profile_id) ON DELETE CASCADE " +
+            "FOREIGN KEY (profile_id) REFERENCES profile(profile_id) ON DELETE CASCADE" +
             ");";
 
         try (Connection conn = DatabaseManager.getConnection();
@@ -160,4 +166,38 @@ public class DatabaseManager {
         }
     }
 
+
+    /**
+     * Adds a column to a table if it does not exist.
+     * @param stmt Statement object
+     * @param tableName Name of the table
+     * @param columnName Name of the column
+     * @param alterQuery SQL query to add the column
+     * @throws SQLException
+     */
+    private static void addColumnIfNotExists(Statement stmt, String tableName, String columnName, String alterQuery) throws SQLException {
+        String checkColumnQuery = String.format(
+            "SELECT column_name FROM information_schema.columns WHERE table_name = '%s' AND column_name = '%s'",
+            tableName, columnName);
+        try (ResultSet rs = stmt.executeQuery(checkColumnQuery)) {
+            if (!rs.next()) {
+                stmt.executeUpdate(alterQuery);
+                System.out.printf("Column '%s' added to table '%s'.%n", columnName, tableName);
+            } else {
+                System.out.printf("Column '%s' already exists in table '%s'.%n", columnName, tableName);
+            }
+        }
+    }
+
+    /**
+     * Creates a table if it does not exist.
+     * @param stmt Statement object
+     * @param tableName Name of the table
+     * @param createQuery SQL query to create the table
+     * @throws SQLException
+     */
+    private static void createTableIfNotExists(Statement stmt, String tableName, String createQuery) throws SQLException {
+        stmt.executeUpdate(createQuery);
+        System.out.printf("Table '%s' created (if it didn't already exist).%n", tableName);
+    }
 }

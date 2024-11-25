@@ -1,12 +1,12 @@
 package com.oap2024team7.team7mediastreamingapp.services;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
-import java.sql.Date;
 
 import com.oap2024team7.team7mediastreamingapp.models.Discount;
 
