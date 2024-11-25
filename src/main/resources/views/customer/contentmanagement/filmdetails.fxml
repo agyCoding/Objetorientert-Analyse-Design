@@ -64,7 +64,7 @@
          </GridPane.margin></Button>
 
     <!-- New Label to show the status of the "Save to List" action -->
-    <Label fx:id="statusLabel" style="-fx-font-size: 14px; -fx-text-fill: green;" text="" wrapText="true" GridPane.columnIndex="3" GridPane.rowIndex="6" />
+    <Label fx:id="statusLabel" style="-fx-font-size: 14px; -fx-text-fill: green;" text="" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="5" />
       <ImageView fitHeight="189.0" fitWidth="365.0" pickOnBounds="true" preserveRatio="true" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.rowSpan="2" GridPane.valignment="TOP">
         <image>
           <Image url="@/images/play button.png" />

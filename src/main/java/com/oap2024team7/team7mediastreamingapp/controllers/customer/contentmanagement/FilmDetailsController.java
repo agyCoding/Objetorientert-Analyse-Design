@@ -1,6 +1,8 @@
 package com.oap2024team7.team7mediastreamingapp.controllers.customer.contentmanagement;
 
 import java.util.List;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import com.oap2024team7.team7mediastreamingapp.models.Actor;
 import com.oap2024team7.team7mediastreamingapp.models.Customer;
@@ -10,12 +12,14 @@ import com.oap2024team7.team7mediastreamingapp.models.Profile;
 import com.oap2024team7.team7mediastreamingapp.services.ActorManager;
 import com.oap2024team7.team7mediastreamingapp.services.FilmManager;
 import com.oap2024team7.team7mediastreamingapp.services.ProfileManager;
+import com.oap2024team7.team7mediastreamingapp.services.RentalManager;
 import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 import com.oap2024team7.team7mediastreamingapp.utils.StageUtils;
 import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
 import com.oap2024team7.team7mediastreamingapp.services.ReviewManager;
 import com.oap2024team7.team7mediastreamingapp.models.Review;
-
+import com.oap2024team7.team7mediastreamingapp.services.InventoryManager;
+import com.oap2024team7.team7mediastreamingapp.models.Inventory;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -73,6 +77,8 @@ public class FilmDetailsController {
     private Film selectedFilm;
     private Stage stage;
     private ReviewManager reviewManager;
+    private InventoryManager inventoryManager;
+    private RentalManager rentalManager = new RentalManager();
    
     /**
      * The stage for the Film Details window.
@@ -95,16 +101,11 @@ public class FilmDetailsController {
         // Retrieve the selected film from the session data
         selectedFilm = SessionData.getInstance().getSelectedFilm();
         reviewManager = new ReviewManager();
+        inventoryManager = new InventoryManager();
     
         if (selectedFilm != null) {
             // Now that the film is set, update the labels with the film's details
             updateFilmDetails();
-    
-            // Set Rent/Stream button visibility based on account type
-            setRentStreamButtonVisibility();
-
-            // Set visibility of rating and review buttons based on film attributes
-            setRatingAndReviewButtonVisibility();
     
             // Update the status label based on whether the film is already in the list
             if (SessionData.getInstance().getSavedFilms().contains(selectedFilm)) {
@@ -112,6 +113,12 @@ public class FilmDetailsController {
             } else {
                 statusLabel.setText("");
             }
+
+            // Set Rent/Stream button visibility based on account type
+            setRentStreamButtonVisibility();
+
+            // Set visibility of rating and review buttons based on film attributes
+            setRatingAndReviewButtonVisibility();
 
             // Add action listeners for both buttons
             likeButton.setOnAction(e -> {
@@ -188,28 +195,72 @@ public class FilmDetailsController {
         displayAllReviews();
     }
 
-    // This method sets the visibility of the Rent and Stream buttons based on the logged-in customer's account type.
+    /**
+     * Method to set the visibility of the Rent and Stream buttons based on the customer's account type,
+     * film attributes and inventory availability.
+     * It provides feedback to the customer if they already have an active rental for the selected film and
+     * if there is no available inventory for the selected film within the next 24 hours.
+     * 
+     */
     private void setRentStreamButtonVisibility() {
         // Retrieve the logged-in customer
         Customer loggedInCustomer = SessionData.getInstance().getLoggedInCustomer();
 
         if (loggedInCustomer != null) {
             AccountType accountType = loggedInCustomer.getAccountType();
+            LocalDateTime now = LocalDateTime.now();
 
-            if (accountType == AccountType.FREE) {
-                if (selectedFilm.isStreamable()) {
-                    // Show Stream button and hide Rent button if the film is streamable
-                    rentButton.setVisible(false);
-                    streamButton.setVisible(true);
+            // Check if the customer already has an active rental for the selected film
+            boolean hasActiveRental = rentalManager.customerHasActiveRental(
+                loggedInCustomer.getCustomerId(), selectedFilm.getFilmId(), now, now.plusDays(1)
+            );
+
+            if (hasActiveRental) {
+                // Customer already has an active rental; disable both buttons and update status label
+                rentButton.setDisable(true);
+                streamButton.setDisable(true);
+                statusLabel.setText("You already have an active rental for this film.");
+            } else {
+                // Customer does not have an active rental; proceed with checking general availability
+                List<Inventory> availableInventories = inventoryManager.checkForAvailableInventory(
+                    selectedFilm.getFilmId(), loggedInCustomer.getStoreId(), now, now.plusDays(1)
+                );
+
+                if (availableInventories.isEmpty()) {
+                    // No inventory available, disable both buttons
+                    rentButton.setDisable(true);
+                    streamButton.setDisable(true);
+
+                    // Get the next availability date
+                    LocalDateTime nextAvailableDate = inventoryManager.getNextAvailableDate(selectedFilm.getFilmId(), loggedInCustomer.getStoreId());
+
+                    if (nextAvailableDate != null) {
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMM yyyy 'at' h:mm a");
+                        statusLabel.setText("Next availability for renting/streaming: " + nextAvailableDate.format(formatter));
+                        statusLabel.setStyle("-fx-text-fill: red;");
+                    } else {
+                        statusLabel.setText("No inventory available.");
+                        statusLabel.setStyle("-fx-text-fill: red;");
+                    }
                 } else {
-                    // Show Rent button and hide Stream button if the film is not streamable
-                    rentButton.setVisible(true);
-                    streamButton.setVisible(false);
+                    // Inventory available, enable both buttons and set visibility based on account type and film attributes
+                    if (accountType == AccountType.FREE) {
+                        if (selectedFilm.isStreamable()) {
+                            // Show Stream button and hide Rent button if the film is streamable
+                            rentButton.setVisible(false);
+                            streamButton.setVisible(true);
+                        } else {
+                            // Show Rent button and hide Stream button if the film is not streamable
+                            rentButton.setVisible(true);
+                            streamButton.setVisible(false);
+                        }
+                    } else if (accountType == AccountType.PREMIUM) {
+                        // Always show Stream button and hide Rent button for PREMIUM users
+                        rentButton.setVisible(false);
+                        streamButton.setVisible(true);
+                    }
+                    statusLabel.setText("");
                 }
-            } else if (accountType == AccountType.PREMIUM) {
-                // Always show Stream button and hide Rent button for PREMIUM users
-                rentButton.setVisible(false);
-                streamButton.setVisible(true);
             }
         }
     }

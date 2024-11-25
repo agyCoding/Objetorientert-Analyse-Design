@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="357.0" prefWidth="332.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.oap2024team7.team7mediastreamingapp.controllers.customer.contentmanagement.CreditCardPaymentController">
+   <children>
+      <Label text="Payment Information">
+         <font>
+            <Font name="System Bold Italic" size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="filmTitleLabel" text="Film title: " />
+      <Label fx:id="amountLabel" text="Amount: " />
+      <Separator prefWidth="200.0" />
+      <Label text="Card Number:" />
+      <TextField fx:id="cardNumberTF" />
+      <Label text="Expiry Date:" />
+      <HBox prefHeight="33.0" prefWidth="600.0">
+         <children>
+            <TextField fx:id="monthTextField" />
+            <Label text=" / " />
+            <TextField fx:id="yearTF" />
+         </children>
+      </HBox>
+      <Label text="CVV:" />
+      <TextField fx:id="cvvTF" />
+      <HBox alignment="CENTER" prefHeight="33.0" prefWidth="600.0">
+         <children>
+            <Button mnemonicParsing="false" text="Confirm Payment" onAction="#tryToPay"/>
+         </children>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</VBox>
