@@ -340,6 +340,60 @@ public class FilmManager {
             return null;
         }
     }
+    /**
+ * Searches for films based on a query string.
+ * @param query The text to search for in the title or description.
+ * @return A list of films that match the search query.
+ */
+public List<Film> searchFilms(String query) {
+    List<Film> films = new ArrayList<>();
+    String sql = "SELECT * FROM film WHERE title LIKE ? OR description LIKE ?";
+    try (Connection conn = DatabaseManager.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        
+        // Use wildcards for partial matching
+        String searchPattern = "%" + query + "%";
+        stmt.setString(1, searchPattern);
+        stmt.setString(2, searchPattern);
+
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            // Fetch the language object
+            LanguageManager languageManager = new LanguageManager();
+            Language language = languageManager.getLanguageById(conn, rs.getInt("language_id"));
+
+            // Convert special_features from String to Set<String>
+            Set<String> specialFeatures = new HashSet<>();
+            String specialFeaturesString = rs.getString("special_features");
+            if (specialFeaturesString != null && !specialFeaturesString.isEmpty()) {
+                specialFeatures.addAll(Arrays.asList(specialFeaturesString.split(",")));
+            }
+
+            // Fetch the actors for this film
+            List<Actor> actors = ActorManager.getInstance().getActorsForFilm(rs.getInt("film_id"));
+
+            Film film = new Film(
+                rs.getInt("film_id"),
+                rs.getString("title"),
+                rs.getString("description"),
+                rs.getInt("release_year"),
+                language,
+                rs.getInt("rental_duration"),
+                rs.getInt("length"),
+                Film.Rating.valueOf(rs.getString("rating").replace("-", "")),
+                specialFeatures,
+                rs.getDouble("rental_rate"),
+                actors
+            );
+
+            films.add(film);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return films;
+}
+
     
 
     /**

@@ -22,19 +22,18 @@ import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Alert.AlertType;
-import javafx.stage.Stage;
-import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.stage.Stage;
 import javafx.stage.Modality;
 
 /**
  * Controller class for the primary screen.
- * It displays a list of films and allows the user to filter and sort the films.
- * The controller also allows the user to view film details and navigate to the edit profile screen or logout.
+ * It displays a list of films and allows the user to filter, sort, search films, and navigate to other screens.
  * @author  Agata (Agy) Olaussen (@agyCoding)
  */
 
@@ -56,7 +55,7 @@ public class PrimaryController {
     @FXML
     private VBox filterMenu;
 
-    // Pirmary content viewer (LV)
+    // Primary content viewer (LV)
     @FXML
     private ListView<Film> filmListView;
     @FXML
@@ -82,7 +81,13 @@ public class PrimaryController {
     private TextField startYearField;
     @FXML
     private TextField endYearField;
-    
+
+    // Search feature
+    @FXML
+    private TextField searchField;
+    @FXML
+    private Button searchButton;
+
     // Local variables
     private ToggleGroup sortToggleGroup;
     private FilmManager filmManager;
@@ -98,7 +103,7 @@ public class PrimaryController {
     private Integer selectedMaxLength;
     private Integer selectedStartYear;
     private Integer selectedEndYear;
-    
+
     /**
      * Initializes the controller class.
      * It is used to initialize the controller and load the initial data.
@@ -118,37 +123,28 @@ public class PrimaryController {
             editAccountMenuItem.setVisible(true);  // Show the Edit Account menu item if mainProfile = true
         } else {
             editAccountMenuItem.setVisible(false);  // Hide the Edit Account menu item if mainProfile = false
-        }        
-    
-        // Handle manage profiles action
+        }
+
+        // Handle user menu actions
         manageProfilesMenuItem.setOnAction(event -> handleManageProfiles());
-
-        // Handle edit account action
         editAccountMenuItem.setOnAction(event -> handleEditAccount());
-    
-        // Handle edit profile action
         editProfileMenuItem.setOnAction(event -> handleEditProfile());
-
-        // Handle logout action
         logoutMenuItem.setOnAction(event -> handleLogout());
 
-        /* INITIALIZE FILTERS FOR LV */
+        /* INITIALIZE SEARCH FEATURE */
+        searchButton.setOnAction(event -> handleSearch());
 
+        /* INITIALIZE FILTERS FOR LV */
         loadCategories();
         loadRatings();
 
         /* INITIALIZE FILM LV */
-
         filmManager = new FilmManager();
 
         // Initialize the ToggleGroup in the controller
         sortToggleGroup = new ToggleGroup();
-        
-        // Assign the ToggleGroup to the RadioButtons
         sortByTitle.setToggleGroup(sortToggleGroup);
         sortByReleaseYear.setToggleGroup(sortToggleGroup);
-
-        // Set default selection if needed
         sortByTitle.setSelected(true);
 
         // Load the first page of films
@@ -170,6 +166,27 @@ public class PrimaryController {
             }
         });
     }
+
+    // Search functionality
+    @FXML
+    private void handleSearch() {
+        String query = searchField.getText().trim();
+
+        if (query.isEmpty()) {
+            loadFilms(); // Reload all films if search is empty
+            return;
+        }
+
+        List<Film> searchResults = filmManager.searchFilms(query);
+
+        if (searchResults == null || searchResults.isEmpty()) {
+            GeneralUtils.showAlert(AlertType.INFORMATION, "No Results", "Search Results", "No movies found matching your search.");
+        } else {
+            filmListView.getItems().clear();
+            filmListView.getItems().addAll(searchResults);
+        }
+    }
+
 
     /**
      * Updates the logged-in user label with the current profile name,
