@@ -12,7 +12,7 @@ import java.util.Set;
 /**
  * Class for the Database Manager.
  * This class is responsible for managing the database connection and schema.
- * @author Agata (Agy) Olaussen (@agyCoding)
+ * @author Agata (Agy) Olaussen (@agyCoding) and Saman Shaheen @saman091 (createProfileImageTable, addColumnIfNotExists amd createTableIfNotExists methods)
  */
 
 public class DatabaseManager {
