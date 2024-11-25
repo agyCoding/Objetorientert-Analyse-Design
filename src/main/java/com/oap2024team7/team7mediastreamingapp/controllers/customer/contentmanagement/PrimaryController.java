@@ -34,7 +34,7 @@ import javafx.stage.Modality;
 /**
  * Controller class for the primary screen.
  * It displays a list of films and allows the user to filter, sort, search films, and navigate to other screens.
- * @author  Agata (Agy) Olaussen (@agyCoding)
+ * @author  Agata (Agy) Olaussen (@agyCoding), Adnan Duric (@adovic) (Search by title Functionality).
  */
 
 public class PrimaryController {

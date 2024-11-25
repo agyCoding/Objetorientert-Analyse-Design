@@ -35,7 +35,7 @@ import javafx.scene.control.Hyperlink;
  * Controller class for the Film Details screen.
  * This class is responsible for displaying the details of a selected film.
  * 
- * @author Agata (Agy) Olaussen (@agyCoding)
+ * @author Agata (Agy) Olaussen (@agyCoding), Adnan Duric (@adovic) (Add to my list button).
  */
 
 public class FilmDetailsController {
