@@ -9,6 +9,12 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
+/**
+ * Manages rentals in the database.
+ * This class provides methods to add, remove, and check rentals in the database.
+ * It also provides a method to check if a customer has an active rental for a given film and date range.
+ * @author Agata (Agy) Olaussen @agyCoding
+ */
 public class RentalManager {
     /**
      * Checks if a customer has an active rental for a given film and date range.

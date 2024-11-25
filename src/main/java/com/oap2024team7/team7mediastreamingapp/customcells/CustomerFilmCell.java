@@ -4,6 +4,10 @@ import com.oap2024team7.team7mediastreamingapp.models.Film;
 
 import javafx.scene.control.ListCell;
 
+/**
+ * Custom ListCell for displaying Film objects with title and release year only
+ * @author  Agata (Agy) Olaussen (@agyCoding)
+ */
 public class CustomerFilmCell extends ListCell<Film> {
     @Override
     protected void updateItem(Film film, boolean empty) {

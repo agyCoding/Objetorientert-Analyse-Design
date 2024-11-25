@@ -15,6 +15,11 @@ import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 import com.oap2024team7.team7mediastreamingapp.services.ProfileManager;
 import com.oap2024team7.team7mediastreamingapp.services.ReviewManager;
 
+/**
+ * Controller class for the Review screen.
+ * This class is responsible for handling user input and displaying data on the Review screen.
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
 public class ReviewController {
     @FXML
     private Label filmTitleLabel;

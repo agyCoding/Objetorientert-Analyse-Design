@@ -16,7 +16,7 @@ import com.oap2024team7.team7mediastreamingapp.services.ProfileImageManager;
  * Class for the SessionData object.
  * This class is responsible for managing the session data of the application.
  * It stores the logged in customer, current profile, customer's address, and selected film.
- * @authors Agata (Agy) Olaussen (@agyCoding), Adnan @adovic (savedFilms and methods for my saved films), @saman091 (profile image methods)
+ * @author Agata (Agy) Olaussen (@agyCoding), Adnan @adovic (savedFilms and methods for my saved films), @saman091 (profile image methods)
  */
 
 public class SessionData {
