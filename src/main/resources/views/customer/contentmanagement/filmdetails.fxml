@@ -40,7 +40,7 @@
          <GridPane.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </GridPane.margin></Label>
-    <Label fx:id="actorsLabel" text="Actors: " wrapText="true" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="2" GridPane.rowSpan="2" GridPane.valignment="TOP">
+    <Label fx:id="actorsLabel" text="Actors: " wrapText="true" GridPane.columnIndex="2" GridPane.columnSpan="1" GridPane.rowIndex="2" GridPane.rowSpan="2" GridPane.valignment="TOP">
          <GridPane.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </GridPane.margin></Label>
@@ -64,7 +64,7 @@
          </GridPane.margin></Button>
 
     <!-- New Label to show the status of the "Save to List" action -->
-    <Label fx:id="statusLabel" style="-fx-font-size: 14px; -fx-text-fill: green;" text="" wrapText="true" GridPane.columnIndex="3" GridPane.rowIndex="6" />
+    <Label fx:id="statusLabel" style="-fx-font-size: 14px; -fx-text-fill: green;" text="" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="5" />
       <ImageView fitHeight="189.0" fitWidth="365.0" pickOnBounds="true" preserveRatio="true" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.rowSpan="2" GridPane.valignment="TOP">
         <image>
           <Image url="@/images/play button.png" />
@@ -84,10 +84,10 @@
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </GridPane.margin>
       </Label>
-      <Hyperlink onAction="#tryToOpenAllReviews" text="See all reviews" GridPane.columnIndex="3" GridPane.rowIndex="6" />
+      <Hyperlink fx:id="allReviewsHL" onAction="#tryToOpenAllReviews" text="See all reviews" GridPane.columnIndex="3" GridPane.rowIndex="6" />
       <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="5">
          <children>
-            <Label text="Reviews: " />
+            <Label fx:id="reviewsLabel" text="Reviews: " />
             <Text fx:id="reviewsText" strokeType="OUTSIDE" strokeWidth="0.0" text="Placeholder" />
          </children>
       </VBox>

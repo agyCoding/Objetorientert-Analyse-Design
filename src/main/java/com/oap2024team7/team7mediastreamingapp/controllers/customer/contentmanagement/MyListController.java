@@ -17,6 +17,11 @@ import javafx.stage.Modality;
 
 import java.util.Comparator;
 
+/**
+ * This class is responsible for handling the My List page.
+ * It displays the user's saved films, allowing them to add, remove, view and sort films from their personal My List.
+ * @author Adnan Duric (@adovic)
+ */
 
 public class MyListController {
 

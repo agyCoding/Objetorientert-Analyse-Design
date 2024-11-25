@@ -33,6 +33,7 @@ import com.oap2024team7.team7mediastreamingapp.services.FilmManager;
 import com.oap2024team7.team7mediastreamingapp.services.DatabaseManager;
 import com.oap2024team7.team7mediastreamingapp.models.Discount;
 import com.oap2024team7.team7mediastreamingapp.services.DiscountManager;
+import com.oap2024team7.team7mediastreamingapp.services.RentalManager;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -125,6 +126,7 @@ public class AdminFilmManagementController {
     private InventoryManager inventoryManager = new InventoryManager();
     private FilmManager filmManager = new FilmManager();
     private DiscountManager discountManager = new DiscountManager();
+    private RentalManager rentalManager = new RentalManager();
         
     // Store information about chosen inputs
     private Category selectedCategory;
@@ -168,7 +170,7 @@ public class AdminFilmManagementController {
 
     /**
      * Method to update the film details in the admin screen.
-     * It sets the text fields and ComboBoxes to the values of the selected film.
+     * It pre-sets the text fields and ComboBoxes to the values of the selected film (based on the info from the DB).
      */
     
     private void updateFilmDetails() {
@@ -178,6 +180,9 @@ public class AdminFilmManagementController {
         lengthTF.setText(String.valueOf(selectedFilm.getLength()));
         rentalDurationTF.setText(String.valueOf(selectedFilm.getRentalDuration()));
         rentalRateTF.setText(String.valueOf(selectedFilm.getRentalRate()));
+        enableFreeCheckBox.setSelected(selectedFilm.isStreamable());
+        likeDislikeCheckBox.setSelected(selectedFilm.isRatable());
+        enableReviewCheckBox.setSelected(selectedFilm.isReviewable());
 
         // Set the discount information
         Discount discount = discountManager.getActiveDiscount(selectedFilm.getFilmId());
@@ -189,7 +194,7 @@ public class AdminFilmManagementController {
         // Set the current inventory label
         InventoryManager inventoryManager = new InventoryManager();
         Staff staff = SessionData.getInstance().getLoggedInStaff();
-        List<Inventory> currentInventory = inventoryManager.checkInventoryForFilmAndStore(selectedFilm, staff);
+        List<Inventory> currentInventory = inventoryManager.checkInventoryForFilmAndStore(selectedFilm, staff.getStoreId());
         currentInventorySize = currentInventory.size();
         
         currentInventoryLabel.setText("Current inventory: " + currentInventorySize);
@@ -433,6 +438,9 @@ public class AdminFilmManagementController {
         }
         selectedFilm.setSpecialFeatures(new HashSet<>(specialFeatures));
         selectedFilm.setActors(actors);
+        selectedFilm.setStreamable(enableFreeCheckBox.isSelected());
+        selectedFilm.setRatable(likeDislikeCheckBox.isSelected());
+        selectedFilm.setReviewable(enableReviewCheckBox.isSelected());
 
         // Validate the rental duration and set it in the Film object
         try {
@@ -616,7 +624,7 @@ public class AdminFilmManagementController {
             if (deletedItems >= amount) {
             break;
             }
-            if (inventoryManager.removeRentalForInventory(inventory.getInventoryId()) && 
+            if (rentalManager.removeRentalForInventory(inventory.getInventoryId()) && 
             inventoryManager.deleteAvailableInventory(inventory.getInventoryId())) {
             deletedItems++;
             } else {

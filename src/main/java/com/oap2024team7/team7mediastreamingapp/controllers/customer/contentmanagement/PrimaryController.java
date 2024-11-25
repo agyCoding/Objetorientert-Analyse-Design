@@ -22,19 +22,18 @@ import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Alert.AlertType;
-import javafx.stage.Stage;
-import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.stage.Stage;
 import javafx.stage.Modality;
 
 /**
  * Controller class for the primary screen.
- * It displays a list of films and allows the user to filter and sort the films.
- * The controller also allows the user to view film details and navigate to the edit profile screen or logout.
+ * It displays a list of films and allows the user to filter, sort, search films, and navigate to other screens.
  * @author  Agata (Agy) Olaussen (@agyCoding)
  */
 
@@ -56,7 +55,7 @@ public class PrimaryController {
     @FXML
     private VBox filterMenu;
 
-    // Pirmary content viewer (LV)
+    // Primary content viewer (LV)
     @FXML
     private ListView<Film> filmListView;
     @FXML
@@ -82,7 +81,13 @@ public class PrimaryController {
     private TextField startYearField;
     @FXML
     private TextField endYearField;
-    
+
+    // Search feature
+    @FXML
+    private TextField searchField;
+    @FXML
+    private Button searchButton;
+
     // Local variables
     private ToggleGroup sortToggleGroup;
     private FilmManager filmManager;
@@ -98,7 +103,7 @@ public class PrimaryController {
     private Integer selectedMaxLength;
     private Integer selectedStartYear;
     private Integer selectedEndYear;
-    
+
     /**
      * Initializes the controller class.
      * It is used to initialize the controller and load the initial data.
@@ -118,37 +123,28 @@ public class PrimaryController {
             editAccountMenuItem.setVisible(true);  // Show the Edit Account menu item if mainProfile = true
         } else {
             editAccountMenuItem.setVisible(false);  // Hide the Edit Account menu item if mainProfile = false
-        }        
-    
-        // Handle manage profiles action
+        }
+
+        // Handle user menu actions
         manageProfilesMenuItem.setOnAction(event -> handleManageProfiles());
-
-        // Handle edit account action
         editAccountMenuItem.setOnAction(event -> handleEditAccount());
-    
-        // Handle edit profile action
         editProfileMenuItem.setOnAction(event -> handleEditProfile());
-
-        // Handle logout action
         logoutMenuItem.setOnAction(event -> handleLogout());
 
-        /* INITIALIZE FILTERS FOR LV */
+        /* INITIALIZE SEARCH FEATURE */
+        searchButton.setOnAction(event -> handleSearch());
 
+        /* INITIALIZE FILTERS FOR LV */
         loadCategories();
         loadRatings();
 
         /* INITIALIZE FILM LV */
-
         filmManager = new FilmManager();
 
         // Initialize the ToggleGroup in the controller
         sortToggleGroup = new ToggleGroup();
-        
-        // Assign the ToggleGroup to the RadioButtons
         sortByTitle.setToggleGroup(sortToggleGroup);
         sortByReleaseYear.setToggleGroup(sortToggleGroup);
-
-        // Set default selection if needed
         sortByTitle.setSelected(true);
 
         // Load the first page of films
@@ -164,12 +160,37 @@ public class PrimaryController {
         filmListView.setOnMouseClicked(event -> {
             if (event.getClickCount() == 1) {
                 Film selectedFilm = filmListView.getSelectionModel().getSelectedItem();
+                System.out.println("Selected film: " + selectedFilm.getTitle());
+                System.out.println("Selected is ratable: " + selectedFilm.isRatable());
+                System.out.println("Selected is reviewable: " + selectedFilm.isReviewable());
+
                 if (selectedFilm != null) {
                     showFilmDetails(selectedFilm);
                 }
             }
         });
     }
+
+    // Search functionality
+    @FXML
+    private void handleSearch() {
+        String query = searchField.getText().trim();
+
+        if (query.isEmpty()) {
+            loadFilms(); // Reload all films if search is empty
+            return;
+        }
+
+        List<Film> searchResults = filmManager.searchFilms(query);
+
+        if (searchResults == null || searchResults.isEmpty()) {
+            GeneralUtils.showAlert(AlertType.INFORMATION, "No Results", "Search Results", "No movies found matching your search.");
+        } else {
+            filmListView.getItems().clear();
+            filmListView.getItems().addAll(searchResults);
+        }
+    }
+
 
     /**
      * Updates the logged-in user label with the current profile name,
@@ -265,10 +286,18 @@ public class PrimaryController {
 
         // Get sort criteria
         String sortBy = sortByTitle.isSelected() ? "title" : "release_year";
+
+        // Check if the selectedCategory is the placeholder (-1); if so, treat it as null
+        Integer categoryId = (selectedCategory != null && selectedCategory.getCategoryId() != -1) 
+        ? selectedCategory.getCategoryId() 
+        : null;
     
+        // For rating: If selectedRating is null, treat it as no filter for the rating
+        Film.Rating rating = selectedRating == Film.Rating.NONE ? null : selectedRating;
+
         List<Film> films = filmManager.loadFilms(
-            selectedCategory != null ? selectedCategory.getCategoryId() : null,
-            selectedRating,
+            categoryId,
+            rating,
             selectedMaxLength,
             selectedStartYear,
             selectedEndYear,
@@ -330,6 +359,7 @@ public class PrimaryController {
      */
     private void showFilmDetails(Film film) {
         SessionData.getInstance().setSelectedFilm(film);
+
         StageUtils.showPopup(
             (Stage) loggedInUserLabel.getScene().getWindow(),
             "filmDetails",  // Using the short name for the FXML file
@@ -351,7 +381,8 @@ public class PrimaryController {
             genreComboBox.getItems().clear();
             
             // Add a null option for the empty category
-            genreComboBox.getItems().add(null);  // Displayed as an empty option
+            Category placeholder = new Category(-1, "");
+            genreComboBox.getItems().add(placeholder);
     
             // Set custom cells for displaying category names
             genreComboBox.setButtonCell(new CategoryCell());
@@ -377,21 +408,32 @@ public class PrimaryController {
      * Load all ratings and add them to the ComboBox.
      */
     private void loadRatings() {
-        // Get all the enum values
+        // Get all the enum values, but do not include 'NONE' manually here
         Film.Rating[] ratings = Film.Rating.values();
-
+    
         ratingComboBox.getItems().clear();
-
-        // Add a null option
-        ratingComboBox.getItems().add(null);  // This will be displayed as an empty choice
-
+    
+        // Add all the enum values to the ComboBox
+        ratingComboBox.getItems().addAll(ratings);
+    
         // Set custom cells for displaying rating names
         ratingComboBox.setCellFactory(lv -> new RatingCell());
         ratingComboBox.setButtonCell(new RatingCell());
-
-        // Add all the enum values to the ComboBox
-        ratingComboBox.getItems().addAll(ratings);
+    
+        // Set the ComboBox value to 'NONE' initially, acting as the empty option
+        ratingComboBox.setValue(Film.Rating.NONE);
+    
+        // Add listener to handle the selection
+        ratingComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            // If the selected value is 'NONE', set selectedRating to null (empty selection)
+            if (newValue == Film.Rating.NONE) {
+                selectedRating = null;  // Reset the selectedRating to null
+            } else {
+                selectedRating = newValue;  // Set the selectedRating to the valid selected value
+            }
+        });
     }
+       
 
     /**
      * Apply the filters selected by the user and load the films.

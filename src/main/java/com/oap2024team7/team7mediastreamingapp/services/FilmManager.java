@@ -56,7 +56,7 @@ public class FilmManager {
      * @return The ID of the newly inserted film, or -1 if insertion failed
      */
     public int addFilm(Film film) {
-        String insertFilmQuery = "INSERT INTO film (title, description, release_year, language_id, rental_duration, rental_rate, length, rating, special_features) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String insertFilmQuery = "INSERT INTO film (title, description, release_year, language_id, rental_duration, rental_rate, length, rating, special_features, is_streamable, is_ratable, is_reviewable) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         String insertFilmActorQuery = "INSERT INTO film_actor (film_id, actor_id) VALUES (?, ?)";
 
         try (Connection conn = DatabaseManager.getConnection()) {
@@ -73,6 +73,9 @@ public class FilmManager {
                 filmStmt.setInt(7, film.getLength());
                 filmStmt.setString(8, mapRating(film.getRating()));
                 filmStmt.setString(9, String.join(",", film.getSpecialFeatures()));
+                filmStmt.setBoolean(10, film.isStreamable());
+                filmStmt.setBoolean(11, film.isRatable());
+                filmStmt.setBoolean(12, film.isReviewable());
                 
                 int rowsAffected = filmStmt.executeUpdate();
                 
@@ -116,7 +119,7 @@ public class FilmManager {
      * @return boolean indicating if the film was updated successfully.
      */
     public boolean updateFilm(Film film) {
-        String updateQuery = "UPDATE film SET title = ?, description = ?, release_year = ?, language_id = ?, rental_duration = ?, rental_rate = ?, length = ?, rating = ?, special_features = ? WHERE film_id = ?";
+        String updateQuery = "UPDATE film SET title = ?, description = ?, release_year = ?, language_id = ?, rental_duration = ?, rental_rate = ?, length = ?, rating = ?, special_features = ?, is_streamable = ?, is_ratable = ?, is_reviewable = ? WHERE film_id = ?";
         
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
@@ -130,7 +133,10 @@ public class FilmManager {
             stmt.setInt(7, film.getLength());
             stmt.setString(8, mapRating(film.getRating()));
             stmt.setString(9, String.join(",", film.getSpecialFeatures()));
-            stmt.setInt(10, film.getFilmId());
+            stmt.setBoolean(10, film.isStreamable());
+            stmt.setBoolean(11, film.isRatable());
+            stmt.setBoolean(12, film.isReviewable());
+            stmt.setInt(13, film.getFilmId()); 
             
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
@@ -274,7 +280,10 @@ public class FilmManager {
                     Film.Rating.valueOf(rs.getString("rating").replace("-", "")),
                     specialFeatures,
                     rs.getDouble("rental_rate"),
-                    actors
+                    actors,
+                    rs.getBoolean("is_streamable"),
+                    rs.getBoolean("is_ratable"),
+                    rs.getBoolean("is_reviewable")
                 );
                 // The method is reused between primary controller and admin page
                 // Admins don't have profiles so we don't need to check if the film is watchable
@@ -330,7 +339,10 @@ public class FilmManager {
                     Film.Rating.valueOf(rs.getString("rating").replace("-", "")),
                     specialFeatures,
                     rs.getDouble("rental_rate"),
-                    actors
+                    actors,
+                    rs.getBoolean("is_streamable"),
+                    rs.getBoolean("is_ratable"),
+                    rs.getBoolean("is_reviewable")
                 );
             } else {
                 return null;
@@ -340,6 +352,60 @@ public class FilmManager {
             return null;
         }
     }
+    /**
+ * Searches for films based on a query string.
+ * @param query The text to search for in the title or description.
+ * @return A list of films that match the search query.
+ */
+public List<Film> searchFilms(String query) {
+    List<Film> films = new ArrayList<>();
+    String sql = "SELECT * FROM film WHERE title LIKE ? OR description LIKE ?";
+    try (Connection conn = DatabaseManager.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        
+        // Use wildcards for partial matching
+        String searchPattern = "%" + query + "%";
+        stmt.setString(1, searchPattern);
+        stmt.setString(2, searchPattern);
+
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            // Fetch the language object
+            LanguageManager languageManager = new LanguageManager();
+            Language language = languageManager.getLanguageById(conn, rs.getInt("language_id"));
+
+            // Convert special_features from String to Set<String>
+            Set<String> specialFeatures = new HashSet<>();
+            String specialFeaturesString = rs.getString("special_features");
+            if (specialFeaturesString != null && !specialFeaturesString.isEmpty()) {
+                specialFeatures.addAll(Arrays.asList(specialFeaturesString.split(",")));
+            }
+
+            // Fetch the actors for this film
+            List<Actor> actors = ActorManager.getInstance().getActorsForFilm(rs.getInt("film_id"));
+
+            Film film = new Film(
+                rs.getInt("film_id"),
+                rs.getString("title"),
+                rs.getString("description"),
+                rs.getInt("release_year"),
+                language,
+                rs.getInt("rental_duration"),
+                rs.getInt("length"),
+                Film.Rating.valueOf(rs.getString("rating").replace("-", "")),
+                specialFeatures,
+                rs.getDouble("rental_rate"),
+                actors
+            );
+
+            films.add(film);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return films;
+}
+
     
 
     /**
@@ -387,7 +453,7 @@ public class FilmManager {
                 stmt.setInt(paramIndex++, categoryId);
             }
             if (rating != null) {
-                stmt.setString(paramIndex++, rating.name());
+                stmt.setString(paramIndex++, mapRating(rating));
             }
             if (maxLength != null) {
                 stmt.setInt(paramIndex++, maxLength);
@@ -433,7 +499,10 @@ public class FilmManager {
                     Film.Rating.valueOf(rs.getString("rating").replace("-", "")),
                     specialFeatures,
                     rs.getDouble("rental_rate"),
-                    actors
+                    actors,
+                    rs.getBoolean("is_streamable"),
+                    rs.getBoolean("is_ratable"),
+                    rs.getBoolean("is_reviewable")
                 );
 
                 // The method is reused between primary controller and admin page
