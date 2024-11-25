@@ -5,6 +5,8 @@ import com.oap2024team7.team7mediastreamingapp.models.Customer;
 import com.oap2024team7.team7mediastreamingapp.models.Profile;
 import com.oap2024team7.team7mediastreamingapp.models.Film;
 import com.oap2024team7.team7mediastreamingapp.models.Staff;
+import com.oap2024team7.team7mediastreamingapp.models.Rental;
+import com.oap2024team7.team7mediastreamingapp.models.Payment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +15,7 @@ import java.util.List;
  * Class for the SessionData object.
  * This class is responsible for managing the session data of the application.
  * It stores the logged in customer, current profile, customer's address, and selected film.
- * @author Agata (Agy) Olaussen (@agyCoding)
+ * @authors Agata (Agy) Olaussen (@agyCoding), Adnan @adovic (savedFilms and methods for my saved films)
  */
 
 public class SessionData {
@@ -23,6 +25,8 @@ public class SessionData {
     private Profile currentProfile;
     private Address customerAddress;
     private Film selectedFilm;
+    private Rental newRental;
+    private Payment newPayment;
     private List<Film> savedFilms; // List to store saved films
 
     // Constructor is private to implement the Singleton pattern
@@ -77,12 +81,30 @@ public class SessionData {
         return selectedFilm;
     }
 
+    public Rental getNewRental() {
+        return newRental;
+    }
+
+    public void setNewRental(Rental newRental) {
+        this.newRental = newRental;
+    }
+
+    public Payment getNewPayment() {
+        return newPayment;
+    }
+
+    public void setNewPayment(Payment newPayment) {
+        this.newPayment = newPayment;
+    }
+
     public void clearSessionData() {
         loggedInCustomer = null;
         loggedInStaff = null;
         currentProfile = null;
         customerAddress = null;
         selectedFilm = null;
+        newRental = null;
+        newPayment = null;
         savedFilms.clear(); // Clear saved films when session is cleared
     }
 

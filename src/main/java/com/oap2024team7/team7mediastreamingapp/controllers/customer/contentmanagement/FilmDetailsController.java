@@ -12,6 +12,7 @@ import com.oap2024team7.team7mediastreamingapp.models.Profile;
 import com.oap2024team7.team7mediastreamingapp.services.ActorManager;
 import com.oap2024team7.team7mediastreamingapp.services.FilmManager;
 import com.oap2024team7.team7mediastreamingapp.services.ProfileManager;
+import com.oap2024team7.team7mediastreamingapp.services.RentalManager;
 import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
 import com.oap2024team7.team7mediastreamingapp.utils.StageUtils;
 import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
@@ -77,6 +78,7 @@ public class FilmDetailsController {
     private Stage stage;
     private ReviewManager reviewManager;
     private InventoryManager inventoryManager;
+    private RentalManager rentalManager = new RentalManager();
    
     /**
      * The stage for the Film Details window.
@@ -209,7 +211,7 @@ public class FilmDetailsController {
             LocalDateTime now = LocalDateTime.now();
 
             // Check if the customer already has an active rental for the selected film
-            boolean hasActiveRental = inventoryManager.customerHasActiveRental(
+            boolean hasActiveRental = rentalManager.customerHasActiveRental(
                 loggedInCustomer.getCustomerId(), selectedFilm.getFilmId(), now, now.plusDays(1)
             );
 

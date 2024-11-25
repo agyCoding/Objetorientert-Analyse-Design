@@ -4,11 +4,13 @@ package com.oap2024team7.team7mediastreamingapp.controllers.customer.contentmana
 import com.oap2024team7.team7mediastreamingapp.models.Film;
 import com.oap2024team7.team7mediastreamingapp.utils.GeneralUtils;
 import com.oap2024team7.team7mediastreamingapp.utils.SessionData;
+import com.oap2024team7.team7mediastreamingapp.utils.StageUtils;
 import com.oap2024team7.team7mediastreamingapp.services.InventoryManager;
 import com.oap2024team7.team7mediastreamingapp.models.Inventory;
-import com.oap2024team7.team7mediastreamingapp.models.Customer;
 import com.oap2024team7.team7mediastreamingapp.services.DiscountManager;
 import com.oap2024team7.team7mediastreamingapp.models.Discount;
+import com.oap2024team7.team7mediastreamingapp.models.Rental;
+import com.oap2024team7.team7mediastreamingapp.models.Payment;
 
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
@@ -18,6 +20,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.util.Duration;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.time.LocalDateTime;
@@ -50,8 +53,6 @@ public class RentFilmController {
     private static final String ERROR_TITLE = "Error";
     private static final String ERROR_MESSAGE = "An error occurred while trying to rent the film.";
     private static final String NO_INVENTORY_MESSAGE = "No available inventory for the selected film within this period of time.";
-    private static final String SUCCESS_TITLE = "Film rented";
-    private static final String SUCCESS_MESSAGE = "The film has been successfully rented.";
     private static final String INVALID_INPUT_MESSAGE = "Please enter a valid number of days.";
 
     private double rentalRate;
@@ -129,33 +130,36 @@ public class RentFilmController {
     private void tryToRent() {
         try {
             if (totalCost > 0) {
-                rentalEndDate = rentalStartDate.plusDays(Integer.parseInt(rentalDaysTF.getText()));
-                int filmId = selectedFilm.getFilmId();
-                int storeId = SessionData.getInstance().getLoggedInCustomer().getStoreId();
-                Customer loggedInCustomer = SessionData.getInstance().getLoggedInCustomer();
-    
-                InventoryManager inventoryManager = new InventoryManager();
-    
-                // Check if customer already has an active rental for this film
-                if (inventoryManager.customerHasActiveRental(loggedInCustomer.getCustomerId(), filmId, rentalStartDate, rentalEndDate)) {
-                    Platform.runLater(() -> {
-                        GeneralUtils.showAlert(Alert.AlertType.ERROR, ERROR_TITLE, "You already have this film rented within this time period.", "Please wait for the current rental to expire.");
-                    });
-                    return;
-                }
-    
-                // Check for available inventory
-                List<Inventory> availableInventories = inventoryManager.checkForAvailableInventory(filmId, storeId, rentalStartDate, rentalEndDate);
+            rentalStartDate = LocalDateTime.now();
+            rentalEndDate = rentalStartDate.plusDays(Integer.parseInt(rentalDaysTF.getText()));
+
+            // Check for available inventory, and get inventoryId of the first available inventory item
+            InventoryManager inventoryManager = new InventoryManager();
+            List<Inventory> availableInventories = inventoryManager.checkForAvailableInventory(selectedFilm.getFilmId(), SessionData.getInstance().getLoggedInCustomer().getStoreId(), rentalStartDate, rentalEndDate);
                 if (!availableInventories.isEmpty()) {
-                    processRental(inventoryManager, availableInventories.get(0).getInventoryId());
+                    int inventoryId = availableInventories.get(0).getInventoryId();
+                    int customerId = SessionData.getInstance().getLoggedInCustomer().getCustomerId();
+                    int storeId = SessionData.getInstance().getLoggedInCustomer().getStoreId();
+
+                    Rental newRental = new Rental(inventoryId, customerId, storeId, rentalStartDate, rentalEndDate);
+                    SessionData.getInstance().setNewRental(newRental);
+
+                    Payment newPayment = new Payment(customerId, storeId, totalCost);
+                    SessionData.getInstance().setNewPayment(newPayment);
+
+                    StageUtils.showPopup(
+                        (Stage) selectedFilmLabel.getScene().getWindow(), 
+                        "payment", 
+                        "Streamify - Payment Information", 
+                        Modality.WINDOW_MODAL);
                 } else {
                     Platform.runLater(() -> {
                         GeneralUtils.showAlert(Alert.AlertType.ERROR, ERROR_TITLE, NO_INVENTORY_MESSAGE, "Please try again later.");
                     });
-                }
+                }                
             } else {
                 Platform.runLater(() -> {
-                    GeneralUtils.showAlert(Alert.AlertType.ERROR, ERROR_TITLE, ERROR_MESSAGE, "Please try again.");
+                    GeneralUtils.showAlert(Alert.AlertType.ERROR, ERROR_TITLE, NO_INVENTORY_MESSAGE, "Please try again later.");
                 });
             }
         } catch (Exception e) {
@@ -164,37 +168,5 @@ public class RentFilmController {
             });
             e.printStackTrace();
         }
-    }
-    
-
-    /**
-     * This method processes the rental of the selected film
-     * @param inventoryManager
-     * @param inventoryId
-     */
-    private void processRental(InventoryManager inventoryManager, int inventoryId) {
-        Customer loggedInCustomer = SessionData.getInstance().getLoggedInCustomer();
-        int rentalId = inventoryManager.addRentalToDatabase(inventoryId, loggedInCustomer, rentalStartDate, rentalEndDate);
-        if (rentalId < 0) {
-            Platform.runLater(() -> {
-                GeneralUtils.showAlert(Alert.AlertType.ERROR, ERROR_TITLE, ERROR_MESSAGE, "Please try again.");
-            });
-            return;
-        }
-        int paymentId = inventoryManager.addPaymentToDatabase(loggedInCustomer, rentalId, totalCost, rentalStartDate);
-        if (paymentId < 0) {
-            Platform.runLater(() -> {
-                GeneralUtils.showAlert(Alert.AlertType.ERROR, ERROR_TITLE, ERROR_MESSAGE, "Please try again.");
-            });
-            inventoryManager.removeRentalFromDatabase(rentalId);
-            return;
-        }
-        
-        Platform.runLater(() -> {
-            GeneralUtils.showAlert(Alert.AlertType.INFORMATION, SUCCESS_TITLE, SUCCESS_MESSAGE, "The total cost is: $" + totalCost);
-            // Get the current stage and close it
-            ((Stage) selectedFilmLabel.getScene().getWindow()).close();
-        });
-    }
-    
+    }    
 }

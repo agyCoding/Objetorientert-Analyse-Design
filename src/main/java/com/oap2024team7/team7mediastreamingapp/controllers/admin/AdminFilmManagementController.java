@@ -33,6 +33,7 @@ import com.oap2024team7.team7mediastreamingapp.services.FilmManager;
 import com.oap2024team7.team7mediastreamingapp.services.DatabaseManager;
 import com.oap2024team7.team7mediastreamingapp.models.Discount;
 import com.oap2024team7.team7mediastreamingapp.services.DiscountManager;
+import com.oap2024team7.team7mediastreamingapp.services.RentalManager;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -125,6 +126,7 @@ public class AdminFilmManagementController {
     private InventoryManager inventoryManager = new InventoryManager();
     private FilmManager filmManager = new FilmManager();
     private DiscountManager discountManager = new DiscountManager();
+    private RentalManager rentalManager = new RentalManager();
         
     // Store information about chosen inputs
     private Category selectedCategory;
@@ -622,7 +624,7 @@ public class AdminFilmManagementController {
             if (deletedItems >= amount) {
             break;
             }
-            if (inventoryManager.removeRentalForInventory(inventory.getInventoryId()) && 
+            if (rentalManager.removeRentalForInventory(inventory.getInventoryId()) && 
             inventoryManager.deleteAvailableInventory(inventory.getInventoryId())) {
             deletedItems++;
             } else {

@@ -40,7 +40,7 @@ public class StageUtils {
         FXML_PATHS.put("myRentals", "/views/customer/contentmanagement/myRentals.fxml");
         FXML_PATHS.put("rentFilm", "/views/customer/contentmanagement/rentfilm.fxml");
         FXML_PATHS.put("review", "/views/customer/contentmanagement/review.fxml");
-        
+        FXML_PATHS.put("payment", "/views/customer/contentmanagement/creditcardpayment.fxml");
     }
 
     /**
