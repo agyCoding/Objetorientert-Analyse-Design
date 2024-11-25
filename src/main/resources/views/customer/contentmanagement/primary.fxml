@@ -28,6 +28,14 @@
       <VBox fx:id="filterMenu" spacing="10.0" style="-fx-background-color: lightgray; -fx-padding: 10;" GridPane.rowIndex="1" GridPane.rowSpan="2">
          <children>
             <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Filters" />
+
+            <!-- Search Filter -->
+            <Label text="Search for a movie:" />
+            <HBox spacing="10.0">
+               <TextField fx:id="searchField" promptText="Enter movie title..." prefWidth="120.0" />
+               <Button fx:id="searchButton" text="Go" onAction="#handleSearch" />
+            </HBox>
+
             <Label text="Choose Genre:" />
             <ComboBox fx:id="genreComboBox" prefWidth="150.0" />
             <Label text="PG Rating:" />
@@ -46,7 +54,7 @@
       <HBox prefHeight="100.0" prefWidth="200.0" spacing="30.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="TOP">
          <children>
             <Button fx:id="homeButton" mnemonicParsing="false" text="Home" />
-            <Button fx:id="myListButton" mnemonicParsing="false" text="My list" onAction="#handleMyList"/> <!-- new -->
+            <Button fx:id="myListButton" mnemonicParsing="false" text="My list" onAction="#handleMyList"/>
             <Button fx:id="myRentalsButton" mnemonicParsing="false" text="My rentals" onAction="#handleMyRentalsButtonAction"/>
          </children>
          <padding>
