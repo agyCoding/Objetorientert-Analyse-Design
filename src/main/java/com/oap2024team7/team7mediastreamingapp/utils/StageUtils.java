@@ -14,6 +14,12 @@ import javafx.stage.Stage;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Modality;
 
+/**
+ * Utility class for managing stages and switching scenes.
+ * This class contains methods for loading FXML files and switching scenes on stages.
+ * It also contains a map of short names to full FXML paths for easy access.
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
 public class StageUtils {
 
     // Map for storing short names to full FXML paths

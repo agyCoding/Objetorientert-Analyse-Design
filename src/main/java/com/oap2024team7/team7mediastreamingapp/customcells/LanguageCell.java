@@ -4,6 +4,10 @@ import com.oap2024team7.team7mediastreamingapp.models.Language;
 
 import javafx.scene.control.ListCell;
 
+/**
+ * Custom ListCell for displaying Language objects with language name only
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
 public class LanguageCell extends ListCell<Language> {
     @Override
     protected void updateItem(Language language, boolean empty) {

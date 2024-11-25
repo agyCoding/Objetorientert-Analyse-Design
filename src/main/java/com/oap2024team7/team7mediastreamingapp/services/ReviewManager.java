@@ -10,6 +10,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Manages reviews in the database.
+ * This class provides methods to add, remove, and check reviews in the database.
+ * It also provides a method to check if a review is liked, and to calculate the average review score for a film.
+ * @author Agata (Agy) Olaussen @agyCoding
+ */
 public class ReviewManager {
     /**
      * Retrieves the Review object for a given film and profile.

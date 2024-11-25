@@ -27,11 +27,12 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-/*
- * Author: Saman Shaheen @saman091
+/**
+ * Controller class for the Manage Profiles screen.
+ * This class is responsible for handling user input and displaying data on the Manage Profiles screen.
+ * It allows the user to view, create, and switch between profiles.
+ * @author Agata (Agy) Olaussen @agyCoding, Saman Shaheen @saman091 (editing profile picture)
  */
-
-
 public class ManageProfilesController {
 
     @FXML

@@ -4,6 +4,10 @@ import com.oap2024team7.team7mediastreamingapp.models.Film;
 
 import javafx.scene.control.ListCell;
 
+/**
+ * Custom ListCell for displaying Film.Rating objects in a ListView.
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
 public class RatingCell extends ListCell<Film.Rating> {
     @Override
     protected void updateItem(Film.Rating rating, boolean empty) {

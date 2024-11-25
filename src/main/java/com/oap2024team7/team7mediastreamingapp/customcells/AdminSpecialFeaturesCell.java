@@ -7,6 +7,10 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 
+/**
+ * Custom ListCell for displaying Actor objects in a ListView, in the admin page (with check boxes).
+ * @author Agata (Agy) Olaussen (@agyCoding)
+ */
 public class AdminSpecialFeaturesCell extends ListCell<String> {
     private HBox hbox = new HBox();
     private CheckBox checkBox = new CheckBox();
